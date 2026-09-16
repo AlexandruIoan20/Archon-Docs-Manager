@@ -35,7 +35,7 @@ export function createMainWindow(): BrowserWindow {
     ...MAIN_WINDOW_DEFAULTS,
     show: false,
     autoHideMenuBar: true,
-    backgroundColor: '#0f1115',
+    backgroundColor: '#0d0f16',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

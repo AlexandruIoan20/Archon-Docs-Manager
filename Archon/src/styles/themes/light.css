@@ -1,0 +1,18 @@
+[data-theme='light'] {
+  --bg: #f8fafc;
+  --canvas: #ffffff;
+  --dot: #e2e8f0;
+  --side: #f1f5f9;
+  --border: #e2e8f0;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --text: #0f172a;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --accent: #2563eb;
+  --on-accent: #ffffff;
+
+  --accent-soft: color-mix(in oklab, var(--accent) 18%, var(--bg));
+  --accent-border: color-mix(in oklab, var(--accent) 45%, var(--bg));
+  --accent-text: color-mix(in oklab, var(--accent) 80%, var(--text));
+}

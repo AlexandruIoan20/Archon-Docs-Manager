@@ -1,0 +1,19 @@
+:root,
+[data-theme='dark'] {
+  --bg: #0d0f16;
+  --canvas: #111318;
+  --dot: #1a1d27;
+  --side: #0a0c11;
+  --border: #1e2130;
+  --surface: #161922;
+  --surface2: #12151d;
+  --text: #e2e8f0;
+  --text2: #8892a4;
+  --text3: #5b6478;
+  --accent: #4f8ef7;
+  --on-accent: #071018;
+
+  --accent-soft: color-mix(in oklab, var(--accent) 24%, var(--bg));
+  --accent-border: color-mix(in oklab, var(--accent) 48%, var(--bg));
+  --accent-text: color-mix(in oklab, var(--accent) 62%, var(--text));
+}

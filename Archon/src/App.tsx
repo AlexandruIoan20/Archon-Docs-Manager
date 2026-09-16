@@ -11,12 +11,12 @@ function App(): React.JSX.Element {
   })
 
   return (
-    <main className="flex h-full flex-col items-center justify-center gap-2 bg-neutral-950 text-neutral-200">
+    <main className="flex h-full flex-col items-center justify-center gap-2 bg-bg text-fg">
       <h1 className="text-2xl font-semibold">{APP_NAME}</h1>
-      {isPending && <p className="text-sm text-neutral-500">Connecting to main process…</p>}
+      {isPending && <p className="text-sm text-fg-muted">Connecting to main process...</p>}
       {error && <p className="text-sm text-red-400">IPC error: {error.message}</p>}
       {data && (
-        <p className="text-sm text-neutral-500" data-testid="app-info">
+        <p className="text-sm text-fg-muted" data-testid="app-info">
           v{data.version} · {data.platform}
         </p>
       )}

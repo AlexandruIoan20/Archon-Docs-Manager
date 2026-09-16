@@ -1,0 +1,28 @@
+:root {
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 14px;
+
+  --shadow-node: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-menu: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow-toast: 0 10px 28px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
+
+  --size-titlebar: 48px;
+  --size-tabbar: 36px;
+  --size-sidebar: 260px;
+  --size-inspector: 240px;
+  --size-statusbar: 24px;
+
+  --danger: #dc2626;
+  --success: #22c55e;
+  --overlay: rgba(5, 7, 11, 0.62);
+}
