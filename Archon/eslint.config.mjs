@@ -28,5 +28,22 @@ export default defineConfig(
       ...eslintPluginReactRefresh.configs.vite.rules
     }
   },
+  {
+    // Layering: only App.tsx composes feature modules.
+    files: ['src/core/**', 'src/shared/**', 'src/store/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/modules/*', '**/modules/*'],
+              message: 'core/, shared/ and store/ must not depend on feature modules.'
+            }
+          ]
+        }
+      ]
+    }
+  },
   eslintConfigPrettier
 )

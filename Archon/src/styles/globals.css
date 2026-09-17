@@ -107,3 +107,31 @@
     stroke-dashoffset: -24;
   }
 }
+
+/* Side panel drawers (overlay mode). */
+@keyframes drawer-in-start {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes drawer-in-end {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@utility animate-drawer-start {
+  animation: drawer-in-start 150ms ease-out;
+}
+
+@utility animate-drawer-end {
+  animation: drawer-in-end 150ms ease-out;
+}
+
+/* While a panel edge is dragged, the resize cursor wins everywhere. */
+html.panel-resizing,
+html.panel-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}

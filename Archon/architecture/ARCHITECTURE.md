@@ -8,7 +8,7 @@ Se actualizează la finalul fiecărui plan.
 - `[NN]` planul care creează fișierul;
 - `[NN*]` planul care modifică un fișier existent.
 
-**Stare curentă:** planurile 01–03 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless).
+**Stare curentă:** planurile 01–04 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless, layout shell responsive).
 
 ---
 
@@ -45,16 +45,14 @@ Main, preload și renderer se tipează din el, deci un canal inexistent sau un p
 **Direcția dependențelor:**
 
 ```
-App.tsx ─► modules/* ─► store/* ─► core/*
-   │           │                     ▲
-   │           └──────► shared/* ────┘
-   └─► shared/*
+App.tsx ─► modules/* ─► shared/* ─► store/* ─► core/*
+(fiecare strat poate importa din oricare strat aflat la dreapta lui, niciodată spre stânga)
 electron/* ─► src/core/types, src/core/constants/layout.constants (doar date pure)
 ```
 
 Reguli:
 - `core/` nu importă nimic din afara lui.
-- `shared/` nu cunoaște modulele.
+- `shared/` și `store/` nu cunosc modulele. Regula ESLint `no-restricted-imports` blochează importurile din `@/modules/*` în `core/`, `shared/` și `store/`.
 - Modulele nu se importă între ele.
 - `electron/` importă din `src/` doar tipuri și constante pure; `tsconfig.node.json` le listează explicit.
 
@@ -80,7 +78,7 @@ Archon/
 ├── electron.vite.config.ts        ✅ build main / preload / renderer, alias `@` → src
 ├── electron-builder.yml           ✅ packaging Windows / macOS / Linux
 ├── vitest.config.ts               ✅ jsdom, include src/** și electron/**
-├── eslint.config.mjs              ✅ TS + React + hooks + Prettier
+├── eslint.config.mjs              ✅ TS + React + hooks + Prettier + regula de straturi [04]
 ├── tsconfig.json                  ✅ referințe către node / web
 ├── tsconfig.node.json             ✅ electron/** + src/core/types + layout.constants
 ├── tsconfig.web.json              ✅ src/**
@@ -151,13 +149,10 @@ electron/
 ```
 src/
 ├── main.tsx                       ✅ React root, QueryClient    [05*] încarcă setările înainte de render
-├── App.tsx                        ✅ compoziție provizorie: TitleBar + preview primitive [03]
-│                                     [04*] AppShell + înregistrarea contribuțiilor de editor
+├── App.tsx                        ✅ [04] singurul loc de compoziție: AppShell, contribuții de editor,
+│                                     modale, scurtăturile Ctrl+B / Ctrl+Alt+B
 ├── App.test.tsx                   ✅
 ├── env.d.ts                       ✅ tipul global window.soar
-├── dev/                           ✅ doar pentru dezvoltare (dispare când shell-ul e complet)
-│   ├── PrimitivesPreview.tsx      ✅ galerie cu primitivele UI
-│   └── PreviewModal.tsx           ✅
 └── test/
     ├── setup.ts                   ✅ jest-dom + cleanup
     └── soar-api-mock.ts           ✅ mock complet pentru window.soar, cu emit() pentru evenimente [03]
@@ -172,9 +167,9 @@ src/core/
 ├── types/
 │   ├── index.ts                   ✅ barrel
 │   ├── ipc.types.ts               ✅ IpcInvokeContract, IpcEventContract, SoarApi [03]
-│   ├── editor.types.ts               [04] FileKind, EditorTabRef, EditorContribution
-│   ├── layout.types.ts               [04] PanelId, PanelMode, PanelLayout
-│   ├── ui.types.ts                   [04] ModalId
+│   ├── editor.types.ts            ✅ [04] FileKind, EditorTabRef, EditorContribution
+│   ├── layout.types.ts            ✅ [04] PanelId, PanelMode, PanelPreference, PanelState, PanelLayout
+│   ├── ui.types.ts                ✅ [04] ModalId
 │   ├── settings.types.ts             [05] AppSettings
 │   ├── workspace.types.ts            [07]
 │   ├── document.types.ts             [09]
@@ -185,19 +180,23 @@ src/core/
 │   └── diagram.schema.ts             [09]
 ├── constants/
 │   ├── app.constants.ts           ✅ APP_NAME, QUERY_KEYS   [05*] DEFAULT_SETTINGS, ACCENT_OPTIONS, UI_ZOOM_STEPS
-│   ├── layout.constants.ts        ✅ LAYOUT, TITLEBAR_DENSITY, TITLEBAR_INSETS [03]   [04*] lățimi și praguri panouri
+│   ├── layout.constants.ts        ✅ LAYOUT, TITLEBAR_DENSITY, TITLEBAR_INSETS [03]; SIDEBAR_WIDTH, INSPECTOR_WIDTH,
+│   │                                 MAIN_MIN_WITH_*, PANEL_RESIZE_STEP, OVERLAY_EDGE_GAP [04]
 │   ├── file-extensions.ts            [09] .soarws, .soardoc, .soardiag
 │   └── shortcuts.ts                  [20] registrul de scurtături
 └── editor/
-    └── EditorContributionsProvider.tsx  [04] context + useEditorContribution(kind)
+    ├── EditorContributionsProvider.tsx  ✅ [04] context + useEditorContribution(kind); kind duplicat → eroare
+    └── tests/                           ✅
 ```
 
 ### 4.3 `store/` — stare globală (Zustand)
 
 ```
 src/store/
-├── index.ts                          [04]
-├── ui.store.ts                       [04] panouri, modal activ   [05*] resolvedTheme   [06*] toast
+├── index.ts                       ✅ [04]
+├── ui.store.ts                    ✅ [04] panouri (visible / width / overlayOpen), lastOverlay, panelResizing,
+│                                     modal activ   [05*] resolvedTheme   [06*] toast
+├── tests/                         ✅ ui.store
 ├── status.store.ts                   [06] segmentele status bar-ului
 ├── workspace.store.ts                [07] workspace curent, arbore, folder țintă
 └── editor.store.ts                   [08] tab-uri, tab activ, dirty   [11*] [17*]
@@ -416,15 +415,14 @@ src/shared/
 │       │   ├── TitleBarDensityContext.tsx  context + useTitleBarDensity()
 │       │   ├── title-bar-density.ts   funcție pură, cu histerezis
 │       │   └── tests/                 BrandMark, WindowControls, title-bar-density
-│       ├── tests/
-│       │   └── TitleBar.test.tsx  ✅
-│       ├── AppShell.tsx              [04] gridul ferestrei
-│       ├── SidePanel.tsx             [04] docked / overlay
-│       ├── PanelResizeHandle.tsx     [04]   [18*] refolosit pentru split view
-│       ├── Sidebar.tsx               [04]
-│       ├── InspectorPanel.tsx        [04]
-│       ├── ModalHost.tsx             [04]
-│       ├── StatusBar.tsx             [04]   [06*] conținut
+│       ├── tests/                 ✅ TitleBar, AppShell, SidePanel, PanelResizeHandle, ModalHost
+│       ├── AppShell.tsx           ✅ [04] gridul ferestrei; coloane din PanelLayout
+│       ├── SidePanel.tsx          ✅ [04] docked / overlay: poziție, animație, focus, Escape
+│       ├── PanelResizeHandle.tsx  ✅ [04] generic, pointer + tastatură   [18*] refolosit pentru split view
+│       ├── Sidebar.tsx            ✅ [04] cadrul panoului stâng
+│       ├── InspectorPanel.tsx     ✅ [04] header „Properties” + închidere
+│       ├── ModalHost.tsx          ✅ [04] modalul activ din ui.store
+│       ├── StatusBar.tsx          ✅ [04] containerul de 24px   [06*] conținut
 │       ├── ToastViewport.tsx         [06]
 │       └── ShortcutsHelp.tsx         [20]
 ├── hooks/
@@ -433,8 +431,9 @@ src/shared/
 │   ├── useEscape.ts               ✅
 │   ├── useFloatingPosition.ts     ✅
 │   ├── usePlatform.ts             ✅ [03] platforma din app:get-info (staleTime: Infinity)
-│   ├── useWindowSize.ts              [04]
-│   ├── usePanelLayout.ts             [04]
+│   ├── useWindowSize.ts           ✅ [04] grupat pe requestAnimationFrame
+│   ├── usePanelLayout.ts          ✅ [04] fereastră + store → PanelLayout; închide cererile de sertar expirate
+│   ├── usePanelResize.ts          ✅ [04] legătura mâner ↔ ui.store
 │   ├── useSettings.ts                [05]
 │   ├── useTheme.ts                   [05]
 │   ├── useLayoutPersistence.ts       [05]
@@ -445,8 +444,8 @@ src/shared/
     ├── cn.ts                      ✅
     ├── floating-position.ts       ✅
     ├── truncate-middle.ts         ✅
-    ├── tests/                     ✅ cn, floating-position, truncate-middle
-    ├── panel-layout.ts               [04] resolvePanelLayout
+    ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout
+    ├── panel-layout.ts            ✅ [04] resolvePanelLayout (funcție pură)
     ├── platform.ts                   [06]
     └── color.ts                      [14]
 ```
@@ -457,6 +456,7 @@ src/shared/
 src/styles/
 ├── globals.css                    ✅ Tailwind v4 + @theme, fonturi locale, bază
 │                                     [03*] utilitarele app-drag / app-no-drag + no-drag automat pe elementele interactive
+│                                     [04*] animațiile sertarelor, cursorul global în timpul redimensionării
 ├── variables.css                  ✅ tokenuri fără temă (fonturi, raze, umbre, dimensiuni)
 ├── tokens.test.ts                 ✅
 └── themes/
