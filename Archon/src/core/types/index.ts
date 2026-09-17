@@ -3,7 +3,12 @@ export type {
   AppPlatform,
   IpcArgs,
   IpcChannel,
+  IpcEvent,
+  IpcEventContract,
+  IpcEventPayload,
   IpcInvokeContract,
   IpcResult,
-  SoarApi
+  IpcUnsubscribe,
+  SoarApi,
+  TitleBarColors
 } from './ipc.types'

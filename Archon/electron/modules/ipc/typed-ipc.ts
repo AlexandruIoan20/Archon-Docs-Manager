@@ -1,6 +1,6 @@
-import { ipcMain, type IpcMainInvokeEvent } from 'electron'
+import { ipcMain, type BrowserWindow, type IpcMainInvokeEvent } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import type { IpcArgs, IpcChannel, IpcResult } from '@/core/types'
+import type { IpcArgs, IpcChannel, IpcEvent, IpcEventPayload, IpcResult } from '@/core/types'
 
 type Handler<C extends IpcChannel> = (
   event: IpcMainInvokeEvent,
@@ -26,4 +26,14 @@ export function handle<C extends IpcChannel>(channel: C, handler: Handler<C>): v
     // the typed contract; handlers must still validate values they persist.
     return handler(event, ...(args as IpcArgs<C>))
   })
+}
+
+/** Pushes a typed event to one window's renderer. No-op once the window is gone. */
+export function send<E extends IpcEvent>(
+  window: BrowserWindow,
+  event: E,
+  payload: IpcEventPayload<E>
+): void {
+  if (window.isDestroyed()) return
+  window.webContents.send(event, payload)
 }

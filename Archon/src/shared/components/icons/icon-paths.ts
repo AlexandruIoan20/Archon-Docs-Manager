@@ -98,6 +98,14 @@ export const ICON_PATHS = {
   ],
   more: [circle(5, 12, 1), circle(12, 12, 1), circle(19, 12, 1)],
   check: ['M20 6 9 17l-5-5'],
+  /** App brand triangle, drawn on the accent square. */
+  logo: ['M12 3 4 20h16L12 3Z', 'M8.6 14h6.8'],
+  winMinimize: ['M5 12h14'],
+  winMaximize: [roundedRect(5, 5, 14, 14, 1)],
+  winRestore: [
+    roundedRect(5, 8, 11, 11, 1),
+    'M8 8V6a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-2'
+  ],
   weight: [
     { d: 'M4 6h16', strokeWidth: 1 },
     { d: 'M4 12h16', strokeWidth: 2 },
@@ -112,5 +120,6 @@ export const ICON_DEFAULT_STROKE: Partial<Record<IconName, number>> = {
   chevD: 2,
   chevR: 2,
   close: 2,
-  check: 2.2
+  check: 2.2,
+  logo: 2.2
 }

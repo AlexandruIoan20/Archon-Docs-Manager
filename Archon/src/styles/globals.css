@@ -42,6 +42,17 @@
   --shadow-modal: var(--shadow-modal);
 }
 
+/* Window drag regions (frameless window). */
+@utility app-drag {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+@utility app-no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
 /* Base rules live in the base layer so utilities (text-*, outline-*) can override them. */
 @layer base {
   html,
@@ -72,6 +83,13 @@
   textarea,
   [contenteditable] {
     user-select: text;
+  }
+
+  /* Anything interactive inside a drag region stays clickable, including tools
+     contributed later by editors that do not know about drag regions. */
+  .app-drag :is(button, a, input, textarea, select, label, [role='button'], [contenteditable]) {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
   }
 
   :focus-visible {
