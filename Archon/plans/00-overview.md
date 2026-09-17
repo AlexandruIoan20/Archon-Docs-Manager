@@ -20,7 +20,7 @@ Nu se începe un plan până când cel anterior nu îndeplinește criteriile de 
 | 02 | [Primitive UI partajate](02-shared-ui-primitives.md) | F1 | 01 |
 | 03 | [TitleBar & fereastră frameless](03-titlebar-frameless.md) | F1 | 02 |
 | 04 | [Layout shell & contribuții de editor](04-layout-shell.md) | F1 | 03 |
-| 05 | [Theming: toggle, persistență, accent](05-theming.md) | F1 | 04 |
+| 05 | [Theming, layout persistat & zoom interfață](05-theming.md) | F1 | 04 |
 | 06 | [Status bar & notificări (toast)](06-status-bar-toasts.md) | F1 (infra din F5, adusă înainte) | 05 |
 | 07 | [Workspace în procesul main](07-workspace-main.md) | F2 | 06 |
 | 08 | [Sidebar & file tree](08-sidebar-file-tree.md) | F2 | 07 |
@@ -84,9 +84,9 @@ Infrastructura de notificări trebuie deci să existe când se scriu operațiile
 7. **Documentele folosesc TipTap**, nu `<textarea>` ca în prototip. Din prototip păstrăm doar aspectul vizual (plan 12).
 8. **Canvas-ul folosește React Flow** (`@xyflow/react`), nu implementarea manuală din prototip.
    Designul nodurilor, muchiilor, minimap-ului și controalelor de zoom se reproduce peste React Flow.
-9. **Layout fluid.** Prototipul are 1440×900 fix, aplicația pornește de la minimum 960×600.
-   Panourile laterale au lățimi fixe (260 / 240), iar zona centrală se întinde.
-   Sub 1100px lățime, properties panel se ascunde automat (plan 04).
+9. **Layout responsive.** Prototipul are 1440×900 fix.
+   Aplicația trebuie să funcționeze de la 720×480 (px CSS, după scalarea OS) până la ultrawide și 4K.
+   Regulile sunt în secțiunea [Strategie responsive](#strategie-responsive) și se aplică în fiecare plan cu UI.
 10. **Fiecare fișier are maximum 200 de linii.** Unde prototipul are funcții mari (`renderVals`), planurile indică explicit spargerea în componente și hook-uri.
 
 ### Abateri față de structura de foldere din specificație (toate aditive)
@@ -99,6 +99,79 @@ Infrastructura de notificări trebuie deci să existe când se scriu operațiile
 - `src/modules/diagram-editor/components/new-diagram/`, `.../edges/`, `.../canvas/`: subcomponente, pentru limita de 200 de linii.
 - `electron/modules/ipc/window.handler.ts`, `workspace.handler.ts`, `settings.handler.ts`: handlere IPC pe domenii.
 - `electron/modules/settings/`: preferințe la nivel de aplicație (temă, accent, workspace-uri recente).
+
+---
+
+## Strategie responsive
+
+### Ținte
+Dimensiunile sunt în px CSS, adică după scalarea sistemului de operare. Pixelii fizici nu contează: Electron scalează singur.
+
+| Ecran (rezoluție × scalare OS) | Viewport CSS util | Rezultat așteptat |
+|---|---|---|
+| 1280×720 × 150% | ~853×440 | sidebar și inspector ca overlay, TitleBar `minimal` |
+| 1366×768 × 125% | ~1093×570 | sidebar fix, inspector overlay, TitleBar `compact` (`full` pe macOS) |
+| 1920×1080 × 150% | ~1280×680 | toate panourile fixe, TitleBar `full` |
+| 1440×900 × 100% | 1440×860 | identic cu prototipul |
+| 1920×1080 × 100% | 1920×1040 | identic cu prototipul, zona centrală mai lată |
+| 2560×1440, 3440×1440, 4K × 100% | ≥ 2560 | panouri lărgibile, zoom de interfață disponibil |
+
+### Principii
+1. **Fără media queries pe DPI.** Totul se exprimă în px CSS și tokenuri.
+2. **Fereastra:** minimum 720×480. Dimensiunea inițială se limitează la zona de lucru a ecranului (plan 03), iar poziția și mărimea se restaurează doar dacă încap pe un ecran existent (plan 05).
+3. **Shell-ul decide dispunerea panourilor** printr-o funcție pură, `resolvePanelLayout` (plan 04).
+   Funcția pornește de la lățimea ferestrei și de la lățimile curente ale panourilor, nu de la breakpoint-uri fixe.
+4. **Panourile laterale au trei stări:** `docked`, `overlay`, `hidden`.
+   Când lipsește spațiul, panoul devine overlay (sertar peste zona centrală), iar preferința utilizatorului rămâne salvată.
+5. **Panourile se pot redimensiona** între limite, iar lățimea se persistă.
+6. **Componentele reacționează la containerul lor, nu la fereastră.**
+   Se folosesc CSS container queries (`container-type: inline-size`) pentru status bar, inspector, dialoguri, ecrane goale și document.
+7. **TitleBar-ul are trei densități:** `full`, `compact`, `minimal`, calculate din lățimea disponibilă a barei (plan 03).
+   Contribuțiile editoarelor le citesc cu `useTitleBarDensity()` și își restrâng uneltele în meniuri. Nicio comandă nu dispare: ce nu încape trece într-un meniu „⋯”.
+8. **Elementele flotante nu ies din fereastră.** Meniurile, tooltip-urile și dropdown-urile se poziționează cu flip/shift în viewport (plan 02).
+   Modalele folosesc `min(<lățime design>, 100vw - 32px)` și au corpul cu scroll.
+9. **Nimic nu produce scroll orizontal la nivelul ferestrei.**
+   Textul lung se trunchiază cu ellipsis și tooltip, iar căile se trunchiază la mijloc, ca numele fișierului să rămână vizibil.
+10. **Zoom de interfață între 80% și 150%**, persistat (plan 05).
+    Zoom-ul schimbă viewport-ul CSS, deci regulile de mai sus se adaptează singure. Pe 4K, interfața se poate mări fără să se strice layout-ul.
+
+### Praguri (`src/core/constants/layout.constants.ts`, plan 04)
+
+| Constantă | Valoare | Rol |
+|---|---|---|
+| `SIDEBAR_WIDTH` | implicit 260, între 200 și 420 | lățimea sidebar-ului |
+| `INSPECTOR_WIDTH` | implicit 240, între 220 și 380 | lățimea inspector-ului |
+| `MAIN_MIN_WITH_INSPECTOR` | 600 | inspector-ul e `docked` doar dacă zona centrală păstrează ≥ 600px |
+| `MAIN_MIN_WITH_SIDEBAR` | 640 | sidebar-ul e `docked` doar dacă zona centrală păstrează ≥ 640px |
+| `TITLEBAR_DENSITY` | `full` ≥ 1000, `compact` ≥ 700, altfel `minimal` | pragurile se aplică lățimii disponibile a barei, fără spațiul rezervat controalelor native |
+
+Cu lățimile implicite, inspector-ul rămâne fix de la 1100px, iar sidebar-ul de la 900px.
+Dacă utilizatorul lărgește un panou, pragurile cresc automat.
+
+### Unde se implementează
+
+| Plan | Contribuția responsive |
+|---|---|
+| 02 | poziționare flip/shift pentru `Menu`/`Tooltip`, `Modal` limitat la viewport, `useElementSize`, `truncateMiddle` |
+| 03 | fereastră limitată la zona de lucru, minimum 720×480, densitățile TitleBar-ului |
+| 04 | `resolvePanelLayout`, panouri redimensionabile, overlay pentru sidebar și inspector |
+| 05 | persistarea lățimilor și a vizibilității, poziția ferestrei, zoom de interfață |
+| 06 | segmentele status bar-ului cu prioritate, toast cu lățime limitată |
+| 07, 17, 20 | carduri, dialoguri și paleta de căutare adaptate cu container queries |
+| 08, 16 | conținutul se adaptează la lățimea variabilă a panoului |
+| 11 | tab-uri cu lățime minimă/maximă, meniu cu toate tab-urile la overflow |
+| 12, 13, 18 | coloana documentului, overlay-urile canvas-ului și split view-ul Mermaid se adaptează la container; bara de formatare respectă densitatea |
+| 15, 19 | uneltele diagramei și butonul Export respectă densitatea TitleBar-ului |
+
+### Matrice de verificare
+Fiecare plan cu UI se verifică vizual la:
+- 720×480 (minimul);
+- 1093×570 (laptop 1366×768 la 125%);
+- 1440×900 (prototipul);
+- 2560×1440;
+- 1440×900 cu zoom de interfață 150% (echivalent 960×600), după plan 05.
+
+La toate dimensiunile: niciun element tăiat, niciun scroll orizontal pe fereastră, toate comenzile accesibile.
 
 ---
 
@@ -118,5 +191,6 @@ Infrastructura de notificări trebuie deci să existe când se scriu operațiile
 - **Structura unui plan:** Scop → Referință design → Dependențe → Fișiere → Pași → Criterii de acceptare → Commit → În afara scopului.
 - **Pașii sunt ordonați** și fiecare lasă proiectul compilabil (`npm run typecheck`).
 - **Dependențele npm** se instalează în pasul în care sunt folosite prima dată, nu mai devreme.
+- **Planurile cu UI** trec prin [matricea de verificare responsive](#matrice-de-verificare) înainte de commit.
 - **La finalul fiecărui plan** trebuie să treacă: `npm run typecheck && npm run lint && npm test && npx electron-vite build`.
 - **Commit:** `feat(<modul>): <descriere>`.

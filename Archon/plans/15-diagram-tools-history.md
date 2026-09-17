@@ -13,6 +13,12 @@ Prototipul e urmat pentru comportament: plasare de nod, conectare, ștergere și
   - greutate: iconiță cu 3 linii, valoarea (`1` | `1.5` | `2` | `3`), chevron;
   - font: `Aa` și un input mono 26px cu valoarea (implicit 13).
 - **Undo / redo:** butoane 30×30; culoare text dacă există istoric, altfel text3.
+- **Densitate** (`useTitleBarDensity()`, plan 03):
+  - `full`: ca în prototip;
+  - `compact`: cele patru controale de stil se înlocuiesc cu un singur `ControlPill` „Style”, care arată un punct în culoarea stroke-ului și deschide un popover cu aceleași controale, pe verticală;
+  - `minimal`: ca `compact`, iar din unelte rămân Select / Pan / Add node / Connect; Text / Rectangle / Ellipse intră într-un `IconButton` „⋯” cu meniu. Dacă unealta activă e în meniu, butonul „⋯” apare activ și afișează iconița ei;
+  - undo/redo rămân vizibile la orice densitate;
+  - shortcut-urile (V / H / N / C / T / R / O) funcționează la fel, indiferent ce e vizibil.
 - **Comportamente:**
   - **Add node:** click pe canvas plasează un nod centrat pe cursor (`x-88`, `y-32`, ceea ce înseamnă centrul unui nod de 176×64), îl selectează, revine la Select, toast „Node added”. Cursor `copy`.
   - **Connect:**
@@ -55,7 +61,9 @@ Prototipul e urmat pentru comportament: plasare de nod, conectare, ștergere și
 - `src/modules/diagram-editor/utils/node-factory.ts`: `createNode(kind, position, existingIds)`, care generează id-ul `N<k>` unic (cel mai mic număr liber, nu aleator ca în prototip).
 - `src/modules/diagram-editor/components/nodes/ShapeNode.tsx` (rect / ellipse) și `TextNode.tsx`, cu redimensionare prin `NodeResizer` din React Flow.
 - `src/modules/diagram-editor/components/NodePalette.tsx`: grupul celor 7 unelte. Add node are un chevron mic cu meniu de tipuri (Trigger / Action / Decision / Integration); implicit Action.
-- `src/modules/diagram-editor/components/toolbar/StyleControls.tsx`
+- `src/modules/diagram-editor/components/toolbar/StyleControls.tsx`: prop `layout: 'inline' | 'stacked'`.
+- `src/modules/diagram-editor/components/toolbar/StylePopover.tsx`: pill-ul „Style” și popover-ul (`Menu` din plan 02, cu poziționare flip/shift).
+- `src/modules/diagram-editor/constants/tools.ts`: lista uneltelor cu `priority: 'primary' | 'secondary'`, iconiță, shortcut; folosită de `NodePalette` și de meniul „⋯”.
 - `src/modules/diagram-editor/components/toolbar/HistoryButtons.tsx`
 - `src/modules/diagram-editor/components/toolbar/DiagramToolbar.tsx`: contribuția `Toolbar` (`NodePalette` │ `StyleControls` │ `HistoryButtons`).
 - `src/modules/diagram-editor/hooks/useCanvasInteractions.ts`: `onPaneClick`, `onNodeClick`, `onNodeDragStart`, `onConnect`, cursorul după unealtă și `panOnDrag` pentru Pan.
@@ -73,7 +81,9 @@ Prototipul e urmat pentru comportament: plasare de nod, conectare, ștergere și
    - în modul Connect, se folosește `onNodeClick` (fluxul în doi pași din prototip);
    - în modul Select, rămâne activ și drag-ul nativ React Flow din handle-uri.
 7. `ShapeNode` și `TextNode`, adăugate în `NODE_TYPES`.
-8. `NodePalette`, `StyleControls`, `HistoryButtons`, `DiagramToolbar`. Contribuția primește `Toolbar`.
+8. `NodePalette`, `StyleControls`, `StylePopover`, `HistoryButtons`, `DiagramToolbar`. Contribuția primește `Toolbar`.
+   `DiagramToolbar` alege aranjamentul după densitate.
+   Test: în `minimal`, alegerea Rectangle din „⋯” activează unealta, iar butonul „⋯” apare activ.
 9. `useDiagramShortcuts`: Delete/Backspace, undo/redo, Escape, plus V / H / N / C / T / R / O pentru unelte (afișate în tooltip).
 10. Toast-urile din prototip, prin `ui.store.notify`, cu `modKeyLabel` în mesajul de ștergere.
 11. `status.store`: „Connecting…” cât timp `connectFrom` e setat.
@@ -85,6 +95,7 @@ Prototipul e urmat pentru comportament: plasare de nod, conectare, ștergere și
 ## Criterii de acceptare
 - Toate cele 7 unelte funcționează ca în prototip, iar hint-ul și status bar-ul se actualizează.
 - Undo/redo acoperă mutare, adăugare, ștergere, conectare și stil. Butoanele se estompează corect.
+- Toate uneltele și controalele de stil sunt accesibile la toate cele trei densități.
 - Shortcut-urile nu interferează cu tastarea în Properties sau în editorul de documente.
 
 ## Commit

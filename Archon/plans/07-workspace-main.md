@@ -9,9 +9,11 @@ Tot accesul la disc stă în main, iar renderer-ul vede doar căi **relative** l
 - Header-ul sidebar-ului afișează numele workspace-ului („SecOps Core”) și un badge cu inițiala. UI-ul complet e în plan 08.
 - Designul nu are ecran fără workspace. Folosim stilul din dialogul „New diagram”:
   - fundal `--canvas`;
-  - card centrat 480px, r8, border;
+  - card centrat `width: min(480px, 100% - 32px)`, r8, border;
+  - ecranul are `overflow-y: auto` și `padding: 24px 16px`, iar cardul se centrează cu `margin: auto`, ca la 480px înălțime să nu fie tăiat sus;
   - butoane primary („Create workspace”) și secondary („Open workspace…”);
-  - listă „Recent” cu căi mono 11px text3.
+  - listă „Recent” cu căi mono 11px text3, trunchiate la mijloc cu `truncateMiddle` și tooltip cu calea completă;
+  - sub 400px lățime de card (container query), butoanele se pun unul sub altul, pe toată lățimea.
 
 ## Dependențe
 - Plan 06.

@@ -28,7 +28,7 @@ Modalul de creare a diagramelor din prototip: catalogul celor 14 tipuri UML 2.5 
 **Grila (padding 16 18, scroll)**
 - Grupuri „STRUCTURAL” („what the system is made of”) și „BEHAVIORAL” („what the system does over time”).
 - Header de grup: titlu 11px 600 .6px text2, linie flex-1 border, notă 11px text3, mb10.
-- Grilă cu 4 coloane, gap 12, mb18.
+- Grilă `repeat(auto-fill, minmax(160px, 1fr))`, gap 12, mb18. La lățimea din design rezultă cele 4 coloane din prototip.
 - **Card:**
   - r6, border (accent dacă e selectat), fundal surface2, padding 8;
   - selectat: `box-shadow: 0 0 0 3px` accent la 16%;
@@ -41,6 +41,13 @@ Modalul de creare a diagramelor din prototip: catalogul celor 14 tipuri UML 2.5 
 - „Selected” și chip-ul (h22, accent-soft, accent-text, 11px 500) „<Type> diagram”.
 - „saves to” și un segmented control cu toate căile de foldere (scroll orizontal, max 380px).
 - În dreapta: „Cancel” (secondary) și „Create diagram” (primary) cu `Kbd` ⏎.
+
+**Responsive** (`@container modal`, plan 02)
+- Modalul se limitează la `min(940px, 100vw - 32px)` × `min(712px, 100vh - 32px)`; header-ul și footer-ul rămân fixe, iar grila are scroll.
+- Sub 760px: coloana de categorii devine un `SegmentedControl` orizontal („All · Structural · Behavioral”, cu contoare) sub header; nota de jos se ascunde.
+- Sub 600px: câmpul de căutare trece pe un rând separat, pe toată lățimea; subtitlul are ellipsis.
+- Sub 720px: footer-ul are două rânduri (tipul selectat și „saves to” sus, butoanele jos, aliniate la dreapta), cu `height: auto`.
+- „saves to” are `max-width: 100%` și scroll orizontal propriu; calea selectată se aduce în vizor.
 
 **Comportament**
 - Click pe card = selectează tipul. Dublu-click = selectează și creează.
@@ -68,7 +75,7 @@ Modalul de creare a diagramelor din prototip: catalogul celor 14 tipuri UML 2.5 
   Store-ul îl consumă la montare.
 - `src/modules/diagram-editor/components/new-diagram/NewDiagramDialog.tsx`: compune modalul și ține starea locală (categorie, query, tip selectat).
 - `src/modules/diagram-editor/components/new-diagram/DialogHeader.tsx`
-- `src/modules/diagram-editor/components/new-diagram/CategoryList.tsx`
+- `src/modules/diagram-editor/components/new-diagram/CategoryList.tsx`: prop `variant: 'column' | 'tabs'`, ales prin container query (ambele randate, una ascunsă din CSS, ca să nu depindă de măsurători JS).
 - `src/modules/diagram-editor/components/new-diagram/DiagramTypeGrid.tsx`: grupuri și navigare cu săgeți în grilă (`role="listbox"`).
 - `src/modules/diagram-editor/components/new-diagram/DiagramTypeCard.tsx`
 - `src/modules/diagram-editor/components/new-diagram/DiagramSketch.tsx`
@@ -98,11 +105,13 @@ Modalul de creare a diagramelor din prototip: catalogul celor 14 tipuri UML 2.5 
     - categoria Behavioral ascunde grupul Structural;
     - dublu-click creează (mutație apelată cu tipul corect și folderul-țintă);
     - Enter creează; Escape și click pe fundal închid.
+11. Verificare vizuală la 720×480: categoriile apar ca tab-uri, grila are 2–3 coloane, iar butonul „Create diagram” e vizibil fără scroll.
 
 ## Criterii de acceptare
 - Modalul e identic vizual cu prototipul, cu toate cele 14 schițe.
 - Crearea unei diagrame „State machine” în `Playbooks/` produce un fișier valid, cu nodurile „New” și „Contained”, deschis și cu N1 selectat.
 - Niciun fișier din `new-diagram/` nu depășește 200 de linii.
+- Dialogul e complet utilizabil de la 720×480 până la 2560×1440.
 
 ## Commit
 `feat(diagram-editor): new diagram dialog with UML catalog`

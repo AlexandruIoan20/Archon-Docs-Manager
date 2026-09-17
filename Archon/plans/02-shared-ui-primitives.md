@@ -45,12 +45,21 @@ Planurile următoare **compun** aceste primitive și nu mai scriu stiluri de but
   - `Menu.tsx` (`Menu` + `MenuItem`), `Modal.tsx`, `Tooltip.tsx`
   - `Divider.tsx`, `Kbd.tsx`, `SectionLabel.tsx`, `EmptyState.tsx`
   - `index.ts`
+- `src/shared/utils/floating-position.ts`: funcție pură `computeFloatingPosition({ anchor, floating, viewport, placement, margin })`.
+  - **flip:** dacă nu încape pe partea cerută, trece pe partea opusă;
+  - **shift:** împinge elementul în viewport, cu marja de 8px;
+  - întoarce și `maxHeight`, spațiul disponibil pe verticală, ca meniurile lungi să aibă scroll intern.
+- `src/shared/hooks/useFloatingPosition.ts`: aplică funcția de mai sus și o recalculează la resize, la scroll și la schimbarea mărimii elementului.
+- `src/shared/hooks/useElementSize.ts`: `ResizeObserver`, cu actualizări grupate pe `requestAnimationFrame`. Îl folosesc TitleBar-ul, shell-ul și canvas-ul.
+- `src/shared/utils/truncate-middle.ts`: `truncateMiddle(path, maxChars)` păstrează începutul și numele fișierului (`Playbooks/…/triage.soardiag`).
 - `src/shared/hooks/useClickOutside.ts`: închide meniuri și popover-e.
 - `src/shared/hooks/useEscape.ts`
-- Teste colocate: `*.test.tsx` pentru `Toggle`, `SegmentedControl`, `TagInput`, `Menu`, `Modal`.
+- Teste colocate: `*.test.tsx` pentru `Toggle`, `SegmentedControl`, `TagInput`, `Menu`, `Modal`; `*.test.ts` pentru `floating-position` și `truncate-middle`.
 
 ## Pași
-1. `cn.ts` și testul lui.
+1. `cn.ts`, `truncate-middle.ts` și `floating-position.ts`, cu teste:
+   - `floating-position`: flip jos → sus lângă marginea de jos, shift la marginea din dreapta, `maxHeight` când nu încape pe nicio parte;
+   - `truncate-middle`: șir scurt neschimbat, numele fișierului păstrat întreg.
 2. **Registrul de iconițe.**
    Copiază path-urile din `PATHS` (prototip), plus iconițele desenate inline în template: close, plus, download, undo, redo, gear, more (3 puncte), check, weight (3 linii de grosimi diferite).
    `Icon` randează `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">`.
@@ -69,12 +78,16 @@ Planurile următoare **compun** aceste primitive și nu mai scriu stiluri de but
 11. `TagInput`: `tags`, `onAdd`, `onRemove`.
     Enter adaugă (trim, fără duplicate), Backspace pe input gol șterge ultimul tag.
     Test pentru ambele comportamente.
-12. `Menu`: poziționat relativ la un anchor, se închide la click-outside și Escape, cu navigare cu săgeți.
+12. `Menu`: poziționat relativ la un anchor cu `useFloatingPosition` (`placement: 'bottom-start' | 'bottom-end' | 'point'`), se închide la click-outside și Escape, cu navigare cu săgeți.
     Randat prin portal în `document.body`, ca să nu fie tăiat de `overflow: hidden`.
+    Lista are `max-height` din poziționare și scroll intern.
     `MenuItem` are `icon?`, `suffix?` (mono), `danger?`.
 13. `Modal`: portal, overlay `--overlay` + blur, închidere la mousedown pe overlay și la Escape, focus trap, `aria-modal`.
-    Mărimea vine prin props (`width`, `height`), nu fixă.
-14. `Tooltip`: apare după 500ms, poziționat sub element, randat prin portal.
+    Mărimea vine prin props (`width`, `height`), nu fixă, și e tratată ca maximă:
+    `width: min(<width>, 100vw - 32px)`, `height: min(<height>, 100vh - 32px)`.
+    Conținutul e o coloană flex: header și footer fixe, corp cu `overflow: auto` și `min-height: 0`.
+    Conținutul modalului e container (`container-type: inline-size`, `container-name: modal`), ca dialogurile să se adapteze cu `@container modal (...)`.
+14. `Tooltip`: apare după 500ms, poziționat sub element cu `useFloatingPosition` (flip deasupra la marginea de jos), randat prin portal, `max-width: 280px` cu text pe mai multe rânduri.
 15. `Divider`, `Kbd`, `SectionLabel`, `EmptyState`.
 16. `index.ts` re-exportă tot. Nicio primitivă nu importă din `modules/` sau `store/`.
 17. Pagina temporară de verificare: în `App.tsx` provizoriu, randează câte o instanță din fiecare primitivă, pe ambele teme.
@@ -85,6 +98,8 @@ Planurile următoare **compun** aceste primitive și nu mai scriu stiluri de but
 - Toate controalele sunt operabile doar din tastatură, cu inel de focus vizibil.
 - Testele pentru Toggle, Segmented, TagInput, Menu și Modal trec.
 - Vizual, controalele corespund prototipului în ambele teme.
+- Un `Menu` deschis lângă oricare margine a ferestrei, la 720×480, rămâne complet vizibil.
+- Un `Modal` de 940×712 afișat la 720×480 încape, iar corpul lui are scroll.
 
 ## Commit
 `feat(shared-ui): icon registry and base UI primitives`

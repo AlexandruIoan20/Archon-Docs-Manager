@@ -6,6 +6,9 @@ Cerința vine din specificație. Prototipul nu are un ecran dedicat, așa că UI
 
 ## Referință design (derivat)
 - **Split view** în zona centrală: editor de text în stânga (40%) și previzualizare în dreapta.
+  - separatorul se poate trage (raport între 20% și 80%, dublu-click → 40%), cu același `PanelResizeHandle` din plan 04; raportul se salvează în sesiunea tab-ului;
+  - sub 760px lățime de container, panourile se așază vertical (sursă sus, previzualizare jos), cu separator orizontal;
+  - sub 480px lățime, un `SegmentedControl` „Source | Preview” afișează un singur panou; eroarea de sintaxă apare și în modul Source.
 - **Editor de text:**
   - fundal `--bg`, mono 12px, line-height 1.6, padding 16;
   - coloana de numere de linie în text3, cu border-right.
@@ -32,7 +35,8 @@ Cerința vine din specificație. Prototipul nu are un ecran dedicat, așa că UI
 - `src/modules/diagram-editor/mermaid/theme-variables.ts`: tokenuri → `themeVariables`.
 - `src/modules/diagram-editor/mermaid/templates.ts`: sursele de pornire per tip.
   Exemplul pentru sequence folosește actorii din `STARTERS`: `SIEM ->> SOAR Engine: alert`.
-- `src/modules/diagram-editor/components/MermaidEditor.tsx`: compune split view-ul.
+- `src/modules/diagram-editor/components/MermaidEditor.tsx`: compune split view-ul și alege aranjamentul (`row` / `column` / `single`) după lățimea măsurată cu `useElementSize`.
+- `src/shared/components/layout/PanelResizeHandle.tsx` (modificat): prop `orientation: 'vertical' | 'horizontal'`.
 - `src/modules/diagram-editor/components/mermaid/MermaidSourcePane.tsx`
 - `src/modules/diagram-editor/components/mermaid/LineNumbers.tsx`
 - `src/modules/diagram-editor/components/mermaid/MermaidPreview.tsx`: cu zoom pe preview (roata + Ctrl, controalele din plan 13 reutilizate).
@@ -63,6 +67,7 @@ Cerința vine din specificație. Prototipul nu are un ecran dedicat, așa că UI
 - O diagramă de secvență creată cu „Text” se editează cu previzualizare live în mai puțin de 300ms după oprirea tastării.
 - Mermaid nu se încarcă deloc dacă utilizatorul nu deschide o diagramă Mermaid (verificare în tab-ul Network sau în log).
 - Previzualizarea respectă tema curentă.
+- Editorul e utilizabil la 720×480 (aranjament vertical sau Source/Preview) și la 2560×1440.
 
 ## Commit
 `feat(diagram-editor): mermaid text diagrams with live preview`

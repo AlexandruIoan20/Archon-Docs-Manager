@@ -13,6 +13,13 @@ Bara de tab-uri din prototip, starea fișierelor deschise, zona centrală care a
   - buton close 16×16 r3, cu × 11px text2.
   - **Activ:** fundal `--canvas`, `border-top: 2px solid var(--accent)`, text.
   - **Inactiv:** transparent, `border-top: 2px solid transparent`, text2.
+- **Responsive:**
+  - tab-ul are `min-width: 96px` și `max-width: 220px`; numele are ellipsis, cu tooltip pentru calea completă;
+  - sub 120px lățime de tab, butonul close apare doar pe tab-ul activ și la hover (spațiul lui rămâne rezervat, ca textul să nu sară);
+  - la overflow, lista are scroll orizontal fără scrollbar vizibil, cu gradient de 16px la marginile care mai au conținut;
+  - tab-ul activat se aduce în vizor (`scrollIntoView({ inline: 'nearest' })`);
+  - tot la overflow apare, înaintea butonului „+”, un `IconButton` chevron care deschide un `Menu` cu toate tab-urile (activ marcat, punct dirty);
+  - butonul „+” și meniul de tab-uri rămân fixe în dreapta, în afara zonei cu scroll.
 - **Butonul „+”** de la final (padding 0 12, text3, plus 14): deschide modalul „New diagram”.
 - **Închiderea tab-ului activ** activează ultimul tab rămas.
 - **Calea fișierului activ** apare în status bar (mono).
@@ -33,6 +40,8 @@ Bara de tab-uri din prototip, starea fișierelor deschise, zona centrală care a
 - `src/modules/editor/hooks/useEditorTabs.ts`: combină store-ul cu gărzile de ieșire (dirty → confirmare).
 - `src/modules/editor/components/EditorTabs.tsx`: bara și scroll-ul orizontal la overflow, cu roata mouse-ului.
 - `src/modules/editor/components/EditorTab.tsx`
+- `src/modules/editor/components/TabOverflowMenu.tsx`: butonul chevron și meniul cu toate tab-urile.
+- `src/modules/editor/hooks/useHorizontalOverflow.ts`: `{ overflowing, atStart, atEnd }` pentru gradient și pentru afișarea meniului.
 - `src/modules/editor/components/EditorPane.tsx`:
   - găsește contribuția după `kind` și randează `Editor`;
   - `kind` necunoscut → `EmptyState` cu eroare;
@@ -58,10 +67,11 @@ Bara de tab-uri din prototip, starea fișierelor deschise, zona centrală care a
    - `closeByPath` închide și fișierele din foldere șterse.
 2. **Persistența sesiunii:** tab-urile și tab-ul activ se salvează în `settings.session.tabsByWorkspace[workspaceId]` (debounce 500ms) și se restaurează la deschiderea workspace-ului.
    Fișierele care nu mai există se omit.
-3. `EditorTab` și `EditorTabs`:
+3. `EditorTab`, `EditorTabs`, `useHorizontalOverflow` și `TabOverflowMenu`:
    - middle-click închide;
    - `role="tablist"` / `role="tab"`, `aria-selected`;
-   - butonul close are `aria-label` „Close <name>”.
+   - butonul close are `aria-label` „Close <name>”;
+   - activarea unui tab îl aduce în vizor.
 4. **Gardă pentru modificări nesalvate:**
    - `close` pe un tab `dirty` deschide `UnsavedChangesModal`;
    - „Save” cere editorului să salveze printr-un callback înregistrat de editor în `useEditorTabs` (`registerSaveHandler(tabId, fn)`), deci fără import între module.
@@ -80,6 +90,7 @@ Bara de tab-uri din prototip, starea fișierelor deschise, zona centrală care a
 ## Criterii de acceptare
 - Comportament identic cu prototipul la deschidere, activare și închidere.
 - Tab-urile se restaurează după restart.
+- Cu 20 de tab-uri deschise la 720px, tab-ul activ e mereu vizibil și orice tab e accesibil din meniul de overflow.
 - Un editor care aruncă o eroare nu dărâmă aplicația.
 - `modules/editor` nu importă nimic din `document-editor` sau `diagram-editor`.
 

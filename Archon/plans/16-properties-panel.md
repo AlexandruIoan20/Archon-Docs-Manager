@@ -18,7 +18,12 @@ Panoul are 240px, fundal surface, border-left și header 40 „Properties” (pl
 7. **Secțiune separată** (border-top, pt12, gap 10):
    - „Retry on fail” (12px text2) + `Toggle`;
    - buton „Delete node” (h30, border, text `--danger`, 12px 500).
-8. **Fără selecție:** „Nothing selected.<br>Pick a node on the canvas, or use the Add Node tool to place one.” (centrat, 12px text3, line-height 1.6, padding 24 16).
+8. **Responsive:** panoul are lățime variabilă (220–380, plan 04) și poate fi overlay.
+   - toate câmpurile au `width: 100%`; swatch-urile se înfășoară (`flex-wrap`);
+   - în rândul de identitate, tipul are ellipsis, iar id-ul nu se micșorează;
+   - peste 320px lățime (container query), NAME și SUBTITLE stau pe două coloane, iar restul rămâne pe o coloană;
+   - conținutul are scroll vertical propriu, iar secțiunea cu „Delete node” rămâne la final, nu fixată, ca să nu ocupe spațiu la înălțimi mici.
+9. **Fără selecție:** „Nothing selected.<br>Pick a node on the canvas, or use the Add Node tool to place one.” (centrat, 12px text3, line-height 1.6, padding 24 16).
 
 ## Dependențe
 - Plan 15.
@@ -71,6 +76,7 @@ Panoul are 240px, fundal surface, border-left și header 40 „Properties” (pl
 - Panoul arată identic cu prototipul pentru nodul „Analyze Indicators” (tag-uri `enrichment`, `t1566`, retry activ).
 - Modificările apar instant pe canvas și se salvează prin autosave.
 - Un singur Ctrl+Z anulează o editare completă a unui câmp.
+- La 220px și la 380px lățime, precum și în modul overlay la 720×480, panoul nu taie niciun câmp.
 
 ## Commit
 `feat(diagram-editor): properties panel for nodes and edges`

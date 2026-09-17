@@ -55,6 +55,13 @@ Butonul „New” e doar UI aici; acțiunile lui se leagă în plan 09.
 - `src/modules/workspace/components/TreeGuides.tsx`
 - `src/modules/workspace/components/SidebarFooter.tsx`
 - `src/modules/workspace/components/WorkspaceSidebar.tsx`: compune tot și e exportat din `index.ts`.
+  Sidebar-ul are lățime variabilă (200–420, plan 04), deci toate rândurile folosesc `min-width: 0` și ellipsis, nu lățimi fixe.
+  **Responsive:**
+  - numele workspace-ului și ale fișierelor: ellipsis, cu tooltip doar când textul e trunchiat;
+  - contoarele și iconițele nu se micșorează (`flex-shrink: 0`);
+  - sub 240px (container query), comutatorul Files/Diagrams afișează doar iconițele, cu etichetele în tooltip și `aria-label`;
+  - liniile de ghidaj folosesc aceleași offset-uri la orice lățime; la adâncime mare, rândul are scroll orizontal propriu doar în arbore, nu în tot sidebar-ul;
+  - în modul overlay, deschiderea unui fișier închide sidebar-ul (`closeOverlays()`).
 - `src/store/editor.store.ts` (creat minimal): `activePath: string | null` și `openFile(relPath, kind)`. Plan 11 îl completează. Aici e necesar doar ca tree-ul să aibă o țintă.
 
 ## Pași
@@ -83,6 +90,7 @@ Butonul „New” e doar UI aici; acțiunile lui se leagă în plan 09.
 - Liniile de ghidaj sunt continue, fără goluri între rânduri.
 - Arborele se actualizează singur când un fișier e adăugat din afara aplicației.
 - Niciun fișier din `modules/workspace` nu depășește 200 de linii.
+- La 200px și la 420px lățime, sidebar-ul nu taie și nu suprapune niciun element.
 
 ## Commit
 `feat(workspace): sidebar with file tree, filters and search`

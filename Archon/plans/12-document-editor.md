@@ -4,11 +4,18 @@
 Editorul pentru `.soardoc`: text formatat cu TipTap, layout-ul vizual al documentului din prototip, bara de formatare în TitleBar, autosave cu debounce și contribuțiile în status bar și inspector.
 
 ## Referință design (view-ul „doc” din prototip)
-- **Container:** flex-1, fundal `--canvas`, `overflow-y: auto`, padding 40px 0.
-- **Coloană:** `max-width: 640px`, centrată.
+- **Container:** flex-1, fundal `--canvas`, `overflow-y: auto`, `padding: clamp(20px, 5vh, 40px) 0`, `container-type: inline-size`.
+- **Coloană:** `width: min(640px, 100% - 48px)`, centrată.
   - Cale: mono 11px text3, mb10 (ex. `Runbooks/ir-policy.soardoc`).
   - Titlu: 26px, 700, letter-spacing -.3px, mb16.
-  - Corp: Inter 14px, line-height 1.75, culoare text2, fără border, fundal transparent, `min-height: 420px`.
+  - Corp: Inter 14px, line-height 1.75, culoare text2, fără border, fundal transparent, `min-height: min(420px, 50vh)`.
+- **Responsive:**
+  - sub 560px de container: titlul 22px, coloana `100% - 32px`;
+  - calea deasupra titlului se trunchiază la mijloc;
+  - blocurile de cod (`pre`) au scroll orizontal propriu, iar imaginile/tabelele viitoare `max-width: 100%`; conținutul nu lărgește niciodată coloana (`overflow-wrap: anywhere` pe link-uri și cuvinte lungi).
+- **Bara de formatare după densitatea TitleBar-ului** (`useTitleBarDensity()`):
+  - `full` / `compact`: toate grupurile, ca mai jos;
+  - `minimal`: B / I rămân vizibile; H1–H3 intră într-un meniu „Heading”, listele și citatul într-un meniu „List”, iar codul inline și blocul de cod în meniul „⋯”. Butonul unui meniu apare activ dacă una dintre opțiunile lui e activă.
 - **Status bar:** „N words”.
 - **Tab dirty:** punctul accent (prototipul îl arată pe documentul `ir-policy.md`).
 
@@ -37,6 +44,7 @@ Editorul pentru `.soardoc`: text formatat cu TipTap, layout-ul vizual al documen
   - Grupuri separate de `Divider`: B / I / cod inline │ H1 / H2 / H3 │ listă cu puncte / listă numerotată / citat │ bloc de cod.
   - Undo / redo cu stilul din prototip: culoare text dacă e disponibil, altfel text3.
   - Butoanele sunt `IconButton` 30×30 cu `active` după `editor.isActive(...)`.
+  - Grupurile sunt descrise o singură dată, ca date (`FORMAT_GROUPS`), iar densitatea decide doar dacă un grup se randează ca butoane sau ca `Menu`.
 - `src/modules/document-editor/components/DocumentInspector.tsx`: contribuția `Inspector`: TAGS (`TagInput`) și LINKED DIAGRAMS (listă; adăugarea se face prin căutare în plan 20).
 - `src/modules/document-editor/components/DocumentStatusItems.tsx`: „N words”.
 - `src/modules/document-editor/utils/word-count.ts`
@@ -71,10 +79,12 @@ Editorul pentru `.soardoc`: text formatat cu TipTap, layout-ul vizual al documen
     - încărcare → editare → autosave apelează mutația după 800ms;
     - `Ctrl+S` salvează imediat;
     - butonul Bold comută marcajul;
-    - numărul de cuvinte se actualizează.
+    - numărul de cuvinte se actualizează;
+    - în densitatea `minimal`, H2 se aplică din meniul „Heading”, iar meniul apare activ.
 
 ## Criterii de acceptare
 - Documentul arată ca view-ul din prototip, în ambele teme.
+- La 720×480 și la 2560×1440, coloana rămâne lizibilă, fără scroll orizontal, iar toate formatările sunt accesibile din bară.
 - Editarea marchează tab-ul `dirty`, iar după ~800ms salvează și marcajul dispare.
 - Toate formatările din bara de unelte funcționează și sunt salvate ca TipTap JSON valid (schema din plan 09).
 - Nicio pierdere de date la închiderea rapidă a tab-ului imediat după tastare: `flush` rulează la unmount.

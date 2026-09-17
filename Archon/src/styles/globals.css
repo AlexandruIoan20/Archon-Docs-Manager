@@ -42,40 +42,46 @@
   --shadow-modal: var(--shadow-modal);
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
+/* Base rules live in the base layer so utilities (text-*, outline-*) can override them. */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
 
-body {
-  margin: 0;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  font-size: 13px;
-  user-select: none;
-}
+  /* Colors are set here too: portaled layers (menus, modals) render in body. */
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+    user-select: none;
+  }
 
-input,
-textarea,
-button {
-  font: inherit;
-  color: inherit;
-}
+  input,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
 
-input,
-textarea,
-[contenteditable] {
-  user-select: text;
-}
+  input,
+  textarea,
+  [contenteditable] {
+    user-select: text;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
 
-::selection {
-  background: rgba(79, 142, 247, 0.3);
+  ::selection {
+    background: rgba(79, 142, 247, 0.3);
+  }
 }
 
 @keyframes dashflow {

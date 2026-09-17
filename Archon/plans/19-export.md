@@ -7,7 +7,9 @@ Fișierul se salvează prin dialogul nativ al sistemului.
 ## Referință design
 - **Butonul „Export”:** h30, padding 0 12, r4, border `--accent-border`, fundal transparent, text accent 12px 500, iconiță download 14, gap 7.
   E așezat înaintea toggle-ului de temă.
-- **Dropdown:** absolut sub buton (`top: 44`), 190px, r8, surface, border, shadow-menu, p5, z-index 40.
+  În densitatea `minimal` a TitleBar-ului devine `IconButton` 30×30 cu iconița download și `label` „Export”.
+- **Dropdown:** sub buton, aliniat la marginea din dreapta (`placement: 'bottom-end'`), 190px, r8, surface, border, shadow-menu, p5, z-index 40.
+  Folosește poziționarea flip/shift din plan 02, deci nu intră sub controalele native de pe Windows și nu iese din fereastră.
   - Opțiuni h28 12px: „PNG”, „SVG”, „PDF”, „UML XMI”.
   - Extensia apare în dreapta (mono 10 text3): `.png`, `.svg`, `.pdf`, `.xmi`.
 - **Toast:** „Exporting <file> as <FORMAT>”, urmat, în versiunea noastră, de „Exported to <path>” sau de o eroare.
@@ -43,7 +45,7 @@ Fișierul se salvează prin dialogul nativ al sistemului.
 - `src/modules/diagram-editor/export/xmi/class.xmi.ts`, `activity.xmi.ts`, `state.xmi.ts`
 - `src/modules/diagram-editor/export/export-formats.ts`: `EXPORT_FORMATS` (label, extensie, `isAvailable(diagram)`).
 - `src/modules/diagram-editor/hooks/useExportDiagram.ts`: orchestrare, toast-uri, `exportedAt`.
-- `src/modules/diagram-editor/components/toolbar/ExportMenu.tsx`: contribuția `TitleActions` (`Button outline-accent` + `Menu`).
+- `src/modules/diagram-editor/components/toolbar/ExportMenu.tsx`: contribuția `TitleActions` (`Button outline-accent` sau `IconButton`, după `useTitleBarDensity()`, + `Menu`).
 - `src/modules/diagram-editor/index.ts` (modificat): `TitleActions: ExportMenu`.
 
 ## Pași

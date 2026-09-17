@@ -10,13 +10,17 @@ Faza 5 (polish) din roadmap:
 ## Referință design
 Prototipul nu are aceste ecrane. Ele se construiesc exclusiv din primitivele existente, pentru consistență:
 - **Paleta de căutare:** `Modal` 640×auto (max 480px înălțime), poziționat la 12vh de sus.
+  - Responsive: `width: min(640px, 100vw - 32px)`, `top: min(12vh, 96px)`, `max-height: min(480px, 100vh - top - 16px)`; lista are scroll, iar câmpul și footer-ul rămân fixe.
+  - Căile din rezultate se trunchiază la mijloc; sub 480px (container query) footer-ul cu `Kbd` se ascunde.
   - Câmp de căutare mare: h44, fără border, cu iconiță search 16.
   - Listă grupată: „Files”, „Nodes”, „Content”, cu antete în stilul „CATEGORY” din plan 17.
   - Rândul activ: accent-soft + `inset 2px 0 0 accent`, ca în arbore.
   - Snippet-urile au potrivirea evidențiată în accent-text.
   - Footer cu `Kbd`: ↑↓ navigate · ⏎ open · esc close.
-- **Meniu contextual:** `Menu` din plan 02, poziționat la cursor. Item-urile periculoase folosesc `--danger`.
+- **Meniu contextual:** `Menu` din plan 02, poziționat la cursor (`placement: 'point'`), cu flip/shift la marginile ferestrei și submeniuri („Change type ▸”) care se deschid spre stânga când nu încap în dreapta. Item-urile periculoase folosesc `--danger`.
 - **Ecranul de shortcut-uri** (`Ctrl/Cmd+/`): `Modal` cu tabel de două coloane (acțiune, `Kbd`), grupat pe scope.
+  Peste 900px de container, grupurile se așază pe două coloane; sub 480px, combinația trece sub numele acțiunii.
+  Shortcut-urile de zoom (plan 05) și de panouri (plan 04) apar și ele aici.
 
 ## Dependențe
 - Planurile 10 și 19.
@@ -78,6 +82,7 @@ Prototipul nu are aceste ecrane. Ele se construiesc exclusiv din primitivele exi
 ## Criterii de acceptare
 - `Ctrl/Cmd+K` → „isolate” → Enter deschide `phishing-triage` cu nodul „Contain Host” selectat și centrat.
 - Toate shortcut-urile sunt listate în `Ctrl/Cmd+/` și provin din registru.
+- Paleta, ecranul de shortcut-uri și meniurile contextuale rămân complet vizibile la 720×480, inclusiv deschise lângă marginile ferestrei.
 - Click dreapta funcționează pe rândurile arborelui, pe tab-uri, pe canvas și pe noduri, cu acțiuni funcționale.
 - Faza 5 din roadmap e completă.
 
