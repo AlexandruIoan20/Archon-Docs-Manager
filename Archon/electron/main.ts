@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './modules/ipc'
+import { installAppMenu } from './modules/app-menu'
 import { createMainWindow } from './modules/window-manager'
 
 const APP_USER_MODEL_ID = 'com.archon.soardocsstudio'
@@ -24,6 +25,7 @@ if (!app.requestSingleInstanceLock()) {
       optimizer.watchWindowShortcuts(window)
     })
 
+    installAppMenu()
     registerIpcHandlers()
     createMainWindow()
 

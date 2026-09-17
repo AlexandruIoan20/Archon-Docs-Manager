@@ -22,3 +22,19 @@ export type {
   PanelState
 } from './layout.types'
 export type { ModalId } from './ui.types'
+export type {
+  AccentColor,
+  AppearanceSettings,
+  AppSettings,
+  DeepPartial,
+  EdgeStyle,
+  LayoutSettings,
+  NodeStyle,
+  PanelSettings,
+  ResolvedTheme,
+  SessionSettings,
+  SettingsPatch,
+  ThemePreference,
+  WindowBounds,
+  WindowSettings
+} from './settings.types'

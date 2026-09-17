@@ -2,9 +2,13 @@ import { BrowserWindow, screen, shell, type BrowserWindowConstructorOptions } fr
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import type { AppSettings, ResolvedTheme } from '@/core/types'
 import { LAYOUT } from '@/core/constants/layout.constants'
 import { send } from './ipc/typed-ipc'
-import { resolveInitialBounds } from './window-bounds'
+import { systemTheme } from './ipc/settings.handler'
+import { getSettingsStore } from './settings'
+import { resolveInitialBounds, type InitialBounds } from './window-bounds'
+import { trackWindowState } from './window-state'
 
 const MAIN_WINDOW_DEFAULTS = {
   width: 1440,
@@ -13,8 +17,14 @@ const MAIN_WINDOW_DEFAULTS = {
   minHeight: 480
 } as const
 
-// Dark theme `--bg` / `--text2`. Plan 05 updates them when the theme changes.
-const WINDOWS_TITLEBAR_OVERLAY = { color: '#0D0F16', symbolColor: '#8892A4' } as const
+/**
+ * Window chrome per theme, matching `--bg` / `--text2` in the theme CSS.
+ * The renderer updates the Windows overlay itself when the theme changes.
+ */
+const THEME_CHROME: Record<ResolvedTheme, { color: string; symbolColor: string }> = {
+  dark: { color: '#0D0F16', symbolColor: '#8892A4' },
+  light: { color: '#F8FAFC', symbolColor: '#64748B' }
+}
 
 // Vertically centers the 12px traffic lights inside the 48px title bar.
 const MAC_TRAFFIC_LIGHTS = { x: 14, y: 16 } as const
@@ -25,12 +35,12 @@ const MAC_TRAFFIC_LIGHTS = { x: 14, y: 16 } as const
  * - macOS keeps the traffic lights, inset into our bar.
  * - Linux draws its own controls: `titleBarOverlay` differs between window managers.
  */
-function frameOptions(): BrowserWindowConstructorOptions {
+function frameOptions(theme: ResolvedTheme): BrowserWindowConstructorOptions {
   switch (process.platform) {
     case 'win32':
       return {
         titleBarStyle: 'hidden',
-        titleBarOverlay: { ...WINDOWS_TITLEBAR_OVERLAY, height: LAYOUT.titlebar }
+        titleBarOverlay: { ...THEME_CHROME[theme], height: LAYOUT.titlebar }
       }
     case 'darwin':
       return { titleBarStyle: 'hiddenInset', trafficLightPosition: MAC_TRAFFIC_LIGHTS }
@@ -39,15 +49,17 @@ function frameOptions(): BrowserWindowConstructorOptions {
   }
 }
 
-function initialBounds(): ReturnType<typeof resolveInitialBounds> {
-  // Open on the display the user is looking at, i.e. the one under the cursor.
+function initialBounds(settings: AppSettings): InitialBounds {
+  // Without saved bounds, open on the display the user is looking at.
   const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
   const { width, height, minWidth, minHeight } = MAIN_WINDOW_DEFAULTS
-  return resolveInitialBounds(
-    display.workArea,
-    { width, height },
-    { width: minWidth, height: minHeight }
-  )
+  return resolveInitialBounds({
+    workArea: display.workArea,
+    displays: screen.getAllDisplays().map((d) => d.workArea),
+    preferred: { width, height },
+    min: { width: minWidth, height: minHeight },
+    saved: settings.window.bounds
+  })
 }
 
 function isExternalHttpUrl(url: string): boolean {
@@ -76,24 +88,39 @@ function forwardWindowState(window: BrowserWindow): void {
 }
 
 export function createMainWindow(): BrowserWindow {
+  const store = getSettingsStore()
+  const settings = store.get()
+  const { theme: themePreference, uiZoom } = settings.appearance
+  const theme = themePreference === 'system' ? systemTheme() : themePreference
+
   const window = new BrowserWindow({
-    ...initialBounds(),
-    ...frameOptions(),
+    ...initialBounds(settings),
+    ...frameOptions(theme),
     show: false,
     autoHideMenuBar: true,
-    backgroundColor: '#0d0f16',
+    // Matches the saved theme so no white or black flash shows before the first paint.
+    backgroundColor: THEME_CHROME[theme].color,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
-      webSecurity: true
+      webSecurity: true,
+      zoomFactor: uiZoom
     }
   })
 
-  window.once('ready-to-show', () => window.show())
+  window.once('ready-to-show', () => {
+    if (settings.window.maximized) window.maximize()
+    window.show()
+  })
+  // Pinch-zoom would bypass the persisted interface zoom.
+  window.webContents.on('did-finish-load', () => {
+    void window.webContents.setVisualZoomLevelLimits(1, 1)
+  })
   hardenNavigation(window)
   forwardWindowState(window)
+  trackWindowState(window, store)
 
   const devUrl = process.env['ELECTRON_RENDERER_URL']
   if (is.dev && devUrl) {

@@ -1,6 +1,7 @@
+import type { ResolvedTheme } from '@/core/types'
 import { IconButton } from '@/shared/components/ui'
 
-export type ThemeToggleValue = 'dark' | 'light'
+export type ThemeToggleValue = ResolvedTheme
 
 export interface ThemeToggleButtonProps {
   /** The theme currently shown; its icon is displayed (moon on dark, sun on light). */
@@ -8,7 +9,7 @@ export interface ThemeToggleButtonProps {
   onToggle: () => void
 }
 
-/** Presentational only: persistence and the actual theme switch live in plan 05. */
+/** Presentational only: `useTheme` owns the switch and its persistence. */
 export function ThemeToggleButton({ theme, onToggle }: ThemeToggleButtonProps): React.JSX.Element {
   const next: ThemeToggleValue = theme === 'dark' ? 'light' : 'dark'
   return (

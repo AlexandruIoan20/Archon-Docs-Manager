@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState, type ComponentType } from 'react'
+import { useEffect, useEffectEvent, type ComponentType } from 'react'
 import type { EditorContribution, ModalId, PanelLayout } from '@/core/types'
 import { EditorContributionsProvider } from '@/core/editor/EditorContributionsProvider'
 import { useUiStore } from '@/store'
@@ -8,16 +8,18 @@ import { ModalHost } from '@/shared/components/layout/ModalHost'
 import { Sidebar } from '@/shared/components/layout/Sidebar'
 import { StatusBar } from '@/shared/components/layout/StatusBar'
 import { TitleBar } from '@/shared/components/layout/TitleBar'
-import type { ThemeToggleValue } from '@/shared/components/layout/title-bar/ThemeToggleButton'
 import { EmptyState, Kbd } from '@/shared/components/ui'
+import { useLayoutPersistence } from '@/shared/hooks/useLayoutPersistence'
 import { usePanelLayout } from '@/shared/hooks/usePanelLayout'
+import { useTheme } from '@/shared/hooks/useTheme'
+import { useUiZoom } from '@/shared/hooks/useUiZoom'
 
 // The only place that composes modules. Editor modules register here
 // (plans 12 and 13); the shell looks them up by file kind.
 const EDITOR_CONTRIBUTIONS: readonly EditorContribution[] = []
 const MODALS: Partial<Record<ModalId, ComponentType>> = {}
 
-/** Base panel shortcuts; they move to the shortcut registry in plan 20. */
+/** Base panel shortcuts; they move to the shortcut registry in plan 20 (zoom lives in `useUiZoom`). */
 function usePanelShortcuts(layout: PanelLayout): void {
   const togglePanel = useUiStore((s) => s.togglePanel)
 
@@ -49,21 +51,16 @@ function App(): React.JSX.Element {
   const layout = usePanelLayout()
   const closeOverlays = useUiStore((s) => s.closeOverlays)
   usePanelShortcuts(layout)
-
-  // Provisional: plan 05 replaces this with persisted settings and `useTheme`.
-  const [theme, setTheme] = useState<ThemeToggleValue>('dark')
-  const toggleTheme = (): void => {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    document.documentElement.dataset.theme = next
-    setTheme(next)
-  }
+  useLayoutPersistence()
+  useUiZoom()
+  const { resolvedTheme, toggleTheme } = useTheme()
 
   return (
     <EditorContributionsProvider contributions={EDITOR_CONTRIBUTIONS}>
       <AppShell
         layout={layout}
         onMainPointerDown={closeOverlays}
-        titleBar={<TitleBar theme={theme} onToggleTheme={toggleTheme} />}
+        titleBar={<TitleBar theme={resolvedTheme} onToggleTheme={toggleTheme} />}
         tabBar={
           <div
             data-testid="tab-bar"

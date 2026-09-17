@@ -84,4 +84,21 @@ describe('ui.store', () => {
     closeModal()
     expect(useUiStore.getState().activeModal).toBeNull()
   })
+
+  it('hydrates saved panels and brings widths back within limits', () => {
+    const { togglePanel, hydratePanels } = useUiStore.getState()
+    togglePanel('sidebar', true)
+    hydratePanels({
+      sidebar: { visible: false, width: 9000 },
+      inspector: { visible: true, width: 12 }
+    })
+    expect(panels().sidebar).toEqual({ visible: false, width: 420, overlayOpen: false })
+    expect(panels().inspector).toEqual({ visible: true, width: 220, overlayOpen: false })
+    expect(useUiStore.getState().lastOverlay).toBeNull()
+  })
+
+  it('mirrors the resolved theme', () => {
+    useUiStore.getState().setResolvedTheme('light')
+    expect(useUiStore.getState().resolvedTheme).toBe('light')
+  })
 })

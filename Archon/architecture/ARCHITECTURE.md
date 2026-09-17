@@ -8,7 +8,7 @@ Se actualizează la finalul fiecărui plan.
 - `[NN]` planul care creează fișierul;
 - `[NN*]` planul care modifică un fișier existent.
 
-**Stare curentă:** planurile 01–04 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless, layout shell responsive).
+**Stare curentă:** planurile 01–05 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless, layout shell responsive, setări persistate: temă, accent, layout, fereastră, zoom).
 
 ---
 
@@ -47,7 +47,7 @@ Main, preload și renderer se tipează din el, deci un canal inexistent sau un p
 ```
 App.tsx ─► modules/* ─► shared/* ─► store/* ─► core/*
 (fiecare strat poate importa din oricare strat aflat la dreapta lui, niciodată spre stânga)
-electron/* ─► src/core/types, src/core/constants/layout.constants (doar date pure)
+electron/* ─► src/core/types, src/core/constants, src/core/settings (doar cod pur, fără DOM / React)
 ```
 
 Reguli:
@@ -80,7 +80,7 @@ Archon/
 ├── vitest.config.ts               ✅ jsdom, include src/** și electron/**
 ├── eslint.config.mjs              ✅ TS + React + hooks + Prettier + regula de straturi [04]
 ├── tsconfig.json                  ✅ referințe către node / web
-├── tsconfig.node.json             ✅ electron/** + src/core/types + layout.constants
+├── tsconfig.node.json             ✅ electron/** + src/core/types + src/core/constants + src/core/settings
 ├── tsconfig.web.json              ✅ src/**
 ├── .prettierrc.yaml, .prettierignore, .editorconfig, .gitignore   ✅
 └── .vscode/                       ✅ launch, settings, extensii recomandate
@@ -92,26 +92,31 @@ Archon/
 
 ```
 electron/
-├── main.ts                        ✅ single-instance lock, înregistrare IPC, creare fereastră
+├── main.ts                        ✅ single-instance lock, meniul aplicației [05], înregistrare IPC, creare fereastră
 ├── preload.ts                     ✅ contextBridge: SoarApi (app, window, on); whitelist de evenimente [03]
 └── modules/
     ├── window-manager.ts          ✅ BrowserWindow securizat, ramă per platformă, emite maximized-changed [03]
+    │                                 [05*] fundal după tema salvată, bounds + maximized + zoom restaurate, fără pinch-zoom
     ├── window-bounds.ts           ✅ funcție pură resolveInitialBounds (min 720×480, 90% workArea) [03]
+    │                                 [05*] bounds salvate, folosite doar dacă ≥ 50% sunt pe un ecran conectat
     ├── window-bounds.test.ts      ✅
-    ├── window-state.ts               [05] salvează bounds + maximized (debounce)
+    ├── window-state.ts            ✅ [05] salvează bounds + maximized (debounce 500ms, sincron la close)
+    ├── app-menu.ts                ✅ [05] înlocuiește meniul implicit (scurtăturile de zoom Chromium)
     ├── ipc/
     │   ├── index.ts               ✅ registerIpcHandlers()
     │   ├── typed-ipc.ts           ✅ handle<C>() cu verificare sender, send<E>() tipat [03]
     │   ├── app.handler.ts         ✅ app:get-info
     │   ├── window.handler.ts      ✅ window:minimize / toggle-maximize / close / is-maximized / set-titlebar-colors [03]
-    │   │                             [05*] window:set-zoom
-    │   ├── settings.handler.ts       [05] settings:get / update, system:get-theme, system:theme-changed
+    │   │                             [05*] window:set-zoom (validat 0.8–1.5)
+    │   ├── settings.handler.ts    ✅ [05] settings:get / update, system:get-theme, evenimentul system:theme-changed
     │   ├── workspace.handler.ts      [07] creare / deschidere workspace, evenimente watcher
     │   ├── fs.handler.ts             [09] CRUD .soardoc / .soardiag / foldere
     │   ├── db.handler.ts             [10] căutare, metadata
     │   └── export.handler.ts         [19] salvare PNG / SVG / PDF / XMI
     ├── settings/
-    │   └── settings.ts               [05] userData/settings.json, scriere atomică, validare
+    │   ├── index.ts               ✅ [05] getSettingsStore() → userData/settings.json
+    │   ├── settings.ts            ✅ [05] SettingsStore: citire validată, fișier corupt pus deoparte, scriere atomică serializată
+    │   └── settings.test.ts       ✅ [05] Node, pe un director temporar
     ├── file-system/
     │   ├── paths.ts                  [07] rezolvare și validare căi în workspace
     │   ├── workspace.ts              [07] .soarws: creare, deschidere, recente
@@ -148,14 +153,15 @@ electron/
 
 ```
 src/
-├── main.tsx                       ✅ React root, QueryClient    [05*] încarcă setările înainte de render
+├── main.tsx                       ✅ React root, QueryClient    [05*] încarcă setările, aplică tema și layout-ul, apoi randează
 ├── App.tsx                        ✅ [04] singurul loc de compoziție: AppShell, contribuții de editor,
 │                                     modale, scurtăturile Ctrl+B / Ctrl+Alt+B
 ├── App.test.tsx                   ✅
 ├── env.d.ts                       ✅ tipul global window.soar
 └── test/
     ├── setup.ts                   ✅ jest-dom + cleanup
-    └── soar-api-mock.ts           ✅ mock complet pentru window.soar, cu emit() pentru evenimente [03]
+    ├── soar-api-mock.ts           ✅ mock complet pentru window.soar, cu emit() [03]   [05*] setări stocate în memorie
+    └── render-with-query.tsx      ✅ [05] QueryClient proaspăt pentru render / renderHook
 ```
 
 ### 4.2 `core/` — nucleu fără dependențe
@@ -163,23 +169,27 @@ src/
 ```
 src/core/
 ├── ipc/
-│   └── ipc-client.ts              ✅ ipcClient.app / window / on [03]; crește cu fiecare domeniu IPC
+│   └── ipc-client.ts              ✅ ipcClient.app / window / on [03]; settings / system / isAvailable [05]
+│                                     apelurile nu aruncă sincron: bridge lipsă → promise respins
 ├── types/
 │   ├── index.ts                   ✅ barrel
-│   ├── ipc.types.ts               ✅ IpcInvokeContract, IpcEventContract, SoarApi [03]
+│   ├── ipc.types.ts               ✅ IpcInvokeContract, IpcEventContract, SoarApi [03]   [05*] settings, system, set-zoom
 │   ├── editor.types.ts            ✅ [04] FileKind, EditorTabRef, EditorContribution
 │   ├── layout.types.ts            ✅ [04] PanelId, PanelMode, PanelPreference, PanelState, PanelLayout
 │   ├── ui.types.ts                ✅ [04] ModalId
-│   ├── settings.types.ts             [05] AppSettings
+│   ├── settings.types.ts          ✅ [05] AppSettings, SettingsPatch (DeepPartial), ThemePreference, ResolvedTheme, AccentColor
 │   ├── workspace.types.ts            [07]
 │   ├── document.types.ts             [09]
 │   └── diagram.types.ts              [17]
+├── settings/                      ✅ [05] cod pur partajat de main și renderer
+│   ├── normalize-settings.ts      ✅ normalizeSettings (validare câmp cu câmp), mergeSettings, snapUiZoom
+│   └── tests/                     ✅
 ├── schemas/                          scheme zod; tipurile se derivă din ele
 │   ├── workspace.schema.ts           [07]
 │   ├── document.schema.ts            [09]
 │   └── diagram.schema.ts             [09]
 ├── constants/
-│   ├── app.constants.ts           ✅ APP_NAME, QUERY_KEYS   [05*] DEFAULT_SETTINGS, ACCENT_OPTIONS, UI_ZOOM_STEPS
+│   ├── app.constants.ts           ✅ APP_NAME, QUERY_KEYS   [05] DEFAULT_SETTINGS, ACCENT_OPTIONS, UI_ZOOM_STEPS, RECENT_WORKSPACES_LIMIT
 │   ├── layout.constants.ts        ✅ LAYOUT, TITLEBAR_DENSITY, TITLEBAR_INSETS [03]; SIDEBAR_WIDTH, INSPECTOR_WIDTH,
 │   │                                 MAIN_MIN_WITH_*, PANEL_RESIZE_STEP, OVERLAY_EDGE_GAP [04]
 │   ├── file-extensions.ts            [09] .soarws, .soardoc, .soardiag
@@ -195,7 +205,7 @@ src/core/
 src/store/
 ├── index.ts                       ✅ [04]
 ├── ui.store.ts                    ✅ [04] panouri (visible / width / overlayOpen), lastOverlay, panelResizing,
-│                                     modal activ   [05*] resolvedTheme   [06*] toast
+│                                     modal activ   [05*] resolvedTheme, hydratePanels   [06*] toast
 ├── tests/                         ✅ ui.store
 ├── status.store.ts                   [06] segmentele status bar-ului
 ├── workspace.store.ts                [07] workspace curent, arbore, folder țintă
@@ -411,7 +421,7 @@ src/shared/
 │       ├── title-bar/             ✅ [03]
 │       │   ├── BrandMark.tsx          pătrat accent + APP_NAME (compact → tooltip)
 │       │   ├── WindowControls.tsx     doar Linux: minimize / maximize-restore / close
-│       │   ├── ThemeToggleButton.tsx  doar UI (legătura în [05])
+│       │   ├── ThemeToggleButton.tsx  doar UI; legat de useTheme în App.tsx [05]
 │       │   ├── TitleBarDensityContext.tsx  context + useTitleBarDensity()
 │       │   ├── title-bar-density.ts   funcție pură, cu histerezis
 │       │   └── tests/                 BrandMark, WindowControls, title-bar-density
@@ -434,18 +444,20 @@ src/shared/
 │   ├── useWindowSize.ts           ✅ [04] grupat pe requestAnimationFrame
 │   ├── usePanelLayout.ts          ✅ [04] fereastră + store → PanelLayout; închide cererile de sertar expirate
 │   ├── usePanelResize.ts          ✅ [04] legătura mâner ↔ ui.store
-│   ├── useSettings.ts                [05]
-│   ├── useTheme.ts                   [05]
-│   ├── useLayoutPersistence.ts       [05]
-│   ├── useUiZoom.ts                  [05]
+│   ├── useSettings.ts             ✅ [05] settingsQuery, useSettings(), useUpdateSettings() optimist
+│   ├── useTheme.ts                ✅ [05] temă efectivă, tema OS live, overlay Windows, toggle
+│   ├── useLayoutPersistence.ts    ✅ [05] salvează panourile (debounce 300ms, nu în timpul drag-ului)
+│   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%
+│   ├── tests/                     ✅ [05] useTheme, useLayoutPersistence, useUiZoom
 │   ├── useDebounce.ts                [12]
 │   └── useKeyboard.ts                [15]   [20*]
 └── utils/
     ├── cn.ts                      ✅
     ├── floating-position.ts       ✅
     ├── truncate-middle.ts         ✅
-    ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout
+    ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout, apply-theme
     ├── panel-layout.ts            ✅ [04] resolvePanelLayout (funcție pură)
+    ├── apply-theme.ts             ✅ [05] resolveTheme, applyTheme (data-theme, --accent), readTitleBarColors
     ├── platform.ts                   [06]
     └── color.ts                      [14]
 ```

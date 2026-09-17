@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ModalId, PanelId, PanelPreference } from '@/core/types'
+import type { LayoutSettings, ModalId, PanelId, PanelPreference, ResolvedTheme } from '@/core/types'
 import {
   INSPECTOR_WIDTH,
   SIDEBAR_WIDTH,
@@ -25,6 +25,8 @@ export interface UiState {
   /** True while a panel edge is dragged (persistence waits for the drop). */
   panelResizing: boolean
   activeModal: ModalId | null
+  /** Effective theme, mirrored by `useTheme` for synchronous reads. */
+  resolvedTheme: ResolvedTheme
 
   /**
    * Shows or hides a panel. When space keeps the panel from docking
@@ -36,6 +38,9 @@ export interface UiState {
   setPanelResizing: (resizing: boolean) => void
   closeOverlay: (id: PanelId) => void
   closeOverlays: () => void
+  /** Loads saved panel preferences (widths clamped); drawers start closed. */
+  hydratePanels: (layout: LayoutSettings) => void
+  setResolvedTheme: (theme: ResolvedTheme) => void
   openModal: (id: ModalId) => void
   closeModal: () => void
 }
@@ -51,6 +56,7 @@ export const useUiStore = create<UiState>()((set) => ({
   lastOverlay: null,
   panelResizing: false,
   activeModal: null,
+  resolvedTheme: 'dark',
 
   togglePanel: (id, autoHidden) =>
     set((state) => {
@@ -110,6 +116,25 @@ export const useUiStore = create<UiState>()((set) => ({
         }
       }
     }),
+
+  hydratePanels: (layout) =>
+    set({
+      lastOverlay: null,
+      panels: {
+        sidebar: {
+          visible: layout.sidebar.visible,
+          width: clampPanelWidth('sidebar', layout.sidebar.width),
+          overlayOpen: false
+        },
+        inspector: {
+          visible: layout.inspector.visible,
+          width: clampPanelWidth('inspector', layout.inspector.width),
+          overlayOpen: false
+        }
+      }
+    }),
+
+  setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
 
   openModal: (activeModal) => set({ activeModal }),
   closeModal: () => set({ activeModal: null })

@@ -5,7 +5,8 @@
     "vitest.config.*",
     "electron/**/*",
     "src/core/types/**/*",
-    "src/core/constants/layout.constants.ts"
+    "src/core/constants/**/*",
+    "src/core/settings/**/*"
   ],
   "compilerOptions": {
     "composite": true,

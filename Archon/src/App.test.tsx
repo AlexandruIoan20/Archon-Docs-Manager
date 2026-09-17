@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useUiStore } from '@/store'
 import { createSoarApiMock } from '@/test/soar-api-mock'
@@ -27,6 +27,7 @@ describe('App', () => {
   beforeEach(() => {
     useUiStore.setState(initialState, true)
     setWindowWidth(1440)
+    document.documentElement.dataset.theme = 'dark'
   })
 
   afterEach(() => {
@@ -72,5 +73,17 @@ describe('App', () => {
     act(() => void fireEvent.keyDown(window, { code: 'KeyB', ctrlKey: true, altKey: true }))
     expect(panel('Inspector')).toHaveAttribute('data-mode', 'overlay')
     expect(useUiStore.getState().panels.inspector.visible).toBe(true)
+  })
+
+  it('switches and persists the theme from the title bar toggle', async () => {
+    const mock = createSoarApiMock({ platform: 'linux' })
+    window.soar = mock.api
+    renderApp()
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Switch to light theme' }))
+
+    expect(await screen.findByRole('button', { name: 'Switch to dark theme' })).toBeInTheDocument()
+    expect(document.documentElement.dataset.theme).toBe('light')
+    await waitFor(() => expect(mock.storedSettings().appearance.theme).toBe('light'))
   })
 })

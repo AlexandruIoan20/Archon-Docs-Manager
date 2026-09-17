@@ -1,4 +1,4 @@
-# 04 — Layout shell & contribuții de editor
+l# 04 — Layout shell & contribuții de editor
 
 ## Scop
 Scheletul complet al ferestrei din prototip, cu sloturi goale: TitleBar, tab bar, sidebar, zona centrală, properties panel și status bar.

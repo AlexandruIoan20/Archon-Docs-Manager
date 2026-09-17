@@ -4,6 +4,8 @@
  * renderer consumes the resulting `SoarApi` — a mismatch fails at compile time.
  */
 
+import type { AppSettings, ResolvedTheme, SettingsPatch } from './settings.types'
+
 export type AppPlatform = 'darwin' | 'win32' | 'linux'
 
 export interface AppInfo {
@@ -28,6 +30,12 @@ export interface IpcInvokeContract {
   'window:close': { args: []; result: void }
   'window:is-maximized': { args: []; result: boolean }
   'window:set-titlebar-colors': { args: [colors: TitleBarColors]; result: void }
+  /** Interface zoom factor, 0.8–1.5. */
+  'window:set-zoom': { args: [factor: number]; result: void }
+  'settings:get': { args: []; result: AppSettings }
+  /** Partial update; main validates it and answers with the stored settings. */
+  'settings:update': { args: [patch: SettingsPatch]; result: AppSettings }
+  'system:get-theme': { args: []; result: ResolvedTheme }
 }
 
 export type IpcChannel = keyof IpcInvokeContract
@@ -37,6 +45,8 @@ export type IpcResult<C extends IpcChannel> = IpcInvokeContract[C]['result']
 /** Main → renderer push events (`webContents.send`), keyed by event name. */
 export interface IpcEventContract {
   'window:maximized-changed': boolean
+  /** The OS switched between dark and light. */
+  'system:theme-changed': ResolvedTheme
 }
 
 export type IpcEvent = keyof IpcEventContract
@@ -54,6 +64,14 @@ export interface SoarApi {
     close: () => Promise<void>
     isMaximized: () => Promise<boolean>
     setTitleBarColors: (colors: TitleBarColors) => Promise<void>
+    setZoom: (factor: number) => Promise<void>
+  }
+  settings: {
+    get: () => Promise<AppSettings>
+    update: (patch: SettingsPatch) => Promise<AppSettings>
+  }
+  system: {
+    getTheme: () => Promise<ResolvedTheme>
   }
   /** Subscribes to a main-process event; returns the unsubscribe function. */
   on: <E extends IpcEvent>(
