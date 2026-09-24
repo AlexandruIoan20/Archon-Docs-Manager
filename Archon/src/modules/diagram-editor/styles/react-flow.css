@@ -1,0 +1,62 @@
+/* React Flow's structural styles, themed with the app tokens (plan 13). */
+@import '@xyflow/react/dist/base.css';
+
+.soar-flow {
+  --xy-background-color: var(--canvas);
+  --xy-background-pattern-dots-color: var(--dot);
+  --xy-edge-stroke: var(--text3);
+  --xy-edge-stroke-selected: var(--accent);
+  --xy-edge-stroke-width: 1.5;
+  --xy-connectionline-stroke: var(--accent);
+  --xy-connectionline-stroke-width: 1.5;
+  --xy-handle-background-color: var(--canvas);
+  --xy-handle-border-color: var(--accent);
+  --xy-selection-background-color: var(--accent-soft);
+  --xy-selection-border: 1px dashed var(--accent-border);
+  --xy-attribution-background-color: transparent;
+  --xy-minimap-background-color: var(--side);
+  --xy-minimap-mask-background-color: color-mix(in srgb, var(--canvas) 70%, transparent);
+  --xy-minimap-mask-stroke-color: var(--accent-border);
+  --xy-minimap-node-background-color: var(--accent);
+
+  font-family: var(--font-sans);
+}
+
+/* The canvas takes the pointer; text selection would fight node dragging. */
+.soar-flow .react-flow__pane {
+  cursor: default;
+}
+
+.soar-flow .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-width: 1.5px;
+  border-radius: var(--radius-xs);
+}
+
+.soar-flow .react-flow__edge-textbg {
+  fill: var(--canvas);
+}
+
+.soar-flow .react-flow__edge-text {
+  fill: var(--text2);
+  font-size: 11px;
+}
+
+.soar-flow .soar-minimap {
+  margin: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* Kept (see plan 13), but out of the way. */
+.soar-flow .react-flow__attribution {
+  padding: 2px 6px;
+  font-size: 9px;
+  opacity: 0.55;
+}
+
+.soar-flow .react-flow__attribution a {
+  color: var(--text3);
+}

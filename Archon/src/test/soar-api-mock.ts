@@ -68,6 +68,7 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
         platform: 'linux',
         ...info
       }),
+      enableCloseGuard: resolved(undefined),
       confirmClose: resolved(undefined)
     },
     window: {

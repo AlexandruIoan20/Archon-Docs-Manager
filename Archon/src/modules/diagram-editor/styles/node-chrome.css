@@ -1,0 +1,95 @@
+/* Around SOAR nodes (plan 14): connection handles and the selection chrome. */
+
+/* Handles: hidden until the node is hovered or the connect tool is on. */
+.soar-flow .soar-handle {
+  opacity: 0;
+  transition: opacity 120ms;
+}
+
+.soar-flow .react-flow__node:hover .soar-handle,
+.soar-flow .react-flow__node.selected .soar-handle,
+.soar-flow .soar-node--connecting .soar-handle,
+.soar-flow .soar-handle.connectingfrom,
+.soar-flow .soar-handle.connectingto {
+  opacity: 1;
+}
+
+/* Selection chrome. */
+.soar-node-ring {
+  position: absolute;
+  inset: -6px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+
+.soar-node-grip {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--accent);
+  border-radius: 2px;
+  background: var(--canvas);
+  pointer-events: none;
+}
+
+.soar-node-grip--tl {
+  top: -10px;
+  left: -10px;
+}
+.soar-node-grip--tc {
+  top: -10px;
+  left: calc(50% - 4px);
+}
+.soar-node-grip--tr {
+  top: -10px;
+  right: -10px;
+}
+.soar-node-grip--bl {
+  bottom: -10px;
+  left: -10px;
+}
+.soar-node-grip--bc {
+  bottom: -10px;
+  left: calc(50% - 4px);
+}
+.soar-node-grip--br {
+  right: -10px;
+  bottom: -10px;
+}
+
+.soar-node-toolbar {
+  position: absolute;
+  top: -30px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+.soar-node-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.soar-node-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: #fff;
+  cursor: pointer;
+}

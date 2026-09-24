@@ -36,6 +36,8 @@ export interface TitleBarColors {
 /** Renderer → main request/response channels (`ipcRenderer.invoke`). */
 export interface IpcInvokeContract {
   'app:get-info': { args: []; result: AppInfo }
+  /** The page's close guard is running: main now waits for it before closing. */
+  'app:enable-close-guard': { args: []; result: void }
   /** The renderer agreed to let the window close (answer to `app:before-quit`). */
   'app:confirm-close': { args: []; result: void }
   'window:minimize': { args: []; result: void }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { Editor, JSONContent } from '@tiptap/core'
 import type { EditorTabRef, SoarDocument } from '@/core/types'
-import { useEditorStore, useUiStore } from '@/store'
+import { useExternalChanges } from '@/shared/hooks/useExternalChanges'
 import { useDocumentEditorStore } from '../store/document-editor.store'
 import { useAutosave } from './useAutosave'
 import { useDocumentEditor, wordsOf } from './useDocumentEditor'
@@ -33,8 +33,6 @@ export function useDocumentController(
   /** The disk version the editor content is based on. */
   const known = useRef(initial)
   const changeRef = useRef<() => void>(() => undefined)
-  /** The disk version a conflict toast was already shown for. */
-  const conflictShown = useRef<SoarDocument | null>(null)
 
   const editor = useDocumentEditor(tabId, initial, () => changeRef.current())
 
@@ -80,25 +78,21 @@ export function useDocumentController(
     if (editor) patch(tabId, { editor, words: wordsOf(editor) })
   }, [editor, tabId, patch])
 
-  useEffect(() => {
-    if (!editor || !latest || latest === known.current) return
-    const reload = (): void => {
-      replaceContent(editor, latest.content)
-      const { title, tags, linkedDiagrams } = latest
+  useExternalChanges({
+    tabId,
+    latest,
+    getBase: () => known.current,
+    ready: editor !== null,
+    name: (version) => version.title || filePath,
+    apply: (version) => {
+      if (!editor) return
+      replaceContent(editor, version.content)
+      const { title, tags, linkedDiagrams } = version
       patch(tabId, { title, tags, linkedDiagrams, words: wordsOf(editor) })
-      known.current = latest
+      known.current = version
       autosave.discard()
     }
-    const dirty = useEditorStore.getState().tabs.find((t) => t.id === tabId)?.dirty
-    if (!dirty) reload()
-    else if (conflictShown.current !== latest) {
-      conflictShown.current = latest
-      const name = latest.title || filePath
-      useUiStore
-        .getState()
-        .notify(`${name} changed on disk`, 'error', { label: 'Reload', run: reload })
-    }
-  }, [latest, editor, tabId, filePath, patch, autosave])
+  })
 
   const setTitle = useCallback(
     (title: string) => {

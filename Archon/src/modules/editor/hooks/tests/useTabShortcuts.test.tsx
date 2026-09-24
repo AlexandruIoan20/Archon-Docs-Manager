@@ -52,6 +52,11 @@ describe('useQuitGuard', () => {
     delete window.soar
   })
 
+  it('announces itself to main, so the window waits for it', () => {
+    renderHook(() => useQuitGuard())
+    expect(mock.api.app.enableCloseGuard).toHaveBeenCalledOnce()
+  })
+
   it('releases the window at once when nothing is unsaved', async () => {
     useEditorStore.getState().openFile('a.soardoc', 'soardoc')
     renderHook(() => useQuitGuard())

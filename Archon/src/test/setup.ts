@@ -16,3 +16,28 @@ if (typeof Range !== 'undefined' && !('getClientRects' in Range.prototype)) {
     getBoundingClientRect: emptyRect
   })
 }
+
+// React Flow measures its container and nodes; jsdom has neither observer nor
+// matrix. These stand-ins never fire, so sizes stay 0 as without them.
+if (typeof ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class {
+    observe(): void {
+      // Never reports a size.
+    }
+    unobserve(): void {
+      // Nothing to stop.
+    }
+    disconnect(): void {
+      // Nothing to stop.
+    }
+  }
+}
+if (typeof DOMMatrixReadOnly === 'undefined') {
+  globalThis.DOMMatrixReadOnly = class {
+    m22 = 1
+    constructor(transform?: string) {
+      const scale = transform?.match(/scale\(([\d.]+)\)/)?.[1]
+      this.m22 = scale ? Number(scale) : 1
+    }
+  } as unknown as typeof DOMMatrixReadOnly
+}

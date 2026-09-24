@@ -11,6 +11,8 @@ import {
 } from './modules/workspace-services'
 
 const APP_USER_MODEL_ID = 'com.archon.soardocsstudio'
+/** Longest the app waits for its cleanup (watcher, index) when quitting. */
+const SHUTDOWN_TIMEOUT_MS = 3000
 
 // A second instance would fight the first one over the same workspace files.
 if (!app.requestSingleInstanceLock()) {
@@ -48,17 +50,18 @@ if (!app.requestSingleInstanceLock()) {
     if (process.platform !== 'darwin') app.quit()
   })
 
-  // Stop the watcher (and close the index) before the process exits.
-  let shutdownDone = false
+  // Stop the watcher and close the index before the process exits. Once
+  // `will-quit` has been prevented, Electron ignores a second `app.quit()`, so
+  // the process ends with `app.exit()`; a cleanup that hangs must not keep it alive.
+  let shuttingDown = false
   app.on('will-quit', (event) => {
-    if (shutdownDone) return
     event.preventDefault()
-    void shutdownWorkspaceServices()
-      .then(shutdownIndexService)
+    if (shuttingDown) return
+    shuttingDown = true
+    const cleanup = shutdownWorkspaceServices().then(shutdownIndexService)
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, SHUTDOWN_TIMEOUT_MS))
+    void Promise.race([cleanup, timeout])
       .catch((error: unknown) => console.error('[main] shutdown failed', error))
-      .finally(() => {
-        shutdownDone = true
-        app.quit()
-      })
+      .finally(() => app.exit(0))
   })
 }

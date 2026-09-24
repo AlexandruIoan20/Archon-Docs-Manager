@@ -285,41 +285,43 @@ src/modules/
 │   └── styles/prose.css                          ✅
 │
 ├── diagram-editor/                               [13–19] React Flow + Mermaid
-│   ├── index.ts                                  contribuția pentru `soardiag`
+│   ├── index.ts                                  ✅ [13] contribuția pentru `soardiag`
 │   ├── components/
-│   │   ├── DiagramEditor.tsx                     [13]   [18*] comutare canvas / Mermaid
-│   │   ├── DiagramCanvas.tsx                     [13]
-│   │   ├── DiagramStatusItems.tsx                [13]
-│   │   ├── NodePalette.tsx                       [15]
+│   │   ├── DiagramEditor.tsx                     ✅ [13] store-ul tab-ului + canvas   [18*] comutare canvas / Mermaid
+│   │   ├── DiagramCanvas.tsx                     ✅ [13] React Flow controlat, grilă de puncte, fitView la prima deschidere
+│   │   ├── DiagramStatusItems.tsx                ✅ [13] noduri · muchii, selecție, zoom
+│   │   ├── NodePalette.tsx                       ✅ [15] 7 unelte, meniu de tipuri, „⋯” în minimal
 │   │   ├── PropertiesPanel.tsx                   [16]
 │   │   ├── MermaidEditor.tsx                     [18]
 │   │   ├── canvas/
-│   │   │   ├── CanvasHint.tsx                    [13]
-│   │   │   ├── CanvasMinimap.tsx                 [13]
-│   │   │   ├── ZoomControls.tsx                  [13]
+│   │   │   ├── CanvasOverlays.tsx                ✅ [13] reguli responsive (minimap < 560×360, hint < 640)
+│   │   │   ├── CanvasHint.tsx                    ✅ [13]
+│   │   │   ├── CanvasMinimap.tsx                 ✅ [13] MiniMap React Flow stilizat
+│   │   │   ├── ZoomControls.tsx                  ✅ [13] 30–200%, pas 10%
 │   │   │   └── CanvasContextMenu.tsx             [20]
 │   │   ├── nodes/
-│   │   │   ├── index.ts                          [14]
-│   │   │   ├── BaseNode.tsx                      [14] card / outline / solid
-│   │   │   ├── node-skin.ts                      [14]
-│   │   │   ├── NodeHandles.tsx                   [14]
-│   │   │   ├── NodeSelectionChrome.tsx           [14]
-│   │   │   ├── TriggerNode.tsx                   [14]
-│   │   │   ├── ActionNode.tsx                    [14]
-│   │   │   ├── DecisionNode.tsx                  [14] romb
-│   │   │   ├── IntegrationNode.tsx               [14]
-│   │   │   ├── ElementNode.tsx                   [14] elemente UML generice
-│   │   │   ├── ShapeNode.tsx                     [15] rect / ellipse
+│   │   │   ├── index.ts                          ✅ [14] NODE_TYPES; Trigger/Action/Decision/Integration/ElementNode = BaseNode
+│   │   │   ├── BaseNode.tsx                      ✅ [14] card / outline / solid; decizia ca romb SVG
+│   │   │   ├── node-skin.ts                      ✅ [14] getNodeSkin → clasă + variabile --node-*
+│   │   │   ├── NodeHandles.tsx                   ✅ [14] target stânga, source dreapta
+│   │   │   ├── NodeSelectionChrome.tsx           ✅ [14] inel, grip-uri, badge id, ștergere
+│   │   │   ├── BasicNode.tsx                     ✅ [13] provizoriu pentru shape-* / text
+│   │   │   ├── ShapeNode.tsx                     ✅ [15] rect / ellipse / text (TextNode), NodeResizer
+│   │   │   ├── shape-style.ts                    ✅ [15] stroke / fill 16% / weight / font
 │   │   │   └── NodeContextMenu.tsx               [20]
 │   │   ├── edges/
-│   │   │   ├── index.ts                          [14]
-│   │   │   ├── SoarEdge.tsx                      [14] curved / orthogonal / straight
-│   │   │   └── EdgeMarkers.tsx                   [14]
+│   │   │   ├── index.ts                          ✅ [14] EDGE_TYPES
+│   │   │   ├── edge-path.ts                      ✅ [14] calea după edgeStyle (funcție pură)
+│   │   │   ├── SoarEdge.tsx                      ✅ [14] curved / orthogonal / straight, „hot”, etichetă
+│   │   │   └── EdgeMarkers.tsx                   ✅ [14]
 │   │   ├── toolbar/
-│   │   │   ├── DiagramToolbar.tsx                [15] slot TitleBar
-│   │   │   ├── StyleControls.tsx                 [15]
-│   │   │   ├── StylePopover.tsx                  [15] densitatea `compact`
-│   │   │   ├── HistoryButtons.tsx                [15]
+│   │   │   ├── DiagramToolbar.tsx                ✅ [15] slot TitleBar, aranjament după densitate
+│   │   │   ├── StyleControls.tsx                 ✅ [15] inline (pill-uri) / stacked
+│   │   │   ├── StylePickers.tsx                  ✅ [15] swatch-uri, grosime, font 8–72
+│   │   │   ├── ToolbarPopover.tsx                ✅ [15] popover flip/shift
+│   │   │   ├── useStyleValues.ts                 ✅ [15] stilul selecției sau implicit
+│   │   │   ├── StylePopover.tsx                  ✅ [15] densitățile `compact` / `minimal`
+│   │   │   ├── HistoryButtons.tsx                ✅ [15]
 │   │   │   └── ExportMenu.tsx                    [19] slot TitleActions
 │   │   ├── properties/                           [16]
 │   │   │   ├── NodeProperties.tsx
@@ -343,17 +345,20 @@ src/modules/
 │   │       ├── MermaidError.tsx
 │   │       └── LineNumbers.tsx
 │   ├── store/                                    stare locală modulului
-│   │   ├── diagram.store.ts                      [13] noduri, muchii, selecție
-│   │   ├── DiagramStoreProvider.tsx              [13] un store per tab
-│   │   ├── store-registry.ts                     [13]
-│   │   ├── history.ts                            [15] undo / redo
-│   │   └── tool.store.ts                         [15] unealta activă
+│   │   ├── diagram.store.ts                      ✅ [13] noduri, muchii, viewport, selecție, revision
+│   │   ├── DiagramStoreProvider.tsx              ✅ [13] un store per tab
+│   │   ├── store-registry.ts                     ✅ [13] Map<tabId, store>, curățat la închiderea tab-ului
+│   │   ├── diagram-state.ts                      ✅ [15] tipurile store-ului
+│   │   ├── graph-edits.ts                        ✅ [15] add / delete / connect / stil / undo / redo
+│   │   ├── history.ts                            ✅ [15] undo / redo, 30 de pași
+│   │   └── tool.store.ts                         ✅ [15] unealta activă (slice în store-ul tab-ului)
 │   ├── hooks/
-│   │   ├── useDiagram.ts                         [13]
-│   │   ├── useNodeTypes.ts                       [14]
-│   │   ├── useHotEdges.ts                        [14]
-│   │   ├── useCanvasInteractions.ts              [15]
-│   │   ├── useDiagramShortcuts.ts                [15]
+│   │   ├── useDiagram.ts                         ✅ [13] încărcare, autosave, reîncărcare externă
+│   │   ├── useNodeTypes.ts                       ✅ [14] diagram.style → setarea aplicației → implicit
+│   │   ├── useHotEdges.ts                        ✅ [14] useIsHotEdge, derivat din selecție
+│   │   ├── useCanvasInteractions.ts              ✅ [15] plasare, connect în doi pași, pan
+│   │   ├── useConnectingStatus.ts                ✅ [15] „Connecting…” în status bar
+│   │   ├── useDiagramShortcuts.ts                ✅ [15] Delete, undo/redo, Escape, V/H/N/C/T/R/O
 │   │   ├── useSelectedElements.ts                [16]
 │   │   ├── useCommitOnFocus.ts                   [16]
 │   │   ├── useTagSuggestions.ts                  [16]
@@ -361,15 +366,18 @@ src/modules/
 │   │   ├── useMermaidRender.ts                   [18]
 │   │   └── useExportDiagram.ts                   [19]
 │   ├── constants/
-│   │   ├── node-kinds.ts                         [14]
-│   │   ├── node-palette.ts                       [14] paleta semantică de 6 culori (date, nu temă)
-│   │   ├── tools.ts                              [15]
+│   │   ├── node-kinds.ts                         ✅ [14]
+│   │   ├── node-palette.ts                       ✅ [14] paleta semantică de 6 culori (date, nu temă)
+│   │   ├── tools.ts                              ✅ [15] unelte, hint-uri
+│   │   ├── style.ts                              ✅ [15] grosimi, interval font
 │   │   ├── diagram-catalog.ts                    [17] catalogul UML
 │   │   ├── diagram-sketches.ts                   [17]
 │   │   └── diagram-starters.ts                   [17]
 │   ├── utils/
-│   │   ├── graph-mapping.ts                      [13] .soardiag ↔ React Flow
-│   │   ├── node-factory.ts                       [15]
+│   │   ├── graph-mapping.ts                      ✅ [13] .soardiag ↔ React Flow
+│   │   ├── zoom.ts                               ✅ [13] limite și pași de zoom
+│   │   ├── canvas-layout.ts                      ✅ [13] praguri responsive ale canvas-ului
+│   │   ├── node-factory.ts                       ✅ [15] id N<k> / E<k> cel mai mic liber
 │   │   ├── build-starter-graph.ts                [17]
 │   │   ├── filter-catalog.ts                     [17]
 │   │   └── clipboard.ts                          [20]
@@ -385,8 +393,11 @@ src/modules/
 │   │       ├── serialize-xmi.ts
 │   │       └── class.xmi.ts
 │   └── styles/
-│       ├── react-flow.css                        [13]
-│       └── nodes.css                             [14]
+│       ├── react-flow.css                        ✅ [13] --xy-* din tokenuri
+│       ├── nodes.css                             ✅ [14] noduri, skin-uri, romb
+│       ├── node-chrome.css                       ✅ [14] handle-uri, selecție
+│       ├── edges.css                             ✅ [14] muchii, markere, animația „hot”
+│       └── tools.css                             ✅ [15] cursoare, forme, redimensionare
 │
 └── search/                                       [20] Ctrl+K
     ├── index.ts
@@ -466,8 +477,13 @@ src/shared/
 │   ├── useLayoutPersistence.ts    ✅ [05] salvează panourile (debounce 300ms, nu în timpul drag-ului)
 │   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%   [06*] toast „Zoom N%”
 │   ├── tests/                     ✅ [05] useTheme, useLayoutPersistence, useUiZoom
-│   ├── useDebounce.ts                [12]
-│   └── useKeyboard.ts                [15]   [20*]
+│   ├── useDebounce.ts             ✅ [12] useDebouncedCallback (flush / cancel, onUnmount)
+│   ├── useWorkspaceFile.ts        ✅ [13] query pe un fișier, reîncărcat la workspace:tree-changed
+│   ├── useFileAutosave.ts         ✅ [13] autosave comun documente / diagrame (800ms, Ctrl/Cmd+S, flush)
+│   ├── useExternalChanges.ts      ✅ [13] fișier schimbat pe disc: reload sau toast de conflict
+│   ├── usePanelShortcuts.ts       ✅ [11] Ctrl/Cmd+B, Ctrl/Cmd+Alt+B
+│   ├── useIndexProgress.ts        ✅ [10] „Indexing…” în status bar
+│   └── useKeyboard.ts             ✅ [15] combinații mod+z, ignoră câmpurile editabile   [20*]
 └── utils/
     ├── cn.ts                      ✅
     ├── floating-position.ts       ✅
@@ -476,7 +492,7 @@ src/shared/
     ├── panel-layout.ts            ✅ [04] resolvePanelLayout (funcție pură)
     ├── apply-theme.ts             ✅ [05] resolveTheme, applyTheme (data-theme, --accent), readTitleBarColors
     ├── platform.ts                ✅ [06] modKeyLabel (⌘ / Ctrl), formatShortcut
-    └── color.ts                      [14]
+    └── color.ts                   ✅ [14] hexToRgba
 ```
 
 ### 4.6 `styles/`

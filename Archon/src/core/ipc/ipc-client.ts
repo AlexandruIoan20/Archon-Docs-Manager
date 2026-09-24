@@ -50,6 +50,7 @@ export const ipcClient = {
   isAvailable: (): boolean => window.soar !== undefined,
   app: {
     getInfo: (): Promise<AppInfo> => call((api) => api.app.getInfo()),
+    enableCloseGuard: (): Promise<void> => call((api) => api.app.enableCloseGuard()),
     confirmClose: (): Promise<void> => call((api) => api.app.confirmClose())
   },
   window: {

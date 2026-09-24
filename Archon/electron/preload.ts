@@ -45,6 +45,7 @@ function on<E extends IpcEvent>(
 const api: SoarApi = {
   app: {
     getInfo: () => invoke('app:get-info'),
+    enableCloseGuard: () => invoke('app:enable-close-guard'),
     confirmClose: () => invoke('app:confirm-close')
   },
   window: {

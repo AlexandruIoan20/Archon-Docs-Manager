@@ -39,10 +39,14 @@ import {
   useTabShortcuts
 } from '@/modules/editor'
 import { documentEditorContribution } from '@/modules/document-editor'
+import { diagramEditorContribution } from '@/modules/diagram-editor'
 
 // The only place that composes modules. Editor modules register here
 // (plans 12 and 13); the shell looks them up by file kind.
-const EDITOR_CONTRIBUTIONS: readonly EditorContribution[] = [documentEditorContribution]
+const EDITOR_CONTRIBUTIONS: readonly EditorContribution[] = [
+  documentEditorContribution,
+  diagramEditorContribution
+]
 const MODALS: Partial<Record<ModalId, ComponentType>> = {
   'confirm-delete': ConfirmDeleteModal,
   'unsaved-changes': UnsavedChangesModal
