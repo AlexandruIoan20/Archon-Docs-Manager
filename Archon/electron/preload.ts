@@ -18,7 +18,9 @@ function invoke<C extends IpcChannel>(channel: C, ...args: IpcArgs<C>): Promise<
 // is the runtime guard, since page code can pass any string at runtime.
 const SUBSCRIBABLE_EVENTS: Record<IpcEvent, true> = {
   'window:maximized-changed': true,
-  'system:theme-changed': true
+  'system:theme-changed': true,
+  'workspace:tree-changed': true,
+  'index:progress': true
 }
 const ALLOWED_EVENTS = new Set<string>(Object.keys(SUBSCRIBABLE_EVENTS))
 
@@ -57,6 +59,36 @@ const api: SoarApi = {
   },
   system: {
     getTheme: () => invoke('system:get-theme')
+  },
+  workspace: {
+    create: (name) => invoke('workspace:create', name),
+    openDialog: () => invoke('workspace:open-dialog'),
+    openRecent: (rootPath) => invoke('workspace:open-recent', rootPath),
+    close: () => invoke('workspace:close'),
+    getCurrent: () => invoke('workspace:get-current'),
+    updateSettings: (patch) => invoke('workspace:update-settings', patch),
+    readTree: () => invoke('workspace:read-tree'),
+    reveal: (relPath) => invoke('workspace:reveal', relPath)
+  },
+  fs: {
+    createDocument: (folderRel, title) => invoke('fs:create-document', folderRel, title),
+    createDiagram: (folderRel, options) => invoke('fs:create-diagram', folderRel, options),
+    createFolder: (parentRel, name) => invoke('fs:create-folder', parentRel, name),
+    readDocument: (relPath) => invoke('fs:read-document', relPath),
+    writeDocument: (relPath, document) => invoke('fs:write-document', relPath, document),
+    readDiagram: (relPath) => invoke('fs:read-diagram', relPath),
+    writeDiagram: (relPath, diagram) => invoke('fs:write-diagram', relPath, diagram),
+    rename: (relPath, newName) => invoke('fs:rename', relPath, newName),
+    move: (relPath, targetFolderRel) => invoke('fs:move', relPath, targetFolderRel),
+    delete: (relPath) => invoke('fs:delete', relPath)
+  },
+  index: {
+    getStatus: () => invoke('index:get-status'),
+    rebuild: () => invoke('index:rebuild'),
+    listTags: () => invoke('index:list-tags')
+  },
+  search: {
+    query: (text, limit) => invoke('search:query', text, limit)
   },
   on
 }

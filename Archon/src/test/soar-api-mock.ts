@@ -2,6 +2,7 @@ import { vi, type Mock } from 'vitest'
 import type {
   AppInfo,
   AppSettings,
+  IndexStatus,
   IpcEvent,
   IpcEventPayload,
   ResolvedTheme,
@@ -9,13 +10,20 @@ import type {
 } from '@/core/types'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
+import { createFsApiMock } from './fs-api-mock'
+import {
+  createWorkspaceApiMock,
+  ok,
+  type MockedSection as Mocked,
+  type WorkspaceMockOptions
+} from './workspace-api-mock'
 
 type Listener = (payload: unknown) => void
-type Mocked<T> = { [K in keyof T]: T[K] extends (...args: never[]) => unknown ? Mock<T[K]> : T[K] }
 
-export interface SoarApiMockOptions extends Partial<AppInfo> {
+export interface SoarApiMockOptions extends Partial<AppInfo>, WorkspaceMockOptions {
   settings?: AppSettings
   systemTheme?: ResolvedTheme
+  indexStatus?: IndexStatus
 }
 
 export interface SoarApiMock {
@@ -24,6 +32,10 @@ export interface SoarApiMock {
     window: Mocked<SoarApi['window']>
     settings: Mocked<SoarApi['settings']>
     system: Mocked<SoarApi['system']>
+    workspace: Mocked<SoarApi['workspace']>
+    fs: Mocked<SoarApi['fs']>
+    index: Mocked<SoarApi['index']>
+    search: Mocked<SoarApi['search']>
   }
   /** Simulates a main → renderer event reaching every current subscriber. */
   emit: <E extends IpcEvent>(event: E, payload: IpcEventPayload<E>) => void
@@ -37,7 +49,14 @@ const resolved = <T>(value: T): Mock<() => Promise<T>> =>
 
 /** A complete fake `window.soar`. Install it with `window.soar = mock.api`. */
 export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock {
-  const { settings = DEFAULT_SETTINGS, systemTheme = 'dark', ...info } = options
+  const {
+    settings = DEFAULT_SETTINGS,
+    systemTheme = 'dark',
+    indexStatus = { indexing: false, files: 0, skipped: 0, lastSync: null },
+    workspace,
+    tree,
+    ...info
+  } = options
   const listeners = new Map<IpcEvent, Set<Listener>>()
   let stored = structuredClone(settings)
 
@@ -67,6 +86,16 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
     },
     system: {
       getTheme: resolved(systemTheme)
+    },
+    workspace: createWorkspaceApiMock({ workspace, tree }),
+    fs: createFsApiMock(),
+    index: {
+      getStatus: vi.fn(() => Promise.resolve(ok(indexStatus))),
+      rebuild: vi.fn(() => Promise.resolve(ok(indexStatus))),
+      listTags: vi.fn(() => Promise.resolve(ok([])))
+    },
+    search: {
+      query: vi.fn(() => Promise.resolve(ok([])))
     },
     on: (event, callback) => {
       const set = listeners.get(event) ?? new Set<Listener>()

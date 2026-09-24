@@ -3,7 +3,8 @@ import { act, renderHook, waitFor, type RenderHookResult } from '@testing-librar
 import type { AppSettings, ThemePreference } from '@/core/types'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
-import { useUiStore } from '@/store'
+import { useUiStore, useWorkspaceStore } from '@/store'
+import { SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
 import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { useTheme, type ThemeControls } from '../useTheme'
@@ -30,6 +31,7 @@ const renderTheme = (): RenderHookResult<ThemeControls, unknown> =>
 describe('useTheme', () => {
   beforeEach(() => {
     useUiStore.setState(initialUi, true)
+    useWorkspaceStore.setState({ current: null })
     delete root.dataset.theme
     root.style.removeProperty('--accent')
   })
@@ -112,6 +114,22 @@ describe('useTheme', () => {
 
     root.style.removeProperty('--bg')
     root.style.removeProperty('--text2')
+  })
+
+  it('lets a workspace theme override the app preference, and toggles the workspace', async () => {
+    const mock = install(settingsWith('dark'))
+    useWorkspaceStore.setState({
+      current: { ...SAMPLE_WORKSPACE, settings: { ...SAMPLE_WORKSPACE.settings, theme: 'light' } }
+    })
+    const { result } = renderTheme()
+    await waitFor(() => expect(root.dataset.theme).toBe('light'))
+    expect(result.current.preference).toBe('light')
+
+    act(() => result.current.toggleTheme())
+    await waitFor(() =>
+      expect(mock.api.workspace.updateSettings).toHaveBeenCalledWith({ theme: 'dark' })
+    )
+    expect(mock.api.settings.update).not.toHaveBeenCalled()
   })
 
   it('falls back to the dark default without the preload bridge', async () => {

@@ -96,10 +96,34 @@ function normalizeWindow(raw: unknown): WindowSettings {
   return { bounds: normalizeBounds(src.bounds), maximized: bool(src.maximized, false) }
 }
 
-function normalizeRecent(raw: unknown): string[] {
+function stringList(raw: unknown): string[] {
   if (!Array.isArray(raw)) return []
-  const paths = raw.filter((item): item is string => typeof item === 'string' && item !== '')
-  return [...new Set(paths)].slice(0, RECENT_WORKSPACES_LIMIT)
+  const items = raw.filter((item): item is string => typeof item === 'string' && item !== '')
+  return [...new Set(items)]
+}
+
+function normalizeRecent(raw: unknown): string[] {
+  return stringList(raw).slice(0, RECENT_WORKSPACES_LIMIT)
+}
+
+function normalizeSession(raw: unknown): SessionSettings {
+  if (!isObject(raw)) return {}
+  const session: SessionSettings = { ...raw }
+  const { lastWorkspace, expandedByWorkspace } = raw
+  if (lastWorkspace !== undefined) {
+    session.lastWorkspace =
+      typeof lastWorkspace === 'string' && lastWorkspace !== '' ? lastWorkspace : null
+  }
+  if (expandedByWorkspace !== undefined) {
+    const byWorkspace: Record<string, string[]> = {}
+    if (isObject(expandedByWorkspace)) {
+      for (const [id, paths] of Object.entries(expandedByWorkspace)) {
+        byWorkspace[id] = stringList(paths)
+      }
+    }
+    session.expandedByWorkspace = byWorkspace
+  }
+  return session
 }
 
 /**
@@ -113,7 +137,7 @@ export function normalizeSettings(raw: unknown): AppSettings {
     layout: normalizeLayout(src.layout),
     window: normalizeWindow(src.window),
     recentWorkspaces: normalizeRecent(src.recentWorkspaces),
-    session: (isObject(src.session) ? src.session : {}) as SessionSettings
+    session: normalizeSession(src.session)
   }
 }
 

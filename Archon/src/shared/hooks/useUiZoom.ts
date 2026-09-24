@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useEffectEvent } from 'react'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { UI_ZOOM_DEFAULT, UI_ZOOM_STEPS } from '@/core/constants/app.constants'
+import { useUiStore } from '@/store'
 import { useSettings, useUpdateSettings } from './useSettings'
 
 export interface UiZoomControls {
@@ -29,15 +30,16 @@ export function stepZoom(current: number, direction: 1 | -1): number {
 export function useUiZoom(): UiZoomControls {
   const zoom = useSettings().appearance.uiZoom
   const { mutate: updateSettings } = useUpdateSettings()
+  const notify = useUiStore((s) => s.notify)
 
   const setZoom = useCallback(
     (factor: number) => {
       if (factor === zoom) return
       void ipcClient.window.setZoom(factor).catch(console.error)
       updateSettings({ appearance: { uiZoom: factor } })
-      // Plan 06 adds the "Zoom 125%" toast here.
+      notify(`Zoom ${Math.round(factor * 100)}%`)
     },
-    [zoom, updateSettings]
+    [zoom, updateSettings, notify]
   )
 
   const zoomIn = useCallback(() => setZoom(stepZoom(zoom, 1)), [setZoom, zoom])

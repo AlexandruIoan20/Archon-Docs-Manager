@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://soar-docs-studio.local/formats/soardiag.schema.json",
+  "title": "SOAR Docs Studio diagram (.soardiag)",
+  "description": "A diagram. Mirrors src/core/schemas/diagram.schema.ts, which is the source of truth. Nodes and edges use the React Flow shape.",
+  "type": "object",
+  "required": ["version", "id", "title", "created", "lastModified"],
+  "$defs": {
+    "hexColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+    "nullableHexColor": {
+      "oneOf": [{ "$ref": "#/$defs/hexColor" }, { "type": "null" }],
+      "default": null
+    },
+    "nullablePositive": {
+      "oneOf": [{ "type": "number", "exclusiveMinimum": 0 }, { "type": "null" }],
+      "default": null
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "position"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "description": "Short and unique within the diagram, e.g. N1." },
+        "type": {
+          "enum": ["trigger", "action", "decision", "integration", "element", "shape-rect", "shape-ellipse", "text"]
+        },
+        "position": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string", "default": "" },
+            "subtitle": { "type": "string", "default": "" },
+            "color": { "$ref": "#/$defs/nullableHexColor" },
+            "icon": { "type": ["string", "null"], "default": null },
+            "description": { "type": "string", "default": "" },
+            "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
+            "retryOnFail": { "type": "boolean", "default": false },
+            "stroke": { "$ref": "#/$defs/nullableHexColor" },
+            "fill": { "$ref": "#/$defs/nullableHexColor" },
+            "strokeWidth": { "$ref": "#/$defs/nullablePositive" },
+            "fontSize": { "$ref": "#/$defs/nullablePositive" }
+          }
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "source", "target"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "label": { "type": ["string", "null"], "default": null }
+      }
+    }
+  },
+  "properties": {
+    "version": { "type": "string", "minLength": 1, "examples": ["1.0.0"] },
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "maxLength": 200 },
+    "type": {
+      "enum": [
+        "flowchart", "class", "object", "component", "composite", "package", "deployment", "profile",
+        "usecase", "activity", "state", "sequence", "communication", "timing", "interaction"
+      ],
+      "default": "flowchart"
+    },
+    "engine": { "enum": ["react-flow", "mermaid"], "default": "react-flow" },
+    "created": { "type": "string", "format": "date-time" },
+    "lastModified": { "type": "string", "format": "date-time" },
+    "style": {
+      "type": "object",
+      "description": "null follows the app preference.",
+      "properties": {
+        "nodeStyle": { "enum": ["card", "outline", "solid", null], "default": null },
+        "edgeStyle": { "enum": ["curved", "orthogonal", "straight", null], "default": null }
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" }, "default": [] },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" }, "default": [] },
+        "viewport": {
+          "type": "object",
+          "required": ["x", "y", "zoom"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "zoom": { "type": "number", "exclusiveMinimum": 0 }
+          },
+          "default": { "x": 0, "y": 0, "zoom": 1 }
+        }
+      }
+    },
+    "mermaidSource": { "type": ["string", "null"], "default": null },
+    "exportedAt": {
+      "oneOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }],
+      "default": null
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "default": [] }
+  }
+}

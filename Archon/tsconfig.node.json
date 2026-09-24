@@ -3,10 +3,13 @@
   "include": [
     "electron.vite.config.*",
     "vitest.config.*",
+    "vitest.main.config.*",
     "electron/**/*",
     "src/core/types/**/*",
     "src/core/constants/**/*",
-    "src/core/settings/**/*"
+    "src/core/settings/**/*",
+    "src/core/schemas/**/*",
+    "src/core/validation/**/*"
   ],
   "compilerOptions": {
     "composite": true,

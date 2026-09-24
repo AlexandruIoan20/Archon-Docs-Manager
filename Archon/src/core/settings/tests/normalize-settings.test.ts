@@ -48,9 +48,24 @@ describe('normalizeSettings', () => {
     ).toBe(null)
   })
 
-  it('keeps at most ten recent workspaces', () => {
+  it('keeps at most eight recent workspaces', () => {
     const paths = Array.from({ length: 14 }, (_, i) => `/ws/${i}`)
-    expect(normalizeSettings({ recentWorkspaces: paths }).recentWorkspaces).toHaveLength(10)
+    expect(normalizeSettings({ recentWorkspaces: paths }).recentWorkspaces).toHaveLength(8)
+  })
+
+  it('validates the known session fields and keeps the others', () => {
+    const session = normalizeSettings({
+      session: {
+        lastWorkspace: 42,
+        expandedByWorkspace: { a: ['x', 'x', 3, 'y'], b: 'nope' },
+        futureField: { tabs: [] }
+      }
+    }).session
+    expect(session).toEqual({
+      lastWorkspace: null,
+      expandedByWorkspace: { a: ['x', 'y'], b: [] },
+      futureField: { tabs: [] }
+    })
   })
 })
 

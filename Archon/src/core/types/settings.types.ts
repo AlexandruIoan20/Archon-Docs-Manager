@@ -42,8 +42,14 @@ export interface WindowSettings {
   maximized: boolean
 }
 
-/** Reserved for the open-tabs session (plan 11). */
-export type SessionSettings = Record<string, unknown>
+/** What the app restores on the next launch. Plan 11 adds the open tabs. */
+export interface SessionSettings {
+  /** Root of the workspace open at quit; `null` after an explicit close. */
+  lastWorkspace?: string | null
+  /** Expanded folder paths, per workspace id (plan 08). */
+  expandedByWorkspace?: Record<string, string[]>
+  [key: string]: unknown
+}
 
 export interface AppSettings {
   appearance: AppearanceSettings

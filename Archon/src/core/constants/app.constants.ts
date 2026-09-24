@@ -8,18 +8,28 @@ export const APP_NAME = 'SOAR Docs Studio'
 export const QUERY_KEYS = {
   appInfo: ['app', 'info'],
   settings: ['settings'],
-  systemTheme: ['system', 'theme']
+  systemTheme: ['system', 'theme'],
+  workspaceCurrent: ['workspace', 'current'],
+  /** Followed by the workspace id, so switching workspaces never shows a stale tree. */
+  workspaceTree: ['workspace', 'tree']
 } as const
 
 /** The four accents offered by the design; the first one is the default. */
 export const ACCENT_OPTIONS: readonly AccentColor[] = ['#4F8EF7', '#22C55E', '#F59E0B', '#E8534F']
+
+export const ACCENT_LABELS: Record<AccentColor, string> = {
+  '#4F8EF7': 'Blue',
+  '#22C55E': 'Green',
+  '#F59E0B': 'Amber',
+  '#E8534F': 'Red'
+}
 
 /** Interface zoom factors, cycled by Ctrl/Cmd + `=` / `-`. */
 export const UI_ZOOM_STEPS: readonly number[] = [0.8, 0.9, 1, 1.1, 1.25, 1.5]
 export const UI_ZOOM_DEFAULT = 1
 
 /** Most recent workspaces remembered in settings. */
-export const RECENT_WORKSPACES_LIMIT = 10
+export const RECENT_WORKSPACES_LIMIT = 8
 
 export const DEFAULT_SETTINGS: AppSettings = {
   appearance: {

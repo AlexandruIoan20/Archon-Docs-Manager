@@ -8,12 +8,13 @@ files:
   - '!electron/*'
   - '!formats/*'
   - '!index.html'
-  - '!{electron.vite.config,vitest.config}.{js,ts,mjs,cjs}'
+  - '!{electron.vite.config,vitest.config,vitest.main.config}.{js,ts,mjs,cjs}'
   - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+  - '**/node_modules/better-sqlite3/**'
 win:
   executableName: soar-docs-studio
 nsis:

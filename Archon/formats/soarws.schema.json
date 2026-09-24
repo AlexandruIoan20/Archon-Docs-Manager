@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://soar-docs-studio.local/formats/soarws.schema.json",
+  "title": "SOAR Docs Studio workspace (.soarws)",
+  "description": "Marks a folder as a workspace. Mirrors src/core/schemas/workspace.schema.ts, which is the source of truth.",
+  "type": "object",
+  "required": ["version", "id", "name", "created", "lastModified"],
+  "properties": {
+    "version": { "type": "string", "minLength": 1, "examples": ["1.0.0"] },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Stable identity; the local index is keyed by it."
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "created": { "type": "string", "format": "date-time" },
+    "lastModified": { "type": "string", "format": "date-time" },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "enum": ["inherit", "dark", "light"],
+          "default": "inherit",
+          "description": "`inherit` follows the app preference."
+        },
+        "defaultDiagramType": {
+          "type": "string",
+          "default": "flowchart",
+          "description": "A diagram type id, see soardiag.schema.json#/properties/type."
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0.0",
+      "id": "6f1c2f0e-8f1a-4b8a-9d1e-2b7c4d5e6f70",
+      "name": "SOAR Platform v2",
+      "created": "2024-01-15T10:00:00Z",
+      "lastModified": "2024-01-20T14:30:00Z",
+      "settings": { "theme": "dark", "defaultDiagramType": "flowchart" }
+    }
+  ]
+}

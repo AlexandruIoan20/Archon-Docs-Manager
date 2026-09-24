@@ -7,6 +7,10 @@ export interface SegmentedOption<T extends string> {
   label: ReactNode
   icon?: IconName
   disabled?: boolean
+  /** Native tooltip, e.g. when a narrow container hides the label. */
+  tooltip?: string
+  /** Accessible name when the label is not plain text. */
+  ariaLabel?: string
 }
 
 export interface SegmentedControlProps<T extends string> {
@@ -94,6 +98,8 @@ export function SegmentedControl<T extends string>({
             tabIndex={selected ? 0 : -1}
             disabled={option.disabled}
             data-value={option.value}
+            title={option.tooltip}
+            aria-label={option.ariaLabel}
             onClick={() => onChange(option.value)}
             className={cn(
               'inline-flex min-w-0 cursor-pointer items-center justify-center whitespace-nowrap transition-colors',

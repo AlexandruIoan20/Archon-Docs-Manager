@@ -11,7 +11,13 @@ export default defineConfig({
   main: {
     resolve: { alias },
     build: {
-      rollupOptions: { input: { index: resolve(__dirname, 'electron/main.ts') } }
+      // chokidar 5 is ESM-only while main is emitted as CJS, so it is bundled.
+      // better-sqlite3 is a native module and must stay external (plan 10).
+      externalizeDeps: { exclude: ['chokidar'] },
+      rollupOptions: {
+        input: { index: resolve(__dirname, 'electron/main.ts') },
+        external: ['better-sqlite3']
+      }
     }
   },
   preload: {

@@ -3,6 +3,12 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { registerIpcHandlers } from './modules/ipc'
 import { installAppMenu } from './modules/app-menu'
 import { createMainWindow } from './modules/window-manager'
+import { shutdownIndexService, startIndexService } from './modules/index-service'
+import {
+  restoreLastWorkspace,
+  shutdownWorkspaceServices,
+  startWorkspaceServices
+} from './modules/workspace-services'
 
 const APP_USER_MODEL_ID = 'com.archon.soardocsstudio'
 
@@ -17,7 +23,7 @@ if (!app.requestSingleInstanceLock()) {
     window.focus()
   })
 
-  void app.whenReady().then(() => {
+  void app.whenReady().then(async () => {
     electronApp.setAppUserModelId(APP_USER_MODEL_ID)
 
     // F12 toggles DevTools in dev; Ctrl/Cmd+R reload is disabled in production.
@@ -27,6 +33,10 @@ if (!app.requestSingleInstanceLock()) {
 
     installAppMenu()
     registerIpcHandlers()
+    startWorkspaceServices()
+    startIndexService()
+    // Before the window: its first `workspace:get-current` already sees the workspace.
+    await restoreLastWorkspace()
     createMainWindow()
 
     app.on('activate', () => {
@@ -36,5 +46,19 @@ if (!app.requestSingleInstanceLock()) {
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
+  })
+
+  // Stop the watcher (and close the index) before the process exits.
+  let shutdownDone = false
+  app.on('will-quit', (event) => {
+    if (shutdownDone) return
+    event.preventDefault()
+    void shutdownWorkspaceServices()
+      .then(shutdownIndexService)
+      .catch((error: unknown) => console.error('[main] shutdown failed', error))
+      .finally(() => {
+        shutdownDone = true
+        app.quit()
+      })
   })
 }

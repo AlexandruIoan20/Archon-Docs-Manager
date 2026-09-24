@@ -15,7 +15,9 @@ export const settingsQuery = queryOptions({
   queryKey: QUERY_KEYS.settings,
   queryFn: ipcClient.settings.get,
   // Main is the only writer and every write goes through `useUpdateSettings`.
-  staleTime: Infinity
+  staleTime: Infinity,
+  // A local IPC failure is not transient; retrying would only delay startup.
+  retry: false
 })
 
 /** The stored settings, or the defaults while they are unavailable. */

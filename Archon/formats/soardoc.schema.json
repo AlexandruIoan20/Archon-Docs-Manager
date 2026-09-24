@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://soar-docs-studio.local/formats/soardoc.schema.json",
+  "title": "SOAR Docs Studio document (.soardoc)",
+  "description": "A rich-text document. Mirrors src/core/schemas/document.schema.ts, which is the source of truth.",
+  "type": "object",
+  "required": ["version", "id", "title", "created", "lastModified"],
+  "properties": {
+    "version": { "type": "string", "minLength": 1, "examples": ["1.0.0"] },
+    "id": { "type": "string", "minLength": 1, "description": "UUID v4 for files created by the app." },
+    "title": { "type": "string", "maxLength": 200 },
+    "created": { "type": "string", "format": "date-time" },
+    "lastModified": { "type": "string", "format": "date-time" },
+    "content": {
+      "description": "TipTap JSON. Older files may store it as a string; it is converted on read.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": { "const": "doc" },
+            "content": { "type": "array" }
+          }
+        },
+        { "type": "string" }
+      ],
+      "default": { "type": "doc", "content": [] }
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "linkedDiagrams": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Ids of diagrams the document refers to."
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0.0",
+      "id": "3d9b7c2a-1e4f-4a6b-8c0d-2e4f6a8b0c1d",
+      "title": "Incident Response Policy",
+      "created": "2024-01-15T10:00:00Z",
+      "lastModified": "2024-01-20T14:30:00Z",
+      "content": { "type": "doc", "content": [] },
+      "tags": [],
+      "linkedDiagrams": []
+    }
+  ]
+}

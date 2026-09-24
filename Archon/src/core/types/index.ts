@@ -1,6 +1,7 @@
 export type {
   AppInfo,
   AppPlatform,
+  EntryRef,
   IpcArgs,
   IpcChannel,
   IpcEvent,
@@ -9,9 +10,9 @@ export type {
   IpcInvokeContract,
   IpcResult,
   IpcUnsubscribe,
-  SoarApi,
   TitleBarColors
 } from './ipc.types'
+export type { SoarApi } from './soar-api.types'
 export type { EditorContribution, EditorSlotProps, EditorTabRef, FileKind } from './editor.types'
 export type {
   PanelId,
@@ -38,3 +39,26 @@ export type {
   WindowBounds,
   WindowSettings
 } from './settings.types'
+export type { IpcErrorCode, IpcErrorPayload, Result, ResultValue } from './result.types'
+export type {
+  FileEntry,
+  FolderEntry,
+  TreeEntry,
+  WorkspaceInfo,
+  WorkspaceSettings,
+  WorkspaceThemeOverride
+} from './workspace.types'
+export type { SoarDocument, TiptapDoc } from './document.types'
+export type {
+  CreateDiagramOptions,
+  DiagramEdge,
+  DiagramEdgeInput,
+  DiagramEngine,
+  DiagramNode,
+  DiagramNodeInput,
+  DiagramNodeType,
+  DiagramType,
+  SoarDiagram,
+  UmlDiagramType
+} from './diagram.types'
+export type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'

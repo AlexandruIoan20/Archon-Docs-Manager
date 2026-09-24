@@ -129,6 +129,29 @@
   animation: drawer-in-end 150ms ease-out;
 }
 
+/* Status bar: segments give way by priority as the bar narrows (StatusSegment). */
+.statusbar {
+  container: statusbar / inline-size;
+}
+
+@container statusbar (max-width: 719.98px) {
+  [data-priority='3'] {
+    display: none;
+  }
+}
+
+@container statusbar (max-width: 559.98px) {
+  [data-priority='2'] {
+    display: none;
+  }
+}
+
+@container statusbar (max-width: 419.98px) {
+  [data-priority='1'] {
+    display: none;
+  }
+}
+
 /* While a panel edge is dragged, the resize cursor wins everywhere. */
 html.panel-resizing,
 html.panel-resizing * {

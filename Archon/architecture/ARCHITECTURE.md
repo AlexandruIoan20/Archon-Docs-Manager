@@ -8,7 +8,7 @@ Se actualizează la finalul fiecărui plan.
 - `[NN]` planul care creează fișierul;
 - `[NN*]` planul care modifică un fișier existent.
 
-**Stare curentă:** planurile 01–05 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless, layout shell responsive, setări persistate: temă, accent, layout, fereastră, zoom).
+**Stare curentă:** planurile 01–06 sunt implementate (tokenuri, primitive UI, TitleBar și fereastră frameless, layout shell responsive, setări persistate, status bar cu segmente și notificări toast).
 
 ---
 
@@ -111,7 +111,7 @@ electron/
     │   ├── settings.handler.ts    ✅ [05] settings:get / update, system:get-theme, evenimentul system:theme-changed
     │   ├── workspace.handler.ts      [07] creare / deschidere workspace, evenimente watcher
     │   ├── fs.handler.ts             [09] CRUD .soardoc / .soardiag / foldere
-    │   ├── db.handler.ts             [10] căutare, metadata
+    │   ├── db.handler.ts          ✅ [10] index:get-status / rebuild / list-tags, search:query
     │   └── export.handler.ts         [19] salvare PNG / SVG / PDF / XMI
     ├── settings/
     │   ├── index.ts               ✅ [05] getSettingsStore() → userData/settings.json
@@ -127,19 +127,22 @@ electron/
     │   ├── documents.ts              [09] operații .soardoc
     │   ├── diagrams.ts               [09] operații .soardiag
     │   └── naming.ts                 [09] nume unice, sanitizare
+    ├── index-service.ts           ✅ [10] index deschis cu workspace-ul, fullSync în fundal, evenimente watcher, index:progress
     ├── database/
-    │   ├── db.ts                     [10] better-sqlite3, conexiune și inițializare
-    │   ├── indexer.ts                [10] sincronizare fișiere → index
-    │   ├── text-extract.ts           [10] text simplu din TipTap / diagrame
+    │   ├── db.ts                  ✅ [10] better-sqlite3 (WAL, foreign_keys), userData/indexes/<workspaceId>.db + app.db
+    │   ├── indexer.ts             ✅ [10] fullSync (mtime/size), syncPath incremental, coadă serială, loturi de 50
+    │   ├── disk-scan.ts           ✅ [10] fișierele app de pe disc + citire validată (fișier invalid → sărit, logat)
+    │   ├── text-extract.ts        ✅ [10] text simplu din TipTap
     │   ├── migrations/
-    │   │   ├── index.ts              [10]
-    │   │   ├── 001_initial.ts        [10] DB per workspace
-    │   │   └── app/001_projects.ts   [10] DB la nivel de aplicație
+    │   │   ├── index.ts           ✅ [10] runner după PRAGMA user_version, o tranzacție per migrare
+    │   │   ├── 001_initial.ts     ✅ [10] DB per workspace (files, tags, doc_links, diagram_nodes, search_fts)
+    │   │   └── app/001_projects.ts ✅ [10] DB la nivel de aplicație
     │   └── repositories/
-    │       ├── documents.repo.ts     [10]
-    │       ├── diagrams.repo.ts      [10]
-    │       ├── projects.repo.ts      [10]
-    │       └── search.repo.ts        [10] FTS
+    │       ├── file-rows.ts       ✅ [10] statement-uri comune documente / diagrame
+    │       ├── documents.repo.ts  ✅ [10]
+    │       ├── diagrams.repo.ts   ✅ [10] noduri + rânduri FTS per nod
+    │       ├── projects.repo.ts   ✅ [10]
+    │       └── search.repo.ts     ✅ [10] FTS5 cu prefix, snippet() și bm25, listă de tag-uri
     └── export/
         ├── save-file.ts              [19] dialog de salvare + scriere
         └── svg-to-pdf.ts             [19]
@@ -205,9 +208,9 @@ src/core/
 src/store/
 ├── index.ts                       ✅ [04]
 ├── ui.store.ts                    ✅ [04] panouri (visible / width / overlayOpen), lastOverlay, panelResizing,
-│                                     modal activ   [05*] resolvedTheme, hydratePanels   [06*] toast
-├── tests/                         ✅ ui.store
-├── status.store.ts                   [06] segmentele status bar-ului
+│                                     modal activ   [05*] resolvedTheme, hydratePanels   [06*] toast, notify, dismissToast
+├── status.store.ts                ✅ [06] textul și tonul segmentului de stare („Ready” / „Connecting…”)
+├── tests/                         ✅ ui.store, status.store
 ├── workspace.store.ts                [07] workspace curent, arbore, folder țintă
 └── editor.store.ts                   [08] tab-uri, tab activ, dirty   [11*] [17*]
 ```
@@ -413,7 +416,7 @@ src/shared/
 │   │   ├── Kbd.tsx                ✅
 │   │   ├── SectionLabel.tsx       ✅
 │   │   ├── EmptyState.tsx         ✅
-│   │   ├── Toast.tsx                 [06]
+│   │   ├── Toast.tsx              ✅ [06] prezentațional: info / error (2 rânduri, role=alert)
 │   │   ├── ContextMenu.tsx           [20]
 │   │   └── tests/                 ✅ Menu, Modal, SegmentedControl, TagInput, Toggle
 │   └── layout/
@@ -425,15 +428,18 @@ src/shared/
 │       │   ├── TitleBarDensityContext.tsx  context + useTitleBarDensity()
 │       │   ├── title-bar-density.ts   funcție pură, cu histerezis
 │       │   └── tests/                 BrandMark, WindowControls, title-bar-density
-│       ├── tests/                 ✅ TitleBar, AppShell, SidePanel, PanelResizeHandle, ModalHost
+│       ├── tests/                 ✅ TitleBar, AppShell, SidePanel, PanelResizeHandle, ModalHost, StatusBar, ToastViewport
 │       ├── AppShell.tsx           ✅ [04] gridul ferestrei; coloane din PanelLayout
 │       ├── SidePanel.tsx          ✅ [04] docked / overlay: poziție, animație, focus, Escape
 │       ├── PanelResizeHandle.tsx  ✅ [04] generic, pointer + tastatură   [18*] refolosit pentru split view
 │       ├── Sidebar.tsx            ✅ [04] cadrul panoului stâng
 │       ├── InspectorPanel.tsx     ✅ [04] header „Properties” + închidere
 │       ├── ModalHost.tsx          ✅ [04] modalul activ din ui.store
-│       ├── StatusBar.tsx          ✅ [04] containerul de 24px   [06*] conținut
-│       ├── ToastViewport.tsx         [06]
+│       ├── StatusBar.tsx          ✅ [04] containerul de 24px   [06*] sloturi left / right, container `statusbar`
+│       ├── StatusSegment.tsx      ✅ [06] segment: punct, mono, priority 1–3, grow
+│       ├── StatusPath.tsx         ✅ [06] calea activă, trunchiată la mijloc după lățime, tooltip
+│       ├── ShellStatusBar.tsx     ✅ [06] compunerea: stare, cale, StatusItems ale editorului, tema
+│       ├── ToastViewport.tsx      ✅ [06] toast-ul din ui.store, 1900ms, aria-live
 │       └── ShortcutsHelp.tsx         [20]
 ├── hooks/
 │   ├── useClickOutside.ts         ✅
@@ -447,7 +453,7 @@ src/shared/
 │   ├── useSettings.ts             ✅ [05] settingsQuery, useSettings(), useUpdateSettings() optimist
 │   ├── useTheme.ts                ✅ [05] temă efectivă, tema OS live, overlay Windows, toggle
 │   ├── useLayoutPersistence.ts    ✅ [05] salvează panourile (debounce 300ms, nu în timpul drag-ului)
-│   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%
+│   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%   [06*] toast „Zoom N%”
 │   ├── tests/                     ✅ [05] useTheme, useLayoutPersistence, useUiZoom
 │   ├── useDebounce.ts                [12]
 │   └── useKeyboard.ts                [15]   [20*]
@@ -455,10 +461,10 @@ src/shared/
     ├── cn.ts                      ✅
     ├── floating-position.ts       ✅
     ├── truncate-middle.ts         ✅
-    ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout, apply-theme
+    ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout, apply-theme, platform
     ├── panel-layout.ts            ✅ [04] resolvePanelLayout (funcție pură)
     ├── apply-theme.ts             ✅ [05] resolveTheme, applyTheme (data-theme, --accent), readTitleBarColors
-    ├── platform.ts                   [06]
+    ├── platform.ts                ✅ [06] modKeyLabel (⌘ / Ctrl), formatShortcut
     └── color.ts                      [14]
 ```
 
@@ -469,6 +475,7 @@ src/styles/
 ├── globals.css                    ✅ Tailwind v4 + @theme, fonturi locale, bază
 │                                     [03*] utilitarele app-drag / app-no-drag + no-drag automat pe elementele interactive
 │                                     [04*] animațiile sertarelor, cursorul global în timpul redimensionării
+│                                     [06*] regulile @container ale status bar-ului (data-priority)
 ├── variables.css                  ✅ tokenuri fără temă (fonturi, raze, umbre, dimensiuni)
 ├── tokens.test.ts                 ✅
 └── themes/

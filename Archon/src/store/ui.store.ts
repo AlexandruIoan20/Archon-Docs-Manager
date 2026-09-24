@@ -18,6 +18,17 @@ export function clampPanelWidth(id: PanelId, width: number): number {
   return Math.round(Math.min(Math.max(width, min), max))
 }
 
+export type ToastTone = 'info' | 'error'
+
+export interface Toast {
+  /** Changes on every `notify`, so the viewport can restart its timer. */
+  id: number
+  message: string
+  tone: ToastTone
+}
+
+let nextToastId = 1
+
 export interface UiState {
   panels: Record<PanelId, PanelPreference>
   /** The drawer opened most recently; wins if both ask for an overlay. */
@@ -27,6 +38,8 @@ export interface UiState {
   activeModal: ModalId | null
   /** Effective theme, mirrored by `useTheme` for synchronous reads. */
   resolvedTheme: ResolvedTheme
+  /** The single visible toast; a new one replaces it. */
+  toast: Toast | null
 
   /**
    * Shows or hides a panel. When space keeps the panel from docking
@@ -41,6 +54,9 @@ export interface UiState {
   /** Loads saved panel preferences (widths clamped); drawers start closed. */
   hydratePanels: (layout: LayoutSettings) => void
   setResolvedTheme: (theme: ResolvedTheme) => void
+  /** Shows a short confirmation; any module may call it through `getState()`. */
+  notify: (message: string, tone?: ToastTone) => void
+  dismissToast: () => void
   openModal: (id: ModalId) => void
   closeModal: () => void
 }
@@ -57,6 +73,7 @@ export const useUiStore = create<UiState>()((set) => ({
   panelResizing: false,
   activeModal: null,
   resolvedTheme: 'dark',
+  toast: null,
 
   togglePanel: (id, autoHidden) =>
     set((state) => {
@@ -135,6 +152,9 @@ export const useUiStore = create<UiState>()((set) => ({
     }),
 
   setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
+
+  notify: (message, tone = 'info') => set({ toast: { id: nextToastId++, message, tone } }),
+  dismissToast: () => set({ toast: null }),
 
   openModal: (activeModal) => set({ activeModal }),
   closeModal: () => set({ activeModal: null })

@@ -101,4 +101,30 @@ describe('ui.store', () => {
     useUiStore.getState().setResolvedTheme('light')
     expect(useUiStore.getState().resolvedTheme).toBe('light')
   })
+
+  it('shows a toast and replaces it with the next one', () => {
+    const { notify } = useUiStore.getState()
+    notify('Folder created')
+    const first = useUiStore.getState().toast
+    expect(first).toMatchObject({ message: 'Folder created', tone: 'info' })
+
+    notify('Export failed', 'error')
+    const second = useUiStore.getState().toast
+    expect(second).toMatchObject({ message: 'Export failed', tone: 'error' })
+    expect(second?.id).not.toBe(first?.id)
+  })
+
+  it('gives a repeated message a new id', () => {
+    const { notify } = useUiStore.getState()
+    notify('Node added')
+    const first = useUiStore.getState().toast?.id
+    notify('Node added')
+    expect(useUiStore.getState().toast?.id).not.toBe(first)
+  })
+
+  it('dismisses the toast', () => {
+    useUiStore.getState().notify('Node added')
+    useUiStore.getState().dismissToast()
+    expect(useUiStore.getState().toast).toBeNull()
+  })
 })
