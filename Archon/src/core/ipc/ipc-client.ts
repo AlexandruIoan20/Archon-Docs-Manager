@@ -49,7 +49,8 @@ export const ipcClient = {
   /** False in unit tests or if the preload script failed to load. */
   isAvailable: (): boolean => window.soar !== undefined,
   app: {
-    getInfo: (): Promise<AppInfo> => call((api) => api.app.getInfo())
+    getInfo: (): Promise<AppInfo> => call((api) => api.app.getInfo()),
+    confirmClose: (): Promise<void> => call((api) => api.app.confirmClose())
   },
   window: {
     minimize: (): Promise<void> => call((api) => api.window.minimize()),

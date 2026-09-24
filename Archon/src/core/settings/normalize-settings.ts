@@ -5,6 +5,7 @@ import type {
   PanelSettings,
   SessionSettings,
   SettingsPatch,
+  TabSession,
   WindowBounds,
   WindowSettings
 } from '@/core/types/settings.types'
@@ -106,10 +107,30 @@ function normalizeRecent(raw: unknown): string[] {
   return stringList(raw).slice(0, RECENT_WORKSPACES_LIMIT)
 }
 
+const TAB_KINDS = new Set(['soardoc', 'soardiag'])
+
+function normalizeTabSession(raw: unknown): TabSession {
+  const src = isObject(raw) ? raw : {}
+  const tabs = (Array.isArray(src.tabs) ? src.tabs : []).filter(
+    (tab): tab is TabSession['tabs'][number] =>
+      isObject(tab) &&
+      typeof tab.relPath === 'string' &&
+      tab.relPath !== '' &&
+      typeof tab.kind === 'string' &&
+      TAB_KINDS.has(tab.kind)
+  )
+  const unique = tabs.filter((tab, i) => tabs.findIndex((t) => t.relPath === tab.relPath) === i)
+  const active =
+    typeof src.active === 'string' && unique.some((tab) => tab.relPath === src.active)
+      ? src.active
+      : null
+  return { tabs: unique.map(({ relPath, kind }) => ({ relPath, kind })), active }
+}
+
 function normalizeSession(raw: unknown): SessionSettings {
   if (!isObject(raw)) return {}
   const session: SessionSettings = { ...raw }
-  const { lastWorkspace, expandedByWorkspace } = raw
+  const { lastWorkspace, expandedByWorkspace, tabsByWorkspace } = raw
   if (lastWorkspace !== undefined) {
     session.lastWorkspace =
       typeof lastWorkspace === 'string' && lastWorkspace !== '' ? lastWorkspace : null
@@ -122,6 +143,15 @@ function normalizeSession(raw: unknown): SessionSettings {
       }
     }
     session.expandedByWorkspace = byWorkspace
+  }
+  if (tabsByWorkspace !== undefined) {
+    const byWorkspace: Record<string, TabSession> = {}
+    if (isObject(tabsByWorkspace)) {
+      for (const [id, value] of Object.entries(tabsByWorkspace)) {
+        byWorkspace[id] = normalizeTabSession(value)
+      }
+    }
+    session.tabsByWorkspace = byWorkspace
   }
   return session
 }

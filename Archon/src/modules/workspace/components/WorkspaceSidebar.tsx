@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
+import { selectActivePath, useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
 import { useFileActions } from '../hooks/useFileActions'
 import { useWorkspaceActions, useWorkspaceTree } from '../hooks/useWorkspace'
 import { flattenTree, type TreeRow } from '../utils/flatten-tree'
@@ -28,7 +28,7 @@ export function WorkspaceSidebar({
   const query = useWorkspaceStore((s) => s.query)
   const renaming = useWorkspaceStore((s) => s.renaming)
   const store = useWorkspaceStore.getState()
-  const activePath = useEditorStore((s) => s.activePath)
+  const activePath = useEditorStore(selectActivePath)
   const { openModal, closeOverlays } = useUiStore.getState()
   const actions = useWorkspaceActions()
   const files = useFileActions()

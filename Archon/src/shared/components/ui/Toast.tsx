@@ -5,11 +5,18 @@ export type ToastVariant = 'info' | 'error'
 export interface ToastProps {
   message: string
   tone?: ToastVariant
+  /** A button after the message; the toast then stays up longer. */
+  action?: { label: string; onClick: () => void }
   className?: string
 }
 
 /** A one-line confirmation pill (two lines for errors), full text in `title`. */
-export function Toast({ message, tone = 'info', className }: ToastProps): React.JSX.Element {
+export function Toast({
+  message,
+  tone = 'info',
+  action,
+  className
+}: ToastProps): React.JSX.Element {
   const error = tone === 'error'
   return (
     <div
@@ -27,6 +34,15 @@ export function Toast({ message, tone = 'info', className }: ToastProps): React.
         className={cn('size-1.5 shrink-0 rounded-full', error ? 'bg-danger' : 'bg-accent')}
       />
       <span className={cn('min-w-0', error ? 'line-clamp-2' : 'truncate')}>{message}</span>
+      {action && (
+        <button
+          type="button"
+          onClick={action.onClick}
+          className="shrink-0 cursor-pointer rounded-sm px-1.5 font-semibold text-accent hover:bg-accent-soft"
+        >
+          {action.label}
+        </button>
+      )}
     </div>
   )
 }

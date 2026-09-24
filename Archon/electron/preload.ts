@@ -20,7 +20,8 @@ const SUBSCRIBABLE_EVENTS: Record<IpcEvent, true> = {
   'window:maximized-changed': true,
   'system:theme-changed': true,
   'workspace:tree-changed': true,
-  'index:progress': true
+  'index:progress': true,
+  'app:before-quit': true
 }
 const ALLOWED_EVENTS = new Set<string>(Object.keys(SUBSCRIBABLE_EVENTS))
 
@@ -43,7 +44,8 @@ function on<E extends IpcEvent>(
 
 const api: SoarApi = {
   app: {
-    getInfo: () => invoke('app:get-info')
+    getInfo: () => invoke('app:get-info'),
+    confirmClose: () => invoke('app:confirm-close')
   },
   window: {
     minimize: () => invoke('window:minimize'),

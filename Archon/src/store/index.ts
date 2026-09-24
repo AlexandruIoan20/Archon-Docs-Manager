@@ -3,6 +3,7 @@ export {
   clampPanelWidth,
   PANEL_WIDTH_LIMITS,
   type Toast,
+  type ToastAction,
   type ToastTone,
   type UiState
 } from './ui.store'
@@ -14,4 +15,12 @@ export {
   type SideTab,
   type WorkspaceState
 } from './workspace.store'
-export { useEditorStore, type EditorState } from './editor.store'
+export {
+  useEditorStore,
+  selectActivePath,
+  selectActiveTab,
+  titleFromPath,
+  type EditorState,
+  type EditorTab,
+  type TabSeed
+} from './editor.store'

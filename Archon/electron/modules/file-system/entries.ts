@@ -88,9 +88,10 @@ export async function renameEntry(
   const entry = await resolveEntry(root, relPath)
   const ext = entry.isFolder ? '' : extname(entry.path)
   const trimmed = newName.trim()
-  const base = ext && trimmed.toLowerCase().endsWith(ext.toLowerCase())
-    ? trimmed.slice(0, -ext.length)
-    : trimmed
+  const base =
+    ext && trimmed.toLowerCase().endsWith(ext.toLowerCase())
+      ? trimmed.slice(0, -ext.length)
+      : trimmed
   assertValidFileName(base)
   const fileName = `${base}${ext}`
 

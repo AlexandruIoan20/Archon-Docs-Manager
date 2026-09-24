@@ -4,6 +4,7 @@ import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import type { AppSettings, ResolvedTheme } from '@/core/types'
 import { LAYOUT } from '@/core/constants/layout.constants'
+import { guardWindowClose } from './close-guard'
 import { send } from './ipc/typed-ipc'
 import { systemTheme } from './ipc/settings.handler'
 import { getSettingsStore } from './settings'
@@ -120,6 +121,7 @@ export function createMainWindow(): BrowserWindow {
   })
   hardenNavigation(window)
   forwardWindowState(window)
+  guardWindowClose(window)
   trackWindowState(window, store)
 
   const devUrl = process.env['ELECTRON_RENDERER_URL']

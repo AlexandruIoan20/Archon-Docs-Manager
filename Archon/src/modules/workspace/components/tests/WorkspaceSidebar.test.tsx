@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
+import {
+  selectActivePath,
+  selectActiveTab,
+  useEditorStore,
+  useUiStore,
+  useWorkspaceStore
+} from '@/store'
 import { ModalHost } from '@/shared/components/layout/ModalHost'
 import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
@@ -65,9 +71,9 @@ describe('WorkspaceSidebar', () => {
 
   it('opens a file on click', () => {
     fireEvent.click(row('incident-policy'))
-    expect(useEditorStore.getState()).toMatchObject({
-      activePath: 'incident-policy.soardoc',
-      activeKind: 'soardoc'
+    expect(selectActiveTab(useEditorStore.getState())).toMatchObject({
+      relPath: 'incident-policy.soardoc',
+      kind: 'soardoc'
     })
     expect(row('incident-policy')).toHaveAttribute('aria-selected', 'true')
   })
@@ -114,7 +120,7 @@ describe('WorkspaceSidebar', () => {
     fireEvent.keyDown(row('Playbooks'), { key: 'End' })
     expect(row('incident-policy')).toHaveFocus()
     fireEvent.keyDown(row('incident-policy'), { key: 'Enter' })
-    expect(useEditorStore.getState().activePath).toBe('incident-policy.soardoc')
+    expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.soardoc')
     fireEvent.keyDown(row('incident-policy'), { key: 'Home' })
     expect(row('Architecture')).toHaveFocus()
   })
@@ -135,7 +141,7 @@ describe('WorkspaceSidebar', () => {
     fireEvent.click(screen.getByRole('menuitem', { name: 'New document' }))
 
     await waitFor(() =>
-      expect(useEditorStore.getState().activePath).toBe('Runbooks/untitled-1.soardoc')
+      expect(selectActivePath(useEditorStore.getState())).toBe('Runbooks/untitled-1.soardoc')
     )
     expect(mock.api.fs.createDocument).toHaveBeenCalledWith('Runbooks', undefined)
     expect(useUiStore.getState().toast?.message).toBe('Document created in Runbooks/')
@@ -192,7 +198,7 @@ describe('WorkspaceSidebar', () => {
     fireEvent.keyDown(row('Runbooks'), { key: 'Delete' })
     fireEvent.click(await screen.findByRole('button', { name: 'Move to trash' }))
     await waitFor(() => expect(mock.api.fs.delete).toHaveBeenCalledWith('Runbooks'))
-    await waitFor(() => expect(useEditorStore.getState().activePath).toBeNull())
+    await waitFor(() => expect(selectActivePath(useEditorStore.getState())).toBeNull())
     expect(useWorkspaceStore.getState().targetFolder).toBe('')
     expect(useUiStore.getState().toast?.message).toBe('Runbooks moved to trash')
   })

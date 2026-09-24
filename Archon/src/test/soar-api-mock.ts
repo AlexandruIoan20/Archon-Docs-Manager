@@ -67,7 +67,8 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
         version: '1.0.0',
         platform: 'linux',
         ...info
-      })
+      }),
+      confirmClose: resolved(undefined)
     },
     window: {
       minimize: resolved(undefined),

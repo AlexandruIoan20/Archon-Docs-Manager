@@ -69,6 +69,32 @@ describe('normalizeSettings', () => {
   })
 })
 
+describe('tab sessions', () => {
+  it('keeps valid tabs once and drops an active path that is not open', () => {
+    const session = normalizeSettings({
+      session: {
+        tabsByWorkspace: {
+          a: {
+            tabs: [
+              { relPath: 'x.soardoc', kind: 'soardoc', extra: 1 },
+              { relPath: 'x.soardoc', kind: 'soardoc' },
+              { relPath: 'y.txt', kind: 'text' },
+              { relPath: '', kind: 'soardiag' },
+              'nope'
+            ],
+            active: 'gone.soardoc'
+          },
+          b: 'nope'
+        }
+      }
+    }).session
+    expect(session.tabsByWorkspace).toEqual({
+      a: { tabs: [{ relPath: 'x.soardoc', kind: 'soardoc' }], active: null },
+      b: { tabs: [], active: null }
+    })
+  })
+})
+
 describe('snapUiZoom', () => {
   it('snaps to the closest step', () => {
     expect(snapUiZoom(1.2)).toBe(1.25)

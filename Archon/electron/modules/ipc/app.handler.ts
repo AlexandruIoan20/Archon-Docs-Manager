@@ -1,5 +1,6 @@
-import { app } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import type { AppPlatform } from '@/core/types'
+import { confirmClose } from '../close-guard'
 import { handle } from './typed-ipc'
 
 function toAppPlatform(platform: NodeJS.Platform): AppPlatform {
@@ -13,4 +14,9 @@ export function registerAppHandlers(): void {
     version: app.getVersion(),
     platform: toAppPlatform(process.platform)
   }))
+
+  handle('app:confirm-close', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender)
+    if (window) confirmClose(window)
+  })
 }

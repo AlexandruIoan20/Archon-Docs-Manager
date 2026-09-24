@@ -17,6 +17,7 @@ import type { FolderEntry, WorkspaceInfo, WorkspaceSettings } from './workspace.
 export interface SoarApi {
   app: {
     getInfo: () => Promise<AppInfo>
+    confirmClose: () => Promise<void>
   }
   window: {
     minimize: () => Promise<void>

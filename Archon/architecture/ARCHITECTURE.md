@@ -199,6 +199,7 @@ src/core/
 │   └── shortcuts.ts                  [20] registrul de scurtături
 └── editor/
     ├── EditorContributionsProvider.tsx  ✅ [04] context + useEditorContribution(kind); kind duplicat → eroare
+    ├── save-registry.ts                 ✅ [11] registerSaveHandler / saveTab: garda de tab-uri cere salvarea fără import între module
     └── tests/                           ✅
 ```
 
@@ -212,7 +213,7 @@ src/store/
 ├── status.store.ts                ✅ [06] textul și tonul segmentului de stare („Ready” / „Connecting…”)
 ├── tests/                         ✅ ui.store, status.store
 ├── workspace.store.ts                [07] workspace curent, arbore, folder țintă
-└── editor.store.ts                   [08] tab-uri, tab activ, dirty   [11*] [17*]
+└── editor.store.ts                   ✅ [11] tab-uri, tab activ, dirty   [17*]
 ```
 
 ### 4.4 `modules/` — module funcționale independente
@@ -242,36 +243,46 @@ src/modules/
 │   └── utils/
 │       └── flatten-tree.ts                       [08]
 │
-├── editor/                                       [11] tab system + EditorPane
-│   ├── index.ts
+├── editor/                                       ✅ [11] tab system + EditorPane
+│   ├── index.ts                                  ✅
 │   ├── components/
-│   │   ├── EditorTabs.tsx
-│   │   ├── EditorTab.tsx
-│   │   ├── TabOverflowMenu.tsx
-│   │   ├── EditorPane.tsx                        randează contribuția după FileKind
-│   │   ├── EditorErrorBoundary.tsx
-│   │   ├── UnsavedChangesModal.tsx
-│   │   ├── WelcomeScreen.tsx
+│   │   ├── EditorTabs.tsx                        ✅ scroll orizontal, fade la margini, „+”
+│   │   ├── EditorTab.tsx                         ✅ dirty, close ascuns sub 120px, middle-click
+│   │   ├── TabOverflowMenu.tsx                   ✅ toate tab-urile, la overflow
+│   │   ├── EditorPane.tsx                        ✅ randează contribuția după FileKind
+│   │   ├── EditorErrorBoundary.tsx               ✅ singura componentă clasă (documentat)
+│   │   ├── UnsavedChangesModal.tsx               ✅ Save / Don't save / Cancel, și la închiderea ferestrei
+│   │   ├── WelcomeScreen.tsx                     ✅
 │   │   └── TabContextMenu.tsx                    [20]
-│   └── hooks/
-│       ├── useEditorTabs.ts
-│       └── useHorizontalOverflow.ts
-│
-├── document-editor/                              [12] TipTap
-│   ├── index.ts                                  contribuția pentru `soardoc`
-│   ├── components/
-│   │   ├── DocumentEditor.tsx
-│   │   ├── DocumentTitle.tsx
-│   │   ├── Toolbar.tsx                           slot TitleBar, respectă densitatea
-│   │   ├── DocumentInspector.tsx
-│   │   ├── DocumentStatusItems.tsx
-│   │   └── extensions/index.ts                   extensii TipTap custom
 │   ├── hooks/
-│   │   ├── useDocumentEditor.ts
-│   │   ├── useDocumentFile.ts
-│   │   └── useAutosave.ts
-│   ├── utils/word-count.ts
-│   └── styles/prose.css
+│   │   ├── useEditorTabs.ts                      ✅ garda: salvează, apoi întreabă; requestQuit
+│   │   ├── useHorizontalOverflow.ts              ✅
+│   │   ├── useTabSession.ts                      ✅ settings.session.tabsByWorkspace (debounce 500ms)
+│   │   ├── useTabReconciliation.ts               ✅ închide tab-urile fișierelor dispărute
+│   │   ├── useTabShortcuts.ts                    ✅ Ctrl/Cmd+W, Ctrl+(Shift+)Tab
+│   │   └── useQuitGuard.ts                       ✅ răspunde la app:before-quit
+│   ├── store/close-guard.store.ts                ✅ ce întreabă modalul
+│   └── utils/tree-files.ts                       ✅
+│
+├── document-editor/                              ✅ [12] TipTap
+│   ├── index.ts                                  ✅ contribuția pentru `soardoc`
+│   ├── components/
+│   │   ├── DocumentEditor.tsx                    ✅ cale, titlu, corp; coloană min(640px, 100% - 48px)
+│   │   ├── DocumentTitle.tsx                     ✅
+│   │   ├── Toolbar.tsx                           ✅ slot TitleBar, respectă densitatea
+│   │   ├── format-groups.ts                      ✅ FORMAT_GROUPS, descrise o singură dată
+│   │   ├── FormatMenu.tsx                        ✅ grup pliat în meniu (minimal)
+│   │   ├── DocumentInspector.tsx                 ✅ tag-uri, diagrame legate
+│   │   ├── DocumentStatusItems.tsx               ✅ „N words”
+│   │   └── extensions/index.ts                   ✅ StarterKit, Link, Placeholder, Typography
+│   ├── hooks/
+│   │   ├── useDocumentController.ts              ✅ editor + autosave + sesiune + reîncărcare externă
+│   │   ├── useDocumentEditor.ts                  ✅
+│   │   ├── useDocumentFile.ts                    ✅
+│   │   └── useAutosave.ts                        ✅ 800ms, Ctrl/Cmd+S, flush la unmount
+│   ├── store/document-editor.store.ts            ✅ sesiunea per tabId, citită de toolbar / inspector
+│   ├── utils/word-count.ts                       ✅
+│   └── styles/prose.css                          ✅
 │
 ├── diagram-editor/                               [13–19] React Flow + Mermaid
 │   ├── index.ts                                  contribuția pentru `soardiag`

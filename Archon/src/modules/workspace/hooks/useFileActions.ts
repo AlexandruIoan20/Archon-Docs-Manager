@@ -88,7 +88,7 @@ export function useFileActions(): FileActions {
     async (relPath: string, run: () => Promise<EntryRef>): Promise<EntryRef> => {
       const moved = await run()
       useWorkspaceStore.getState().remapPaths(relPath, moved.relPath)
-      useEditorStore.getState().renamePath(relPath, moved.relPath)
+      useEditorStore.getState().renameTabPath(relPath, moved.relPath)
       await refreshTree()
       return moved
     },

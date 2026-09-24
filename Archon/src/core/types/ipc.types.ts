@@ -36,6 +36,8 @@ export interface TitleBarColors {
 /** Renderer → main request/response channels (`ipcRenderer.invoke`). */
 export interface IpcInvokeContract {
   'app:get-info': { args: []; result: AppInfo }
+  /** The renderer agreed to let the window close (answer to `app:before-quit`). */
+  'app:confirm-close': { args: []; result: void }
   'window:minimize': { args: []; result: void }
   'window:toggle-maximize': { args: []; result: void }
   'window:close': { args: []; result: void }
@@ -107,6 +109,11 @@ export interface IpcEventContract {
   'system:theme-changed': ResolvedTheme
   /** Files changed on disk (debounced); the tree must be read again. */
   'workspace:tree-changed': null
+  /**
+   * The window is about to close (or the app to quit). The renderer saves or
+   * asks about unsaved changes, then answers with `app:confirm-close`.
+   */
+  'app:before-quit': null
   /** Full sync progress; `idle` once it is done. */
   'index:progress': IndexProgress
 }

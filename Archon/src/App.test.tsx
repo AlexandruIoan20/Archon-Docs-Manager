@@ -1,13 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { useUiStore, useWorkspaceStore } from '@/store'
+import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
 import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
 import type { SoarApiMockOptions } from '@/test/soar-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
+import { SAMPLE_TREE } from '@/test/sample-tree'
+import { ok, SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
 import App from './App'
 
 const initialUi = useUiStore.getState()
 const initialWorkspace = useWorkspaceStore.getState()
+const initialEditor = useEditorStore.getState()
 
 function install(options: SoarApiMockOptions = {}): SoarApiMock {
   const mock = createSoarApiMock({ platform: 'linux', ...options })
@@ -41,6 +44,7 @@ describe('App', () => {
   beforeEach(() => {
     useUiStore.setState(initialUi, true)
     useWorkspaceStore.setState(initialWorkspace, true)
+    useEditorStore.setState(initialEditor, true)
     setWindowWidth(1440)
     document.documentElement.dataset.theme = 'dark'
   })
@@ -122,5 +126,45 @@ describe('App', () => {
     expect(await screen.findByRole('button', { name: 'Switch to dark theme' })).toBeInTheDocument()
     expect(document.documentElement.dataset.theme).toBe('light')
     await waitFor(() => expect(mock.storedSettings().appearance.theme).toBe('light'))
+  })
+
+  it('opens a file from the tree in a tab and shows its path in the status bar', async () => {
+    const mock = await renderShell({ tree: SAMPLE_TREE })
+    mock.api.fs.readDocument.mockResolvedValue(
+      ok({
+        version: '1.0.0',
+        id: 'doc-1',
+        title: 'Incident policy',
+        created: '2026-09-01T10:00:00.000Z',
+        lastModified: '2026-09-01T10:00:00.000Z',
+        content: { type: 'doc', content: [] },
+        tags: [],
+        linkedDiagrams: []
+      })
+    )
+    expect(screen.getByText('No file open', { selector: 'h1' })).toBeInTheDocument()
+
+    fireEvent.click(await screen.findByRole('treeitem', { name: 'incident-policy' }))
+    const openFiles = screen.getByRole('tablist', { name: 'Open files' })
+    const tab = await within(openFiles).findByRole('tab', { name: /incident-policy/ })
+    expect(tab).toHaveAttribute('aria-selected', 'true')
+    expect(await screen.findByRole('textbox', { name: 'Document title' })).toHaveValue(
+      'Incident policy'
+    )
+    // The document editor fills the title bar, the inspector and the status bar.
+    expect(screen.getByRole('toolbar', { name: 'Formatting' })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Add tag' })).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('incident-policy.soardoc')
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('0 words')
+
+    fireEvent.click(within(tab).getByRole('button', { name: 'Close incident-policy' }))
+    await waitFor(() => expect(within(openFiles).queryByRole('tab')).toBeNull())
+    // The (now empty) tab list is saved for the workspace.
+    await waitFor(() =>
+      expect(mock.storedSettings().session.tabsByWorkspace?.[SAMPLE_WORKSPACE.id]).toEqual({
+        tabs: [],
+        active: null
+      })
+    )
   })
 })

@@ -1,4 +1,4 @@
-  import { useEffect, useEffectEvent, type RefObject } from 'react'
+import { useEffect, useEffectEvent, type RefObject } from 'react'
 
 /**
  * Calls `handler` on a pointer press outside every element in `refs`.

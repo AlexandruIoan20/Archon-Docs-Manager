@@ -42,12 +42,21 @@ export interface WindowSettings {
   maximized: boolean
 }
 
-/** What the app restores on the next launch. Plan 11 adds the open tabs. */
+/** The open tabs of one workspace (plan 11). */
+export interface TabSession {
+  tabs: { relPath: string; kind: 'soardoc' | 'soardiag' }[]
+  /** Path of the active tab. */
+  active: string | null
+}
+
+/** What the app restores on the next launch. */
 export interface SessionSettings {
   /** Root of the workspace open at quit; `null` after an explicit close. */
   lastWorkspace?: string | null
   /** Expanded folder paths, per workspace id (plan 08). */
   expandedByWorkspace?: Record<string, string[]>
+  /** Open tabs, per workspace id (plan 11). */
+  tabsByWorkspace?: Record<string, TabSession>
   [key: string]: unknown
 }
 

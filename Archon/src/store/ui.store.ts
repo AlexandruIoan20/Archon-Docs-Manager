@@ -20,11 +20,18 @@ export function clampPanelWidth(id: PanelId, width: number): number {
 
 export type ToastTone = 'info' | 'error'
 
+/** A button on the toast, e.g. „Reload” after a conflict. */
+export interface ToastAction {
+  label: string
+  run: () => void
+}
+
 export interface Toast {
   /** Changes on every `notify`, so the viewport can restart its timer. */
   id: number
   message: string
   tone: ToastTone
+  action?: ToastAction
 }
 
 let nextToastId = 1
@@ -55,7 +62,7 @@ export interface UiState {
   hydratePanels: (layout: LayoutSettings) => void
   setResolvedTheme: (theme: ResolvedTheme) => void
   /** Shows a short confirmation; any module may call it through `getState()`. */
-  notify: (message: string, tone?: ToastTone) => void
+  notify: (message: string, tone?: ToastTone, action?: ToastAction) => void
   dismissToast: () => void
   openModal: (id: ModalId) => void
   closeModal: () => void
@@ -153,7 +160,8 @@ export const useUiStore = create<UiState>()((set) => ({
 
   setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
 
-  notify: (message, tone = 'info') => set({ toast: { id: nextToastId++, message, tone } }),
+  notify: (message, tone = 'info', action) =>
+    set({ toast: { id: nextToastId++, message, tone, ...(action ? { action } : {}) } }),
   dismissToast: () => set({ toast: null }),
 
   openModal: (activeModal) => set({ activeModal }),

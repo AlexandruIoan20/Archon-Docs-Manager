@@ -35,6 +35,7 @@ export type {
   ResolvedTheme,
   SessionSettings,
   SettingsPatch,
+  TabSession,
   ThemePreference,
   WindowBounds,
   WindowSettings

@@ -28,7 +28,10 @@ describe('documents and diagrams', () => {
   it('creates untitled-1, untitled-2… without overwriting', async () => {
     const first = await createDocument(root, 'Playbooks', undefined, T0)
     const second = await createDocument(root, 'Playbooks', undefined, T0)
-    expect(first).toMatchObject({ relPath: 'Playbooks/untitled-1.soardoc', name: 'untitled-1.soardoc' })
+    expect(first).toMatchObject({
+      relPath: 'Playbooks/untitled-1.soardoc',
+      name: 'untitled-1.soardoc'
+    })
     expect(second.relPath).toBe('Playbooks/untitled-2.soardoc')
     expect(first.document.id).not.toBe(second.document.id)
 
@@ -59,7 +62,13 @@ describe('documents and diagrams', () => {
     const saved = await writeDocument(
       root,
       relPath,
-      { ...document, id: 'forged', created: '2000-01-01T00:00:00Z', title: 'Renamed', tags: ['ir'] },
+      {
+        ...document,
+        id: 'forged',
+        created: '2000-01-01T00:00:00Z',
+        title: 'Renamed',
+        tags: ['ir']
+      },
       T1
     )
     expect(saved).toMatchObject({
@@ -115,9 +124,9 @@ describe('documents and diagrams', () => {
   })
 
   it('rejects invalid diagram options before touching the disk', async () => {
-    await expect(
-      createDiagram(root, '', { type: 'venn' as never })
-    ).rejects.toMatchObject({ code: 'INVALID_ARGUMENT' })
+    await expect(createDiagram(root, '', { type: 'venn' as never })).rejects.toMatchObject({
+      code: 'INVALID_ARGUMENT'
+    })
     await expect(
       createDiagram(root, '', {
         type: 'flowchart',
@@ -129,7 +138,12 @@ describe('documents and diagrams', () => {
   it('saves diagram changes', async () => {
     const { relPath, diagram } = await createDiagram(root, '', { type: 'flowchart' }, T0)
     const nodes = [{ id: 'N1', type: 'action' as const, position: { x: 1, y: 2 }, data: {} }]
-    const saved = await writeDiagram(root, relPath, { ...diagram, data: { ...diagram.data, nodes } }, T1)
+    const saved = await writeDiagram(
+      root,
+      relPath,
+      { ...diagram, data: { ...diagram.data, nodes } },
+      T1
+    )
     expect(saved.data.nodes).toHaveLength(1)
     expect((await readDiagram(root, relPath)).lastModified).toBe('2026-03-02T11:00:00.000Z')
   })
