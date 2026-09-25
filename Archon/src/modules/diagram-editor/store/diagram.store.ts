@@ -1,15 +1,21 @@
 import { applyEdgeChanges, applyNodeChanges, type EdgeChange, type NodeChange } from '@xyflow/react'
 import { createStore, type StoreApi } from 'zustand/vanilla'
 import type { SoarDiagram } from '@/core/types'
-import type { DiagramGraph, FlowNode } from '../utils/graph-mapping'
+import { withSelectedNodes, type DiagramGraph, type FlowNode } from '../utils/graph-mapping'
 import type { DiagramSelection, DiagramState } from './diagram-state'
 import { createGraphEdits, edit } from './graph-edits'
+import { createMermaidSlice } from './mermaid.store'
 import { createToolSlice } from './tool.store'
 
 export type { DiagramSelection, DiagramState, GraphSnapshot, StylePatch } from './diagram-state'
 export type DiagramStoreApi = StoreApi<DiagramState>
 
 const EMPTY_SELECTION: DiagramSelection = { nodes: [], edges: [] }
+
+const selectionOf = ({ nodes, edges }: DiagramGraph): DiagramSelection => ({
+  nodes: nodes.filter((node) => node.selected).map((node) => node.id),
+  edges: edges.filter((edge) => edge.selected).map((edge) => edge.id)
+})
 
 /** Selecting and measuring are not edits; a user resize is (it carries `resizing`). */
 const isNodeEdit = (change: NodeChange): boolean =>
@@ -35,11 +41,12 @@ export function createDiagramStore(
 ): DiagramStoreApi {
   return createStore<DiagramState>()((set, get) => ({
     ...graph,
-    selection: EMPTY_SELECTION,
+    selection: selectionOf(graph),
     revision: 0,
     base,
     gestureOpen: false,
     ...createToolSlice(set),
+    ...createMermaidSlice(set),
     ...createGraphEdits(set, get),
 
     onNodesChange: (changes) =>
@@ -75,6 +82,18 @@ export function createDiagramStore(
 
     setSelection: (selection) => set({ selection }),
 
+    selectNodes: (ids) =>
+      set((state) => {
+        const graph = withSelectedNodes(state, ids)
+        return { nodes: graph.nodes, edges: graph.edges, selection: selectionOf(graph) }
+      }),
+
+    patchMeta: (patch, { save = true } = {}) =>
+      set((state) => ({
+        meta: { ...state.meta, ...patch },
+        ...(save ? { revision: state.revision + 1 } : {})
+      })),
+
     // A version from disk starts a new history, like opening the file.
     replaceGraph: (next) =>
       set({
@@ -106,3 +125,12 @@ export function selectZoomPercent(state: DiagramState): number {
 
 export const selectCanUndo = (state: DiagramState): boolean => state.history.past.length > 0
 export const selectCanRedo = (state: DiagramState): boolean => state.history.future.length > 0
+
+export const selectIsMermaid = (state: DiagramState): boolean => state.meta.engine === 'mermaid'
+
+/** „Mermaid · N lines”. */
+export function selectMermaidLines(state: DiagramState): string {
+  // A final newline ends the last line; it does not start another.
+  const lines = (state.meta.mermaidSource ?? '').replace(/\n$/, '').split('\n').length
+  return `Mermaid · ${lines} ${lines === 1 ? 'line' : 'lines'}`
+}

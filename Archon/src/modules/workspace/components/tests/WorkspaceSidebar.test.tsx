@@ -37,7 +37,7 @@ describe('WorkspaceSidebar', () => {
     window.soar = mock.api
     render(
       <>
-        <WorkspaceSidebar onToggleInspector={onToggleInspector} />
+        <WorkspaceSidebar onToggleInspector={onToggleInspector} onNewDiagram={vi.fn()} />
         <ModalHost modals={{ 'confirm-delete': ConfirmDeleteModal }} />
       </>,
       { wrapper: queryWrapper() }
@@ -201,5 +201,67 @@ describe('WorkspaceSidebar', () => {
     await waitFor(() => expect(selectActivePath(useEditorStore.getState())).toBeNull())
     expect(useWorkspaceStore.getState().targetFolder).toBe('')
     expect(useUiStore.getState().toast?.message).toBe('Runbooks moved to trash')
+  })
+
+  describe('context menu', () => {
+    const menuFor = (name: string): HTMLElement => {
+      fireEvent.contextMenu(row(name), { clientX: 40, clientY: 80 })
+      return screen.getByRole('menu', { name })
+    }
+
+    it('offers creating inside a folder, in that folder', async () => {
+      const menu = menuFor('Runbooks')
+      expect(
+        within(menu)
+          .getAllByRole('menuitem')
+          .map((item) => item.textContent)
+      ).toEqual([
+        'New document',
+        'New diagram…',
+        'New folder',
+        'RenameF2',
+        'Reveal in file manager',
+        'Copy relative path',
+        'DeleteDel'
+      ])
+      fireEvent.click(within(menu).getByRole('menuitem', { name: /New document/ }))
+      await waitFor(() =>
+        expect(mock.api.fs.createDocument).toHaveBeenCalledWith('Runbooks', undefined)
+      )
+      expect(useWorkspaceStore.getState().targetFolder).toBe('Runbooks')
+    })
+
+    it('renames and deletes through the menu', () => {
+      fireEvent.click(within(menuFor('Runbooks')).getByRole('menuitem', { name: /Rename/ }))
+      expect(useWorkspaceStore.getState().renaming).toBe('Runbooks')
+      act(() => useWorkspaceStore.getState().setRenaming(null))
+
+      fireEvent.click(within(menuFor('incident-policy')).getByRole('menuitem', { name: /Delete/ }))
+      expect(useUiStore.getState().activeModal).toBe('confirm-delete')
+      expect(useWorkspaceStore.getState().pendingDelete?.relPath).toBe('incident-policy.soardoc')
+    })
+
+    it('copies the relative path and reveals in the file manager', async () => {
+      const writeText = vi.fn(() => Promise.resolve())
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+      fireEvent.click(
+        within(menuFor('incident-policy')).getByRole('menuitem', { name: /Copy relative path/ })
+      )
+      await waitFor(() => expect(writeText).toHaveBeenCalledWith('incident-policy.soardoc'))
+      expect(useUiStore.getState().toast?.message).toBe('Path copied')
+
+      fireEvent.click(within(menuFor('Runbooks')).getByRole('menuitem', { name: /Reveal/ }))
+      expect(mock.api.workspace.reveal).toHaveBeenCalledWith('Runbooks')
+    })
+
+    it('opens a file from its menu and closes with Escape', () => {
+      const menu = menuFor('incident-policy')
+      expect(within(menu).getByRole('menuitem', { name: 'Open' })).toHaveFocus()
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+
+      fireEvent.click(within(menuFor('incident-policy')).getByRole('menuitem', { name: 'Open' }))
+      expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.soardoc')
+    })
   })
 })

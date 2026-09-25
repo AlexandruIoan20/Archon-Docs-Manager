@@ -1,0 +1,6 @@
+/* The dotted canvas behind a catalog sketch, like the diagram grid. */
+.diagram-sketch {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
+  background-size: 11px 11px;
+}

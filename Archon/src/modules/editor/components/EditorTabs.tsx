@@ -1,10 +1,14 @@
 import { useRef, type KeyboardEvent, type WheelEvent } from 'react'
 import { Icon } from '@/shared/components/icons'
+import { useContextMenu } from '@/shared/components/ui'
+import { copyText } from '@/shared/utils/copy-text'
 import { cn } from '@/shared/utils/cn'
 import { useEditorTabs } from '../hooks/useEditorTabs'
 import { useHorizontalOverflow } from '../hooks/useHorizontalOverflow'
 import { EditorTab } from './EditorTab'
 import { TabOverflowMenu } from './TabOverflowMenu'
+import { revealInSidebar } from '../utils/reveal-in-sidebar'
+import { tabMenuItems } from '../utils/tab-menu-items'
 
 export interface EditorTabsProps {
   /** The „+” button: a new diagram. */
@@ -18,6 +22,7 @@ export function EditorTabs({ onNew }: EditorTabsProps): React.JSX.Element {
   const { tabs, activeId, activate, requestClose } = useEditorTabs()
   const listRef = useRef<HTMLDivElement>(null)
   const { overflowing, atStart, atEnd } = useHorizontalOverflow(listRef, tabs.length)
+  const contextMenu = useContextMenu()
 
   // A plain mouse wheel scrolls vertically; the strip turns it sideways.
   const onWheel = (event: WheelEvent<HTMLDivElement>): void => {
@@ -63,6 +68,17 @@ export function EditorTabs({ onNew }: EditorTabsProps): React.JSX.Element {
               active={tab.id === activeId}
               onActivate={activate}
               onClose={(id) => void requestClose([id])}
+              onContextMenu={(event) =>
+                contextMenu.open(
+                  event,
+                  tabMenuItems(tab, tabs, {
+                    close: (ids) => void requestClose(ids),
+                    revealInSidebar: (t) => revealInSidebar(t.relPath),
+                    copyPath: (t) => void copyText(t.relPath, 'Path copied')
+                  }),
+                  tab.title
+                )
+              }
             />
           ))}
         </div>
@@ -85,6 +101,7 @@ export function EditorTabs({ onNew }: EditorTabsProps): React.JSX.Element {
           <Icon name="plus" size={14} />
         </button>
       </div>
+      {contextMenu.element}
     </div>
   )
 }

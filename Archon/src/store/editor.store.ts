@@ -23,6 +23,13 @@ export interface TabSeed {
 export interface EditorState {
   tabs: EditorTab[]
   activeId: string | null
+  /**
+   * Nodes to select when a tab's diagram loads, by tab id: a new diagram opens
+   * with N1 selected, before its store exists.
+   */
+  pendingSelection: Record<string, readonly string[]>
+  /** A node to centre on when the tab's diagram shows (a search result), by tab id. */
+  pendingFocus: Record<string, string>
 
   /** Opens a tab for the file, or activates the one already open. Returns its id. */
   openFile: (relPath: string, kind: FileKind) => string
@@ -39,6 +46,11 @@ export interface EditorState {
   closeByPath: (relPath: string) => EditorTab[]
   /** Replaces all tabs, e.g. with the ones saved for a workspace. */
   hydrate: (seeds: readonly TabSeed[], activePath: string | null) => void
+  setPendingSelection: (tabId: string, nodeIds: readonly string[]) => void
+  /** The pending selection of the tab, removed as it is read; `null` if none. */
+  takePendingSelection: (tabId: string) => readonly string[] | null
+  setPendingFocus: (tabId: string, nodeId: string) => void
+  takePendingFocus: (tabId: string) => string | null
 }
 
 let nextTabId = 1
@@ -75,6 +87,8 @@ function keep(
 export const useEditorStore = create<EditorState>()((set, get) => ({
   tabs: [],
   activeId: null,
+  pendingSelection: {},
+  pendingFocus: {},
 
   openFile: (relPath, kind) => {
     const existing = get().tabs.find((tab) => tab.relPath === relPath)
@@ -141,6 +155,34 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
     const tabs = unique.map(createTab)
     const active = tabs.find((tab) => tab.relPath === activePath) ?? tabs.at(-1)
     set({ tabs, activeId: active?.id ?? null })
+  },
+
+  setPendingSelection: (tabId, nodeIds) =>
+    set((state) => ({ pendingSelection: { ...state.pendingSelection, [tabId]: nodeIds } })),
+
+  takePendingSelection: (tabId) => {
+    const pending = get().pendingSelection[tabId]
+    if (!pending) return null
+    set((state) => {
+      const next = { ...state.pendingSelection }
+      delete next[tabId]
+      return { pendingSelection: next }
+    })
+    return pending
+  },
+
+  setPendingFocus: (tabId, nodeId) =>
+    set((state) => ({ pendingFocus: { ...state.pendingFocus, [tabId]: nodeId } })),
+
+  takePendingFocus: (tabId) => {
+    const nodeId = get().pendingFocus[tabId]
+    if (nodeId === undefined) return null
+    set((state) => {
+      const next = { ...state.pendingFocus }
+      delete next[tabId]
+      return { pendingFocus: next }
+    })
+    return nodeId
   }
 }))
 

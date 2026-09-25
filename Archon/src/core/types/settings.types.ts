@@ -57,6 +57,8 @@ export interface SessionSettings {
   expandedByWorkspace?: Record<string, string[]>
   /** Open tabs, per workspace id (plan 11). */
   tabsByWorkspace?: Record<string, TabSession>
+  /** Folder of the last export, where the next save dialog opens (plan 19). */
+  lastExportDir?: string
   [key: string]: unknown
 }
 

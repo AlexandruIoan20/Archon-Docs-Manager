@@ -56,6 +56,25 @@ export function createGraphEdits(set: SetState, get: GetState): GraphEdits {
       return node.id
     },
 
+    insertElements: (nodes, edges) => {
+      if (nodes.length === 0) return
+      const state = get()
+      set(
+        edit(state, {
+          nodes: [...deselected(state.nodes), ...nodes],
+          edges: [...deselected(state.edges), ...edges],
+          selection: { nodes: nodes.map((n) => n.id), edges: [] }
+        })
+      )
+    },
+
+    changeNodeType: (id, type) => {
+      const state = get()
+      const node = state.nodes.find((n) => n.id === id)
+      if (!node || node.type === type) return
+      set(edit(state, { nodes: state.nodes.map((n) => (n.id === id ? { ...n, type } : n)) }))
+    },
+
     deleteSelection: () => {
       const state = get()
       const nodeIds = new Set(state.nodes.filter((n) => n.selected).map((n) => n.id))
@@ -96,6 +115,31 @@ export function createGraphEdits(set: SetState, get: GetState): GraphEdits {
         node.id === id ? { ...node, data: { ...node.data, ...patch } } : node
       )
       set(commit ? edit(state, { nodes }) : { nodes, revision: state.revision + 1 })
+    },
+
+    updateNodesData: (ids, patch) => {
+      const state = get()
+      const targets = new Set(ids)
+      if (!state.nodes.some((node) => targets.has(node.id))) return
+      set(
+        edit(state, {
+          nodes: state.nodes.map((node) =>
+            targets.has(node.id) ? { ...node, data: { ...node.data, ...patch } } : node
+          )
+        })
+      )
+    },
+
+    setEdgeLabel: (id, label, { commit = false } = {}) => {
+      const state = get()
+      const edges = state.edges.map((edge): FlowEdge => {
+        if (edge.id !== id) return edge
+        if (label !== '') return { ...edge, label }
+        const rest = { ...edge }
+        delete rest.label
+        return rest
+      })
+      set(commit ? edit(state, { edges }) : { edges, revision: state.revision + 1 })
     },
 
     applyStyle: (patch) => {

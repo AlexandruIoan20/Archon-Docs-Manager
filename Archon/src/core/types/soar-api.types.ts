@@ -1,4 +1,5 @@
 import type { CreateDiagramOptions, SoarDiagram } from './diagram.types'
+import type { ExportPdfRequest, ExportSaveRequest, ExportSaveResult } from './export.types'
 import type { SoarDocument } from './document.types'
 import type {
   AppInfo,
@@ -64,6 +65,10 @@ export interface SoarApi {
   }
   search: {
     query: (text: string, limit?: number) => Promise<Result<SearchResult[]>>
+  }
+  export: {
+    save: (request: ExportSaveRequest) => Promise<Result<ExportSaveResult>>
+    pdfFromSvg: (request: ExportPdfRequest) => Promise<Result<ExportSaveResult>>
   }
   /** Subscribes to a main-process event; returns the unsubscribe function. */
   on: <E extends IpcEvent>(

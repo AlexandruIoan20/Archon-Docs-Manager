@@ -1,5 +1,5 @@
 import type { DiagramNodeType } from '@/core/types'
-import type { IconName } from '@/shared/components/icons'
+import { ICON_PATHS, type IconName } from '@/shared/components/icons'
 import { NODE_COLORS } from './node-palette'
 
 export interface NodeKind {
@@ -87,4 +87,11 @@ export const NODE_KINDS: Record<DiagramNodeType, NodeKind> = {
 /** The node's own color, or its kind's default. */
 export function nodeColor(type: DiagramNodeType | undefined, color: string | null): string {
   return color ?? NODE_KINDS[type ?? 'element'].defaultColor
+}
+
+const isIconName = (name: string | null): name is IconName => name !== null && name in ICON_PATHS
+
+/** The node's own icon, or its kind's default. */
+export function nodeIcon(type: DiagramNodeType | undefined, icon: string | null): IconName {
+  return isIconName(icon) ? icon : (NODE_KINDS[type ?? 'element'] ?? NODE_KINDS.element).defaultIcon
 }

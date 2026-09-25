@@ -112,7 +112,7 @@ electron/
     │   ├── workspace.handler.ts      [07] creare / deschidere workspace, evenimente watcher
     │   ├── fs.handler.ts             [09] CRUD .soardoc / .soardiag / foldere
     │   ├── db.handler.ts          ✅ [10] index:get-status / rebuild / list-tags, search:query
-    │   └── export.handler.ts         [19] salvare PNG / SVG / PDF / XMI
+    │   └── export.handler.ts      ✅ [19] export:save, export:pdf-from-svg
     ├── settings/
     │   ├── index.ts               ✅ [05] getSettingsStore() → userData/settings.json
     │   ├── settings.ts            ✅ [05] SettingsStore: citire validată, fișier corupt pus deoparte, scriere atomică serializată
@@ -144,8 +144,9 @@ electron/
     │       ├── projects.repo.ts   ✅ [10]
     │       └── search.repo.ts     ✅ [10] FTS5 cu prefix, snippet() și bm25, listă de tag-uri
     └── export/
-        ├── save-file.ts              [19] dialog de salvare + scriere
-        └── svg-to-pdf.ts             [19]
+        ├── save-file.ts           ✅ [19] dialog nativ (ultimul folder, în setări) + scriere; calea vine doar din dialog
+        ├── save-file.test.ts      ✅ [19]
+        └── svg-to-pdf.ts          ✅ [19] fereastră ascunsă, sandbox, fără JS; printToPDF pe o pagină de mărimea SVG-ului
 ```
 
 ---
@@ -183,7 +184,8 @@ src/core/
 │   ├── settings.types.ts          ✅ [05] AppSettings, SettingsPatch (DeepPartial), ThemePreference, ResolvedTheme, AccentColor
 │   ├── workspace.types.ts            [07]
 │   ├── document.types.ts             [09]
-│   └── diagram.types.ts              [17]
+│   ├── diagram.types.ts              ✅ [09] UmlDiagramType (14), DiagramType
+│   └── export.types.ts            ✅ [19] ExportExtension, cererile export:save / export:pdf-from-svg
 ├── settings/                      ✅ [05] cod pur partajat de main și renderer
 │   ├── normalize-settings.ts      ✅ normalizeSettings (validare câmp cu câmp), mergeSettings, snapUiZoom
 │   └── tests/                     ✅
@@ -196,7 +198,7 @@ src/core/
 │   ├── layout.constants.ts        ✅ LAYOUT, TITLEBAR_DENSITY, TITLEBAR_INSETS [03]; SIDEBAR_WIDTH, INSPECTOR_WIDTH,
 │   │                                 MAIN_MIN_WITH_*, PANEL_RESIZE_STEP, OVERLAY_EDGE_GAP [04]
 │   ├── file-extensions.ts            [09] .soarws, .soardoc, .soardiag
-│   └── shortcuts.ts                  [20] registrul de scurtături
+│   └── shortcuts.ts               ✅ [20] registrul: id, combinații, scope, descriere; assertNoConflicts
 └── editor/
     ├── EditorContributionsProvider.tsx  ✅ [04] context + useEditorContribution(kind); kind duplicat → eroare
     ├── save-registry.ts                 ✅ [11] registerSaveHandler / saveTab: garda de tab-uri cere salvarea fără import între module
@@ -213,7 +215,8 @@ src/store/
 ├── status.store.ts                ✅ [06] textul și tonul segmentului de stare („Ready” / „Connecting…”)
 ├── tests/                         ✅ ui.store, status.store
 ├── workspace.store.ts                [07] workspace curent, arbore, folder țintă
-└── editor.store.ts                   ✅ [11] tab-uri, tab activ, dirty   [17*]
+├── editor.store.ts                   ✅ [11] tab-uri, tab activ, dirty; [17] pendingSelection; [20] pendingFocus
+└── search-palette.store.ts        ✅ [20] cererea paletei (filtru de tip, onPick), openSearchPalette
 ```
 
 ### 4.4 `modules/` — module funcționale independente
@@ -229,19 +232,21 @@ src/modules/
 │   │   ├── WorkspaceSidebar.tsx                  [08]
 │   │   ├── WorkspaceHeader.tsx                   [08]
 │   │   ├── SidebarTabs.tsx                       [08] Files / Diagrams
-│   │   ├── NewMenu.tsx                           [08] split-button „New”   [17*]
+│   │   ├── NewMenu.tsx                           [08] split-button „New”; [17] deschide dialogul
 │   │   ├── FileTree.tsx                          [08] listă virtualizată
 │   │   ├── FileTreeNode.tsx                      [08]
 │   │   ├── TreeGuides.tsx                        [08] liniile de ghidaj
 │   │   ├── SidebarFooter.tsx                     [08]
 │   │   ├── InlineRename.tsx                      [09]
 │   │   ├── ConfirmDeleteModal.tsx                [09]
-│   │   └── TreeContextMenu.tsx                   [20]
+│   │   └── (meniul contextual)                   ✅ [20] utils/tree-menu-items.ts + useContextMenu în WorkspaceSidebar
 │   ├── hooks/
 │   │   ├── useWorkspace.ts                       [07]
-│   │   └── useFileActions.ts                     [09]
+│   │   ├── useFileActions.ts                     [09] (crearea de diagrame e în useCreateDiagram [17])
+│   │   └── useTreeKeyboard.ts                    [08] săgeți; Enter / F2 / Delete din registru [20]
 │   └── utils/
-│       └── flatten-tree.ts                       [08]
+│       ├── flatten-tree.ts                       [08]
+│       └── tree-menu-items.ts                    ✅ [20] New… (în folder) / Rename / Reveal / Copy path / Delete
 │
 ├── editor/                                       ✅ [11] tab system + EditorPane
 │   ├── index.ts                                  ✅
@@ -253,7 +258,7 @@ src/modules/
 │   │   ├── EditorErrorBoundary.tsx               ✅ singura componentă clasă (documentat)
 │   │   ├── UnsavedChangesModal.tsx               ✅ Save / Don't save / Cancel, și la închiderea ferestrei
 │   │   ├── WelcomeScreen.tsx                     ✅
-│   │   └── TabContextMenu.tsx                    [20]
+│   │   └── (meniul contextual)                   ✅ [20] utils/tab-menu-items.ts + useContextMenu în EditorTabs
 │   ├── hooks/
 │   │   ├── useEditorTabs.ts                      ✅ garda: salvează, apoi întreabă; requestQuit
 │   │   ├── useHorizontalOverflow.ts              ✅
@@ -287,18 +292,19 @@ src/modules/
 ├── diagram-editor/                               [13–19] React Flow + Mermaid
 │   ├── index.ts                                  ✅ [13] contribuția pentru `soardiag`
 │   ├── components/
-│   │   ├── DiagramEditor.tsx                     ✅ [13] store-ul tab-ului + canvas   [18*] comutare canvas / Mermaid
+│   │   ├── DiagramEditor.tsx                     ✅ [13] store-ul tab-ului + canvas; [18] comutare canvas / Mermaid după engine
 │   │   ├── DiagramCanvas.tsx                     ✅ [13] React Flow controlat, grilă de puncte, fitView la prima deschidere
 │   │   ├── DiagramStatusItems.tsx                ✅ [13] noduri · muchii, selecție, zoom
 │   │   ├── NodePalette.tsx                       ✅ [15] 7 unelte, meniu de tipuri, „⋯” în minimal
-│   │   ├── PropertiesPanel.tsx                   [16]
-│   │   ├── MermaidEditor.tsx                     [18]
+│   │   ├── PropertiesPanel.tsx                   ✅ [16] contribuția Inspector, sub-panou după selecție
+│   │   ├── MermaidEditor.tsx                     ✅ [18] split row / column / single (760 / 480px), raport 20–80%
 │   │   ├── canvas/
 │   │   │   ├── CanvasOverlays.tsx                ✅ [13] reguli responsive (minimap < 560×360, hint < 640)
 │   │   │   ├── CanvasHint.tsx                    ✅ [13]
 │   │   │   ├── CanvasMinimap.tsx                 ✅ [13] MiniMap React Flow stilizat
-│   │   │   ├── ZoomControls.tsx                  ✅ [13] 30–200%, pas 10%
-│   │   │   └── CanvasContextMenu.tsx             [20]
+│   │   │   ├── ZoomControls.tsx                  ✅ [13] zoom-ul canvas-ului, salvat cu viewport-ul
+│   │   │   ├── ZoomBar.tsx                       ✅ [18] − / % / +, 30–200%, comun cu previzualizarea Mermaid
+│   │   │   └── (meniu contextual)                ✅ [20] hooks/useCanvasContextMenu.ts + utils/canvas-menu-items.ts
 │   │   ├── nodes/
 │   │   │   ├── index.ts                          ✅ [14] NODE_TYPES; Trigger/Action/Decision/Integration/ElementNode = BaseNode
 │   │   │   ├── BaseNode.tsx                      ✅ [14] card / outline / solid; decizia ca romb SVG
@@ -308,7 +314,7 @@ src/modules/
 │   │   │   ├── BasicNode.tsx                     ✅ [13] provizoriu pentru shape-* / text
 │   │   │   ├── ShapeNode.tsx                     ✅ [15] rect / ellipse / text (TextNode), NodeResizer
 │   │   │   ├── shape-style.ts                    ✅ [15] stroke / fill 16% / weight / font
-│   │   │   └── NodeContextMenu.tsx               [20]
+│   │   │   └── (meniu contextual)                ✅ [20] nodeMenuItems: Duplicate / Copy / Copy id / Change type ▸ / Delete
 │   │   ├── edges/
 │   │   │   ├── index.ts                          ✅ [14] EDGE_TYPES
 │   │   │   ├── edge-path.ts                      ✅ [14] calea după edgeStyle (funcție pură)
@@ -322,91 +328,111 @@ src/modules/
 │   │   │   ├── useStyleValues.ts                 ✅ [15] stilul selecției sau implicit
 │   │   │   ├── StylePopover.tsx                  ✅ [15] densitățile `compact` / `minimal`
 │   │   │   ├── HistoryButtons.tsx                ✅ [15]
-│   │   │   └── ExportMenu.tsx                    [19] slot TitleActions
-│   │   ├── properties/                           [16]
-│   │   │   ├── NodeProperties.tsx
-│   │   │   ├── NodeIdentity.tsx
-│   │   │   ├── EdgeProperties.tsx
-│   │   │   ├── MultiSelectionProperties.tsx
-│   │   │   ├── EmptySelection.tsx
-│   │   │   └── Field.tsx
-│   │   ├── new-diagram/                          [17] dialogul „New diagram”
-│   │   │   ├── NewDiagramDialog.tsx
-│   │   │   ├── DialogHeader.tsx
-│   │   │   ├── DialogFooter.tsx
-│   │   │   ├── CategoryList.tsx
-│   │   │   ├── DiagramTypeGrid.tsx
-│   │   │   ├── DiagramTypeCard.tsx
-│   │   │   ├── DiagramSketch.tsx
-│   │   │   └── DestinationPicker.tsx
-│   │   └── mermaid/                              [18]
-│   │       ├── MermaidSourcePane.tsx
-│   │       ├── MermaidPreview.tsx
-│   │       ├── MermaidError.tsx
-│   │       └── LineNumbers.tsx
+│   │   │   └── ExportMenu.tsx                    ✅ [19] slot TitleActions; IconButton în minimal
+│   │   ├── properties/                           ✅ [16]
+│   │   │   ├── NodeProperties.tsx                ✅ name, subtitle, color, description, tags, retry, delete
+│   │   │   ├── NodeIdentity.tsx                  ✅ badge, tip, id
+│   │   │   ├── EdgeProperties.tsx                ✅ label, delete
+│   │   │   ├── MultiSelectionProperties.tsx      ✅ culoare comună, „Delete N nodes”
+│   │   │   ├── ColorField.tsx                    ✅ cele 6 swatch-uri
+│   │   │   ├── DeleteButton.tsx                  ✅ aceeași acțiune ca tasta Delete
+│   │   │   ├── EmptySelection.tsx                ✅
+│   │   │   └── Field.tsx                         ✅ SectionLabel + control
+│   │   ├── new-diagram/                          ✅ [17] dialogul „New diagram” (modalul `new-diagram`)
+│   │   │   ├── NewDiagramDialog.tsx              ✅ categorie, căutare, tip; Enter creează
+│   │   │   ├── DialogHeader.tsx                  ✅ căutarea pe rând propriu < 600px
+│   │   │   ├── DialogFooter.tsx                  ✅ două rânduri < 720px
+│   │   │   ├── CategoryList.tsx                  ✅ coloană / tab-uri (< 760px), alese din CSS
+│   │   │   ├── DiagramTypeGrid.tsx               ✅ listbox pe grupuri, săgeți, stare goală
+│   │   │   ├── DiagramTypeCard.tsx               ✅
+│   │   │   ├── DiagramSketch.tsx                 ✅ SVG 160×54 pe grila de puncte
+│   │   │   └── DestinationPicker.tsx             ✅ „saves to”, = workspace.store.targetFolder
+│   │   └── mermaid/                              ✅ [18]
+│   │       ├── MermaidSourcePane.tsx             ✅ textarea mono, Tab = 2 spații (undo nativ păstrat)
+│   │       ├── MermaidPreview.tsx                ✅ SVG pe grila de 22px, zoom Ctrl/⌘ + roată
+│   │       ├── MermaidError.tsx                  ✅ pill --danger cu linia erorii
+│   │       └── LineNumbers.tsx                   ✅ sincronizat la scroll
 │   ├── store/                                    stare locală modulului
 │   │   ├── diagram.store.ts                      ✅ [13] noduri, muchii, viewport, selecție, revision
 │   │   ├── DiagramStoreProvider.tsx              ✅ [13] un store per tab
 │   │   ├── store-registry.ts                     ✅ [13] Map<tabId, store>, curățat la închiderea tab-ului
 │   │   ├── diagram-state.ts                      ✅ [15] tipurile store-ului
-│   │   ├── graph-edits.ts                        ✅ [15] add / delete / connect / stil / undo / redo
+│   │   ├── graph-edits.ts                        ✅ [15] add / delete / connect / stil / undo / redo; [16] date noduri, etichete muchii
 │   │   ├── history.ts                            ✅ [15] undo / redo, 30 de pași
-│   │   └── tool.store.ts                         ✅ [15] unealta activă (slice în store-ul tab-ului)
+│   │   ├── tool.store.ts                         ✅ [15] unealta activă (slice în store-ul tab-ului)
+│   │   └── mermaid.store.ts                      ✅ [18] sursa (meta.mermaidSource), raportul split-ului, zoom-ul previzualizării
 │   ├── hooks/
 │   │   ├── useDiagram.ts                         ✅ [13] încărcare, autosave, reîncărcare externă
 │   │   ├── useNodeTypes.ts                       ✅ [14] diagram.style → setarea aplicației → implicit
 │   │   ├── useHotEdges.ts                        ✅ [14] useIsHotEdge, derivat din selecție
 │   │   ├── useCanvasInteractions.ts              ✅ [15] plasare, connect în doi pași, pan
 │   │   ├── useConnectingStatus.ts                ✅ [15] „Connecting…” în status bar
-│   │   ├── useDiagramShortcuts.ts                ✅ [15] Delete, undo/redo, Escape, V/H/N/C/T/R/O
-│   │   ├── useSelectedElements.ts                [16]
-│   │   ├── useCommitOnFocus.ts                   [16]
-│   │   ├── useTagSuggestions.ts                  [16]
-│   │   ├── useCreateDiagram.ts                   [17]
-│   │   ├── useMermaidRender.ts                   [18]
-│   │   └── useExportDiagram.ts                   [19]
+│   │   ├── useDiagramShortcuts.ts                ✅ [15] Delete, undo/redo, Escape, V/H/N/C/T/R/O; [20] din registru, + C / V / D
+│   │   ├── useNodeClipboard.ts                   ✅ [20] copy / paste (la cursor sau +24px) / duplicate
+│   │   ├── useCanvasContextMenu.ts               ✅ [20] click dreapta pe canvas și pe noduri
+│   │   ├── useFocusRequest.ts                    ✅ [20] centrează pe nodul cerut de căutare (fitView)
+│   │   ├── useDeleteSelection.ts                 ✅ [16] ștergere + toast, comună tastei și panoului
+│   │   ├── useSelectedElements.ts                ✅ [16] nod / muchie / multiplu / nimic
+│   │   ├── useCommitOnFocus.ts                   ✅ [16] un pas de undo per editare de câmp
+│   │   ├── useTagSuggestions.ts                  ✅ [16] index:list-tags, gol dacă indexul nu e gata
+│   │   ├── useCreateDiagram.ts                   ✅ [17] fs:create-diagram + expandare, tab, N1 selectat, toast
+│   │   ├── useMermaidRender.ts                   ✅ [18] debounce 300ms, ultimul SVG valid, re-randare la temă
+│   │   ├── useThemeKey.ts                        ✅ [18] tema și accentul aplicate pe <html>
+│   │   └── useExportDiagram.ts                   ✅ [19] toast-uri, exportedAt scris direct dacă tab-ul e curat
 │   ├── constants/
 │   │   ├── node-kinds.ts                         ✅ [14]
 │   │   ├── node-palette.ts                       ✅ [14] paleta semantică de 6 culori (date, nu temă)
 │   │   ├── tools.ts                              ✅ [15] unelte, hint-uri
 │   │   ├── style.ts                              ✅ [15] grosimi, interval font
-│   │   ├── diagram-catalog.ts                    [17] catalogul UML
-│   │   ├── diagram-sketches.ts                   [17]
-│   │   └── diagram-starters.ts                   [17]
+│   │   ├── diagram-catalog.ts                    ✅ [17] catalogul UML, 7 structural / 7 behavioral
+│   │   ├── diagram-sketches.ts                   ✅ [17] primitive rect / circle / ellipse / path
+│   │   └── diagram-starters.ts                   ✅ [17] class / sequence / state / usecase / activity
 │   ├── utils/
 │   │   ├── graph-mapping.ts                      ✅ [13] .soardiag ↔ React Flow
 │   │   ├── zoom.ts                               ✅ [13] limite și pași de zoom
 │   │   ├── canvas-layout.ts                      ✅ [13] praguri responsive ale canvas-ului
 │   │   ├── node-factory.ts                       ✅ [15] id N<k> / E<k> cel mai mic liber
-│   │   ├── build-starter-graph.ts                [17]
-│   │   ├── filter-catalog.ts                     [17]
-│   │   └── clipboard.ts                          [20]
-│   ├── mermaid/                                  [18]
-│   │   ├── mermaid-loader.ts                     import leneș
-│   │   ├── templates.ts
-│   │   └── theme-variables.ts
-│   ├── export/                                   [19]
-│   │   ├── export-formats.ts
-│   │   ├── export-canvas.ts
-│   │   ├── export-mermaid.ts
-│   │   └── xmi/
-│   │       ├── serialize-xmi.ts
-│   │       └── class.xmi.ts
+│   │   ├── build-starter-graph.ts                ✅ [17] N1, N2 pe diagonală, muchia N1 → N2
+│   │   ├── filter-catalog.ts                     ✅ [17] categorie + căutare, grupat
+│   │   ├── folder-paths.ts                       ✅ [17] folderele arborelui, pentru „saves to”
+│   │   ├── mermaid-layout.ts                     ✅ [18] aranjamentul după lățime
+│   │   ├── clipboard.ts                          ✅ [20] application/x-soar-nodes (JSON ca text), remapare id-uri, +24px
+│   │   └── canvas-menu-items.ts                  ✅ [20] meniurile canvas-ului și ale nodului
+│   ├── mermaid/                                  ✅ [18] pachetul `mermaid`, chunk separat
+│   │   ├── mermaid-loader.ts                     ✅ import() leneș, strict + base, id unic per randare
+│   │   ├── templates.ts                          ✅ sequence / class / state; activity și usecase ca flowchart
+│   │   └── theme-variables.ts                    ✅ tokenuri hex → themeVariables
+│   ├── export/                                   ✅ [19]
+│   │   ├── export-formats.ts                     ✅ PNG / SVG / PDF / UML XMI, isAvailable
+│   │   ├── export-image.ts                       ✅ data URL → SVG / bytes, fundalul --canvas
+│   │   ├── export-canvas.ts                      ✅ html-to-image pe viewport, încadrat pe noduri (+24px), fără UI de editare
+│   │   ├── export-mermaid.ts                     ✅ re-randare cu etichete SVG, PNG prin <canvas> la 2×
+│   │   └── xmi/                                  ✅ UML 2.5.1
+│   │       ├── serialize-xmi.ts                  ✅ dispecer: class / activity / state
+│   │       ├── xmi-writer.ts                     ✅ documentul, escape, id-uri
+│   │       ├── class.xmi.ts                      ✅ Class + Association
+│   │       ├── activity.xmi.ts                   ✅ Activity, OpaqueAction / DecisionNode / InitialNode, ControlFlow
+│   │       └── state.xmi.ts                      ✅ StateMachine, Region, State, Transition
 │   └── styles/
 │       ├── react-flow.css                        ✅ [13] --xy-* din tokenuri
 │       ├── nodes.css                             ✅ [14] noduri, skin-uri, romb
 │       ├── node-chrome.css                       ✅ [14] handle-uri, selecție
 │       ├── edges.css                             ✅ [14] muchii, markere, animația „hot”
-│       └── tools.css                             ✅ [15] cursoare, forme, redimensionare
+│       ├── tools.css                             ✅ [15] cursoare, forme, redimensionare
+│       ├── new-diagram.css                       ✅ [17] grila de puncte a schițelor
+│       └── mermaid.css                           ✅ [18] grila de puncte a previzualizării
 │
-└── search/                                       [20] Ctrl+K
-    ├── index.ts
+└── search/                                       ✅ [20] Ctrl+K
+    ├── index.ts                                  ✅ GlobalSearch (modalul `command-palette`)
     ├── components/
-    │   ├── GlobalSearch.tsx
-    │   ├── SearchResultRow.tsx
-    │   └── HighlightedSnippet.tsx
-    ├── hooks/useSearch.ts
-    └── utils/group-results.ts
+    │   ├── GlobalSearch.tsx                      ✅ combobox + listbox grupat, ↑↓ / ⏎ / esc, filtru de tip
+    │   ├── SearchResultRow.tsx                   ✅ cale trunchiată la mijloc, rândul activ ca în arbore
+    │   └── HighlightedSnippet.tsx                ✅ fără HTML: marcajele devin <mark>
+    ├── hooks/useSearch.ts                        ✅ debounce 150ms, minimum 2 caractere, keepPreviousData
+    └── utils/
+        ├── group-results.ts                      ✅ Files / Nodes / Content
+        ├── snippet-parts.ts                      ✅
+        └── open-result.ts                        ✅ fișier; nod: pendingSelection + pendingFocus
 ```
 
 ### 4.5 `shared/` — cod comun, fără cunoștințe despre module
@@ -421,7 +447,7 @@ src/shared/
 │   ├── ui/                        ✅ primitive [02]
 │   │   ├── index.ts               ✅
 │   │   ├── Button.tsx             ✅
-│   │   ├── IconButton.tsx         ✅
+│   │   ├── IconButton.tsx         ✅ [20] shortcut: combinația în tooltip + aria-keyshortcuts
 │   │   ├── SplitButton.tsx        ✅
 │   │   ├── ControlPill.tsx        ✅
 │   │   ├── Input.tsx              ✅
@@ -430,16 +456,18 @@ src/shared/
 │   │   ├── Toggle.tsx             ✅
 │   │   ├── SegmentedControl.tsx   ✅
 │   │   ├── Swatch.tsx             ✅
-│   │   ├── TagInput.tsx           ✅
-│   │   ├── Menu.tsx               ✅ flip / shift în viewport
-│   │   ├── Modal.tsx              ✅ limitat la viewport
+│   │   ├── TagInput.tsx           ✅ [16] sugestii opționale
+│   │   ├── Menu.tsx               ✅ flip / shift în viewport; [19] title pe MenuItem
+│   │   ├── Modal.tsx              ✅ limitat la viewport; [20] maxHeight
 │   │   ├── Tooltip.tsx            ✅
 │   │   ├── Divider.tsx            ✅
 │   │   ├── Kbd.tsx                ✅
 │   │   ├── SectionLabel.tsx       ✅
 │   │   ├── EmptyState.tsx         ✅
 │   │   ├── Toast.tsx              ✅ [06] prezentațional: info / error (2 rânduri, role=alert)
-│   │   ├── ContextMenu.tsx           [20]
+│   │   ├── ContextMenu.tsx        ✅ [20] useContextMenu: la cursor, pe Menu
+│   │   ├── ContextMenuList.tsx    ✅ [20] acțiuni, separatoare, submeniuri (stânga dacă nu încap)
+│   │   ├── context-menu.types.ts  ✅ [20]
 │   │   └── tests/                 ✅ Menu, Modal, SegmentedControl, TagInput, Toggle
 │   └── layout/
 │       ├── TitleBar.tsx           ✅ [03] sloturi toolbar / actions, densitate, rezervări per OS
@@ -453,7 +481,7 @@ src/shared/
 │       ├── tests/                 ✅ TitleBar, AppShell, SidePanel, PanelResizeHandle, ModalHost, StatusBar, ToastViewport
 │       ├── AppShell.tsx           ✅ [04] gridul ferestrei; coloane din PanelLayout
 │       ├── SidePanel.tsx          ✅ [04] docked / overlay: poziție, animație, focus, Escape
-│       ├── PanelResizeHandle.tsx  ✅ [04] generic, pointer + tastatură   [18*] refolosit pentru split view
+│       ├── PanelResizeHandle.tsx  ✅ [04] generic, pointer + tastatură; [18] orientation, scale (split view)
 │       ├── Sidebar.tsx            ✅ [04] cadrul panoului stâng
 │       ├── InspectorPanel.tsx     ✅ [04] header „Properties” + închidere
 │       ├── ModalHost.tsx          ✅ [04] modalul activ din ui.store
@@ -462,7 +490,7 @@ src/shared/
 │       ├── StatusPath.tsx         ✅ [06] calea activă, trunchiată la mijloc după lățime, tooltip
 │       ├── ShellStatusBar.tsx     ✅ [06] compunerea: stare, cale, StatusItems ale editorului, tema
 │       ├── ToastViewport.tsx      ✅ [06] toast-ul din ui.store, 1900ms, aria-live
-│       └── ShortcutsHelp.tsx         [20]
+│       └── ShortcutsHelp.tsx      ✅ [20] Ctrl/Cmd+/: tot registrul, pe scope, 2 coloane peste 900px
 ├── hooks/
 │   ├── useClickOutside.ts         ✅
 │   ├── useElementSize.ts          ✅
@@ -475,23 +503,24 @@ src/shared/
 │   ├── useSettings.ts             ✅ [05] settingsQuery, useSettings(), useUpdateSettings() optimist
 │   ├── useTheme.ts                ✅ [05] temă efectivă, tema OS live, overlay Windows, toggle
 │   ├── useLayoutPersistence.ts    ✅ [05] salvează panourile (debounce 300ms, nu în timpul drag-ului)
-│   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%   [06*] toast „Zoom N%”
+│   ├── useUiZoom.ts               ✅ [05] Ctrl/Cmd + = / - / 0, trepte 80–150%   [06*] toast „Zoom N%”   [20] din registru
 │   ├── tests/                     ✅ [05] useTheme, useLayoutPersistence, useUiZoom
 │   ├── useDebounce.ts             ✅ [12] useDebouncedCallback (flush / cancel, onUnmount)
 │   ├── useWorkspaceFile.ts        ✅ [13] query pe un fișier, reîncărcat la workspace:tree-changed
 │   ├── useFileAutosave.ts         ✅ [13] autosave comun documente / diagrame (800ms, Ctrl/Cmd+S, flush)
 │   ├── useExternalChanges.ts      ✅ [13] fișier schimbat pe disc: reload sau toast de conflict
-│   ├── usePanelShortcuts.ts       ✅ [11] Ctrl/Cmd+B, Ctrl/Cmd+Alt+B
+│   ├── usePanelShortcuts.ts       ✅ [11] Ctrl/Cmd+B, Ctrl/Cmd+Alt+B (din registru [20])
 │   ├── useIndexProgress.ts        ✅ [10] „Indexing…” în status bar
-│   └── useKeyboard.ts             ✅ [15] combinații mod+z, ignoră câmpurile editabile   [20*]
+│   └── useKeyboard.ts             ✅ [15] combinații mod+z, ignoră câmpurile editabile; [20] useShortcuts / useShortcut / matchesShortcut, tasta fizică la combinații cu modificator
 └── utils/
     ├── cn.ts                      ✅
-    ├── floating-position.ts       ✅
+    ├── floating-position.ts       ✅ [20] computeSubmenuPosition
     ├── truncate-middle.ts         ✅
     ├── tests/                     ✅ cn, floating-position, truncate-middle, panel-layout, apply-theme, platform
     ├── panel-layout.ts            ✅ [04] resolvePanelLayout (funcție pură)
     ├── apply-theme.ts             ✅ [05] resolveTheme, applyTheme (data-theme, --accent), readTitleBarColors
-    ├── platform.ts                ✅ [06] modKeyLabel (⌘ / Ctrl), formatShortcut
+    ├── platform.ts                ✅ [06] modKeyLabel (⌘ / Ctrl), formatShortcut; [20] formatCombo, shortcutLabel, ariaKeyShortcut, platformFromUserAgent
+    ├── copy-text.ts               ✅ [20] clipboard + toast
     └── color.ts                   ✅ [14] hexToRgba
 ```
 

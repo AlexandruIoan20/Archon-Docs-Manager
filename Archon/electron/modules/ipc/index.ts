@@ -1,5 +1,6 @@
 import { registerAppHandlers } from './app.handler'
 import { registerDbHandlers } from './db.handler'
+import { registerExportHandlers } from './export.handler'
 import { registerFsHandlers } from './fs.handler'
 import { registerSettingsHandlers } from './settings.handler'
 import { registerWindowHandlers } from './window.handler'
@@ -13,4 +14,5 @@ export function registerIpcHandlers(): void {
   registerWorkspaceHandlers()
   registerFsHandlers()
   registerDbHandlers()
+  registerExportHandlers()
 }

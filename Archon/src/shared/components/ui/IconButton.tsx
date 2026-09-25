@@ -1,6 +1,8 @@
 import type { ComponentPropsWithRef } from 'react'
+import { getShortcut, type ShortcutId } from '@/core/constants/shortcuts'
 import { Icon, type IconName } from '@/shared/components/icons'
 import { cn } from '@/shared/utils/cn'
+import { ariaKeyShortcut, formatCombo, platformFromUserAgent } from '@/shared/utils/platform'
 import { Tooltip } from './Tooltip'
 
 export type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg'
@@ -14,6 +16,8 @@ export interface IconButtonProps extends Omit<ComponentPropsWithRef<'button'>, '
   variant?: 'ghost' | 'outline'
   active?: boolean
   tooltip?: boolean
+  /** A registry shortcut doing the same: shown in the tooltip, exposed as `aria-keyshortcuts`. */
+  shortcut?: ShortcutId
 }
 
 const SIZE_CLASSES: Record<IconButtonSize, string> = {
@@ -33,14 +37,18 @@ export function IconButton({
   variant = 'ghost',
   active = false,
   tooltip = true,
+  shortcut,
   type = 'button',
   className,
   ...props
 }: IconButtonProps): React.JSX.Element {
+  const platform = platformFromUserAgent()
+  const combo = shortcut ? getShortcut(shortcut).keys[0] : undefined
   const button = (
     <button
       type={type}
       aria-label={label}
+      aria-keyshortcuts={combo ? ariaKeyShortcut(platform, combo) : undefined}
       aria-pressed={active || undefined}
       className={cn(
         'inline-flex shrink-0 cursor-pointer items-center justify-center transition-colors',
@@ -60,7 +68,18 @@ export function IconButton({
 
   if (!tooltip) return button
   return (
-    <Tooltip content={label} describe={false}>
+    <Tooltip
+      content={
+        combo ? (
+          <>
+            {label} <span className="font-mono opacity-65">{formatCombo(platform, combo)}</span>
+          </>
+        ) : (
+          label
+        )
+      }
+      describe={false}
+    >
       {button}
     </Tooltip>
   )

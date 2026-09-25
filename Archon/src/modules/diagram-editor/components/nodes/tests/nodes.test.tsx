@@ -48,7 +48,7 @@ async function renderCanvas(file: SoarDiagram): Promise<DiagramStoreApi> {
     <Wrapper>
       <DiagramStoreProvider store={store}>
         <ReactFlowProvider>
-          <DiagramCanvas />
+          <DiagramCanvas tabId="test" />
         </ReactFlowProvider>
       </DiagramStoreProvider>
     </Wrapper>

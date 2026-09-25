@@ -123,6 +123,18 @@ describe('documents and diagrams', () => {
     expect(uml.relPath).toBe('login-flow.soardiag')
   })
 
+  it('creates a mermaid diagram with its source and no graph', async () => {
+    const source = 'sequenceDiagram\n  A->>B: hi'
+    const created = await createDiagram(root, '', {
+      type: 'sequence',
+      engine: 'mermaid',
+      mermaidSource: source
+    })
+    const onDisk = diagramFileSchema.parse(json(created.relPath))
+    expect(onDisk).toMatchObject({ engine: 'mermaid', mermaidSource: source })
+    expect(onDisk.data.nodes).toEqual([])
+  })
+
   it('rejects invalid diagram options before touching the disk', async () => {
     await expect(createDiagram(root, '', { type: 'venn' as never })).rejects.toMatchObject({
       code: 'INVALID_ARGUMENT'

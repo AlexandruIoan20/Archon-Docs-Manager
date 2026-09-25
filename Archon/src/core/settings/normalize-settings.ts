@@ -130,7 +130,12 @@ function normalizeTabSession(raw: unknown): TabSession {
 function normalizeSession(raw: unknown): SessionSettings {
   if (!isObject(raw)) return {}
   const session: SessionSettings = { ...raw }
-  const { lastWorkspace, expandedByWorkspace, tabsByWorkspace } = raw
+  const { lastWorkspace, expandedByWorkspace, tabsByWorkspace, lastExportDir } = raw
+  if (lastExportDir !== undefined) {
+    if (typeof lastExportDir === 'string' && lastExportDir !== '')
+      session.lastExportDir = lastExportDir
+    else delete session.lastExportDir
+  }
   if (lastWorkspace !== undefined) {
     session.lastWorkspace =
       typeof lastWorkspace === 'string' && lastWorkspace !== '' ? lastWorkspace : null

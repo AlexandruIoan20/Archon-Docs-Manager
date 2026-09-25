@@ -158,3 +158,8 @@ html.panel-resizing * {
   cursor: col-resize !important;
   user-select: none !important;
 }
+
+html.panel-resizing-row,
+html.panel-resizing-row * {
+  cursor: row-resize !important;
+}

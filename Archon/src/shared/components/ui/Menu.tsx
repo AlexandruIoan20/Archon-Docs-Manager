@@ -117,6 +117,8 @@ export interface MenuItemProps {
   disabled?: boolean
   /** Keeps the menu open after selection (toggles, pickers). */
   keepOpen?: boolean
+  /** Native tooltip, e.g. why the item is disabled. */
+  title?: string
   className?: string
 }
 
@@ -128,6 +130,7 @@ export function MenuItem({
   danger = false,
   disabled = false,
   keepOpen = false,
+  title,
   className
 }: MenuItemProps): React.JSX.Element {
   const menu = useContext(MenuContext)
@@ -138,6 +141,7 @@ export function MenuItem({
       role="menuitem"
       tabIndex={-1}
       disabled={disabled}
+      title={title}
       onMouseEnter={(event) => event.currentTarget.focus()}
       onClick={() => {
         onSelect?.()

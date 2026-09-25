@@ -2,6 +2,7 @@ import { fireEvent, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { selectActivePath, useEditorStore, useUiStore } from '@/store'
 import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { queryWrapper } from '@/test/render-with-query'
 import { useCloseGuardStore } from '../../store/close-guard.store'
 import { useQuitGuard } from '../useQuitGuard'
 import { useTabShortcuts } from '../useTabShortcuts'
@@ -23,7 +24,7 @@ describe('tab shortcuts', () => {
   })
 
   it('cycles with Ctrl+Tab and Ctrl+Shift+Tab', () => {
-    renderHook(() => useTabShortcuts())
+    renderHook(() => useTabShortcuts(), { wrapper: queryWrapper() })
     fireEvent.keyDown(window, { code: 'Tab', ctrlKey: true })
     expect(active()).toBe('a.soardoc')
     fireEvent.keyDown(window, { code: 'Tab', ctrlKey: true, shiftKey: true })
@@ -31,7 +32,7 @@ describe('tab shortcuts', () => {
   })
 
   it('closes the active tab with Ctrl+W', async () => {
-    renderHook(() => useTabShortcuts())
+    renderHook(() => useTabShortcuts(), { wrapper: queryWrapper() })
     fireEvent.keyDown(window, { code: 'KeyW', ctrlKey: true })
     await waitFor(() => expect(active()).toBe('b.soardoc'))
   })

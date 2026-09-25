@@ -7,22 +7,39 @@ export interface TagInputProps {
   onAdd: (tag: string) => void
   onRemove: (tag: string) => void
   placeholder?: string
+  /** Known tags, offered under the field while the draft matches them. */
+  suggestions?: readonly string[]
   id?: string
   'aria-label'?: string
   className?: string
 }
+
+const MAX_SUGGESTIONS = 6
 
 export function TagInput({
   tags,
   onAdd,
   onRemove,
   placeholder = 'Add tag…',
+  suggestions,
   id,
   className,
   ...aria
 }: TagInputProps): React.JSX.Element {
   const [draft, setDraft] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const query = draft.trim().toLowerCase()
+  const matches =
+    query === '' || !suggestions
+      ? []
+      : suggestions
+          .filter((tag) => !tags.includes(tag) && tag.toLowerCase().includes(query))
+          .slice(0, MAX_SUGGESTIONS)
+
+  const pick = (tag: string): void => {
+    onAdd(tag)
+    setDraft('')
+  }
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === 'Enter') {
@@ -35,7 +52,7 @@ export function TagInput({
     }
   }
 
-  return (
+  const field = (
     <div
       className={cn(
         'flex min-h-[30px] w-full min-w-0 cursor-text flex-wrap items-center gap-[5px] rounded-sm border border-border bg-bg px-1.5 py-[5px] focus-within:border-accent-border',
@@ -74,6 +91,30 @@ export function TagInput({
         aria-label={aria['aria-label'] ?? placeholder}
         className="h-5 min-w-[60px] flex-1 bg-transparent text-[11px] text-fg outline-none placeholder:text-fg-subtle focus-visible:outline-none"
       />
+    </div>
+  )
+
+  if (!suggestions) return field
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-1">
+      {field}
+      {matches.length > 0 && (
+        <ul aria-label="Tag suggestions" className="flex flex-wrap gap-[5px]">
+          {matches.map((tag) => (
+            <li key={tag} className="max-w-full">
+              <button
+                type="button"
+                // Keeps the focus in the field, so typing can go on.
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => pick(tag)}
+                className="inline-flex h-5 max-w-full cursor-pointer items-center rounded-sm border border-dashed border-border px-1.5 text-[11px] text-fg-muted hover:border-accent-border hover:text-accent-fg"
+              >
+                <span className="truncate">{tag}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

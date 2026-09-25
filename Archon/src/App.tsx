@@ -4,16 +4,18 @@ import {
   EditorContributionsProvider,
   useEditorContribution
 } from '@/core/editor/EditorContributionsProvider'
-import { useUiStore } from '@/store'
+import { openSearchPalette, useUiStore } from '@/store'
 import { AppShell } from '@/shared/components/layout/AppShell'
 import { InspectorPanel } from '@/shared/components/layout/InspectorPanel'
 import { ModalHost } from '@/shared/components/layout/ModalHost'
+import { ShortcutsHelp } from '@/shared/components/layout/ShortcutsHelp'
 import { Sidebar } from '@/shared/components/layout/Sidebar'
 import { ShellStatusBar } from '@/shared/components/layout/ShellStatusBar'
 import { TitleBar } from '@/shared/components/layout/TitleBar'
 import { ToastViewport } from '@/shared/components/layout/ToastViewport'
 import { EmptyState } from '@/shared/components/ui'
 import { useIndexProgress } from '@/shared/hooks/useIndexProgress'
+import { useShortcuts } from '@/shared/hooks/useKeyboard'
 import { useLayoutPersistence } from '@/shared/hooks/useLayoutPersistence'
 import { usePanelLayout } from '@/shared/hooks/usePanelLayout'
 import { usePanelShortcuts } from '@/shared/hooks/usePanelShortcuts'
@@ -39,7 +41,8 @@ import {
   useTabShortcuts
 } from '@/modules/editor'
 import { documentEditorContribution } from '@/modules/document-editor'
-import { diagramEditorContribution } from '@/modules/diagram-editor'
+import { diagramEditorContribution, NewDiagramDialog } from '@/modules/diagram-editor'
+import { GlobalSearch } from '@/modules/search'
 
 // The only place that composes modules. Editor modules register here
 // (plans 12 and 13); the shell looks them up by file kind.
@@ -48,7 +51,10 @@ const EDITOR_CONTRIBUTIONS: readonly EditorContribution[] = [
   diagramEditorContribution
 ]
 const MODALS: Partial<Record<ModalId, ComponentType>> = {
+  'command-palette': GlobalSearch,
   'confirm-delete': ConfirmDeleteModal,
+  'new-diagram': NewDiagramDialog,
+  'shortcuts-help': ShortcutsHelp,
   'unsaved-changes': UnsavedChangesModal
 }
 
@@ -89,11 +95,15 @@ function Workbench(): React.JSX.Element {
   // Until main answers, an empty canvas: no flash of the landing screen.
   const bodyOverride = workspace.current ? undefined : workspace.ready ? <WorkspaceLanding /> : null
 
-  // The „New diagram” dialog arrives in plan 17; until then a flowchart is created directly.
-  const newDiagram = (): void => {
-    if (MODALS['new-diagram']) openModal('new-diagram')
-    else void fileActions.newDiagram()
-  }
+  const newDiagram = (): void => openModal('new-diagram')
+
+  useShortcuts({
+    // The index belongs to a workspace: nothing to search without one.
+    'search.open': () => {
+      if (workspace.current) openSearchPalette()
+    },
+    'shortcuts.help': () => openModal('shortcuts-help')
+  })
 
   return (
     <>
@@ -114,6 +124,7 @@ function Workbench(): React.JSX.Element {
           <Sidebar panel={layout.sidebar}>
             <WorkspaceSidebar
               onToggleInspector={() => togglePanel('inspector', !layout.inspector.fits)}
+              onNewDiagram={newDiagram}
             />
           </Sidebar>
         }

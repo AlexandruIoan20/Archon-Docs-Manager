@@ -5,6 +5,7 @@
  */
 
 import type { CreateDiagramOptions, SoarDiagram } from './diagram.types'
+import type { ExportPdfRequest, ExportSaveRequest, ExportSaveResult } from './export.types'
 import type { SoarDocument } from './document.types'
 import type { Result } from './result.types'
 import type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'
@@ -98,6 +99,11 @@ export interface IpcInvokeContract {
   'index:list-tags': { args: []; result: Result<TagCount[]> }
   /** Full-text search; `limit` defaults to `SEARCH_DEFAULT_LIMIT`. */
   'search:query': { args: [text: string, limit?: number]; result: Result<SearchResult[]> }
+
+  // Export (plan 19). Main asks where to save; the renderer only sends the content.
+  'export:save': { args: [request: ExportSaveRequest]; result: Result<ExportSaveResult> }
+  /** Prints the SVG to a one-page PDF in a hidden window, then saves it. */
+  'export:pdf-from-svg': { args: [request: ExportPdfRequest]; result: Result<ExportSaveResult> }
 }
 
 export type IpcChannel = keyof IpcInvokeContract

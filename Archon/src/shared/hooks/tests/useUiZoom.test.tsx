@@ -54,9 +54,9 @@ describe('useUiZoom', () => {
     expect(mock.api.settings.update).toHaveBeenCalledWith({ appearance: { uiZoom: 1.1 } })
   })
 
-  it('zooms out with Cmd+- and the numpad', async () => {
+  it('zooms out with Ctrl+- and the numpad', async () => {
     const { result } = await render(1.25)
-    press('Minus', { metaKey: true })
+    press('Minus')
     await waitFor(() => expect(result.current.zoom).toBe(1.1))
     press('NumpadSubtract')
     await waitFor(() => expect(result.current.zoom).toBe(1))

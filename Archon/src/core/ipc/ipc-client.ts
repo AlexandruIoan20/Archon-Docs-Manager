@@ -3,6 +3,9 @@ import type {
   AppSettings,
   CreateDiagramOptions,
   EntryRef,
+  ExportPdfRequest,
+  ExportSaveRequest,
+  ExportSaveResult,
   FolderEntry,
   IndexStatus,
   IpcEvent,
@@ -116,6 +119,12 @@ export const ipcClient = {
   search: {
     query: (text: string, limit?: number): Promise<SearchResult[]> =>
       unwrap(call((api) => api.search.query(text, limit)))
+  },
+  export: {
+    save: (request: ExportSaveRequest): Promise<ExportSaveResult> =>
+      unwrap(call((api) => api.export.save(request))),
+    pdfFromSvg: (request: ExportPdfRequest): Promise<ExportSaveResult> =>
+      unwrap(call((api) => api.export.pdfFromSvg(request)))
   },
   /** Throws if the bridge is missing; check `isAvailable()` first where that is expected. */
   on: <E extends IpcEvent>(

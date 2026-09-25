@@ -1,0 +1,11 @@
+/* The preview sits on the canvas dot grid (22px, as in React Flow's Background). */
+.mermaid-preview {
+  background-color: var(--canvas);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+
+.mermaid-preview svg {
+  display: block;
+  height: auto;
+}

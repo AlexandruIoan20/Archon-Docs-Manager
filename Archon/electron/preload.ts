@@ -93,6 +93,10 @@ const api: SoarApi = {
   search: {
     query: (text, limit) => invoke('search:query', text, limit)
   },
+  export: {
+    save: (request) => invoke('export:save', request),
+    pdfFromSvg: (request) => invoke('export:pdf-from-svg', request)
+  },
   on
 }
 

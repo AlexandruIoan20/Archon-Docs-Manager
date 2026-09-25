@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import type { EditorTabRef, SoarDiagram } from '@/core/types'
 import { ipcClient } from '@/core/ipc/ipc-client'
+import { useEditorStore } from '@/store'
 import { useExternalChanges } from '@/shared/hooks/useExternalChanges'
 import { useFileAutosave } from '@/shared/hooks/useFileAutosave'
 import { useWorkspaceFile } from '@/shared/hooks/useWorkspaceFile'
 import { createDiagramStore, type DiagramStoreApi } from '../store/diagram.store'
 import { getStore, registerStore, useRegisteredStore } from '../store/store-registry'
-import { fileToGraph, graphToFile } from '../utils/graph-mapping'
+import { fileToGraph, graphToFile, withSelectedNodes } from '../utils/graph-mapping'
 
 export const diagramQueryKey = (relPath: string): readonly unknown[] => ['diagram', relPath]
 
@@ -27,9 +28,27 @@ export function useDiagram({ tabId, filePath }: EditorTabRef): DiagramLoad {
   // Created once per tab; it outlives tab switches and goes when the tab closes.
   useEffect(() => {
     if (data && !getStore(tabId)) {
-      registerStore(tabId, createDiagramStore(fileToGraph(data), data))
+      const graph = fileToGraph(data)
+      const pending = useEditorStore.getState().takePendingSelection(tabId)
+      registerStore(
+        tabId,
+        createDiagramStore(pending ? withSelectedNodes(graph, pending) : graph, data)
+      )
     }
   }, [data, tabId])
+
+  // A selection asked for later, e.g. a search result in a diagram already open.
+  useEffect(() => {
+    if (!store) return
+    const apply = (): void => {
+      const ids = useEditorStore.getState().takePendingSelection(tabId)
+      if (ids) store.getState().selectNodes(ids)
+    }
+    apply()
+    return useEditorStore.subscribe((state, prev) => {
+      if (state.pendingSelection !== prev.pendingSelection && state.pendingSelection[tabId]) apply()
+    })
+  }, [store, tabId])
 
   const build = useCallback(
     (): SoarDiagram | null => (store ? graphToFile(store.getState()) : null),

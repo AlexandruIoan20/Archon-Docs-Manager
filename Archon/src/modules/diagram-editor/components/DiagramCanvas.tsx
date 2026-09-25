@@ -3,6 +3,7 @@ import {
   Background,
   BackgroundVariant,
   ReactFlow,
+  ViewportPortal,
   type OnMove,
   type OnSelectionChangeParams
 } from '@xyflow/react'
@@ -14,6 +15,8 @@ import '../styles/edges.css'
 import '../styles/tools.css'
 import { MAX_ZOOM, MIN_ZOOM } from '../utils/zoom'
 import { useCanvasInteractions } from '../hooks/useCanvasInteractions'
+import { useCanvasContextMenu } from '../hooks/useCanvasContextMenu'
+import { useFocusRequest } from '../hooks/useFocusRequest'
 import { useNodeTypes } from '../hooks/useNodeTypes'
 import { DiagramStyleContext, type DiagramStyle } from './diagram-style'
 import { EdgeMarkers } from './edges/EdgeMarkers'
@@ -21,7 +24,13 @@ import { EdgeMarkers } from './edges/EdgeMarkers'
 const FIT_VIEW_OPTIONS = { padding: 0.12 }
 
 /** The React Flow canvas, controlled by the tab's diagram store. */
-export function DiagramCanvas({ children }: { children?: ReactNode }): React.JSX.Element {
+export function DiagramCanvas({
+  tabId,
+  children
+}: {
+  tabId: string
+  children?: ReactNode
+}): React.JSX.Element {
   const store = useDiagramStoreApi()
   const nodes = useDiagramStore((s) => s.nodes)
   const edges = useDiagramStore((s) => s.edges)
@@ -33,6 +42,8 @@ export function DiagramCanvas({ children }: { children?: ReactNode }): React.JSX
   const { nodeTypes, edgeTypes, nodeStyle, edgeStyle } = useNodeTypes()
   const connecting = useDiagramStore((s) => s.tool === 'connect')
   const interactions = useCanvasInteractions()
+  const contextMenu = useCanvasContextMenu()
+  useFocusRequest(tabId)
   const style = useMemo<DiagramStyle>(
     () => ({ nodeStyle, edgeStyle, connecting }),
     [nodeStyle, edgeStyle, connecting]
@@ -49,7 +60,6 @@ export function DiagramCanvas({ children }: { children?: ReactNode }): React.JSX
 
   return (
     <DiagramStyleContext value={style}>
-      <EdgeMarkers />
       <ReactFlow<FlowNode, FlowEdge>
         className="soar-flow"
         nodes={nodes}
@@ -69,11 +79,18 @@ export function DiagramCanvas({ children }: { children?: ReactNode }): React.JSX
         // Deleting is ours (undo + toast), see `useDiagramShortcuts`.
         deleteKeyCode={null}
         {...interactions}
+        onPaneContextMenu={contextMenu.onPaneContextMenu}
+        onNodeContextMenu={contextMenu.onNodeContextMenu}
         attributionPosition="top-right"
       >
+        {/* Inside the viewport, so an exported image keeps its arrowheads. */}
+        <ViewportPortal>
+          <EdgeMarkers />
+        </ViewportPortal>
         <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} />
         {children}
       </ReactFlow>
+      {contextMenu.element}
     </DiagramStyleContext>
   )
 }

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import type { DiagramType, EntryRef } from '@/core/types'
+import type { EntryRef } from '@/core/types'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { baseName, parentPath } from '@/core/utils/rel-path'
 import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
@@ -9,14 +9,11 @@ import { treeQueryKey } from './useWorkspace'
 export interface FileActions {
   newDocument: () => Promise<void>
   newFolder: () => Promise<void>
-  newDiagram: (type?: DiagramType) => Promise<void>
   /** Rejects with the `IpcError`, so an inline editor can show it. */
   rename: (relPath: string, newName: string) => Promise<EntryRef>
   move: (relPath: string, targetFolderRel: string) => Promise<EntryRef>
   remove: (relPath: string) => Promise<void>
 }
-
-const capitalize = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1)
 
 /** `Playbooks/` for a file in Playbooks, `<root folder>/` at the top level. */
 function folderLabel(relPath: string): string {
@@ -60,18 +57,6 @@ export function useFileActions(): FileActions {
     useEditorStore.getState().openFile(created.relPath, 'soardoc')
     useUiStore.getState().notify(`Document created in ${folderLabel(created.relPath)}`)
   }, [createInTarget])
-
-  const newDiagram = useCallback(
-    async (type: DiagramType = 'flowchart') => {
-      const created = await createInTarget((folder) => ipcClient.fs.createDiagram(folder, { type }))
-      if (!created) return
-      useEditorStore.getState().openFile(created.relPath, 'soardiag')
-      useUiStore
-        .getState()
-        .notify(`${capitalize(type)} diagram created in ${folderLabel(created.relPath)}`)
-    },
-    [createInTarget]
-  )
 
   const newFolder = useCallback(async () => {
     const created = await createInTarget((folder) => ipcClient.fs.createFolder(folder))
@@ -124,5 +109,5 @@ export function useFileActions(): FileActions {
     [refreshTree]
   )
 
-  return { newDocument, newFolder, newDiagram, rename, move, remove }
+  return { newDocument, newFolder, rename, move, remove }
 }

@@ -36,6 +36,7 @@ export interface SoarApiMock {
     fs: Mocked<SoarApi['fs']>
     index: Mocked<SoarApi['index']>
     search: Mocked<SoarApi['search']>
+    export: Mocked<SoarApi['export']>
   }
   /** Simulates a main → renderer event reaching every current subscriber. */
   emit: <E extends IpcEvent>(event: E, payload: IpcEventPayload<E>) => void
@@ -98,6 +99,10 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
     },
     search: {
       query: vi.fn(() => Promise.resolve(ok([])))
+    },
+    export: {
+      save: vi.fn(() => Promise.resolve(ok({ canceled: true as const }))),
+      pdfFromSvg: vi.fn(() => Promise.resolve(ok({ canceled: true as const })))
     },
     on: (event, callback) => {
       const set = listeners.get(event) ?? new Set<Listener>()

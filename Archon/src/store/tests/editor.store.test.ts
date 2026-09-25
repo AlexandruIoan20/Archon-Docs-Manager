@@ -114,4 +114,12 @@ describe('editor.store', () => {
     state().hydrate([], null)
     expect(state()).toMatchObject({ tabs: [], activeId: null })
   })
+
+  it('hands the pending selection of a tab over once', () => {
+    const id = state().openFile('a.soardiag', 'soardiag')
+    expect(state().takePendingSelection(id)).toBeNull()
+    state().setPendingSelection(id, ['N1'])
+    expect(state().takePendingSelection(id)).toEqual(['N1'])
+    expect(state().takePendingSelection(id)).toBeNull()
+  })
 })

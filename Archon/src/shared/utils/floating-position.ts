@@ -82,3 +82,23 @@ export function computeFloatingPosition({
 
   return { x, y, side, maxHeight }
 }
+
+/**
+ * Where a submenu goes: to the right of its item, or to the left when it does
+ * not fit there; aligned with the item's top, shifted up to stay in the window.
+ */
+export function computeSubmenuPosition(
+  item: Rect,
+  floating: Size,
+  viewport: Size,
+  margin = 8
+): { x: number; y: number; side: 'right' | 'left' } {
+  const fitsRight = item.x + item.width + floating.width + margin <= viewport.width
+  const side = fitsRight || item.x - floating.width < margin ? 'right' : 'left'
+  const x =
+    side === 'right'
+      ? Math.min(item.x + item.width, viewport.width - margin - floating.width)
+      : item.x - floating.width
+  const y = clamp(item.y - 4, margin, Math.max(margin, viewport.height - margin - floating.height))
+  return { x: Math.max(margin, x), y, side }
+}

@@ -24,3 +24,8 @@ export {
   type EditorTab,
   type TabSeed
 } from './editor.store'
+export {
+  useSearchPaletteStore,
+  openSearchPalette,
+  type SearchPaletteRequest
+} from './search-palette.store'

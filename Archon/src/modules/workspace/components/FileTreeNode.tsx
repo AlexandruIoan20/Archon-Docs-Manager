@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode, Ref } from 'react'
+import type { KeyboardEvent, MouseEvent, ReactNode, Ref } from 'react'
 import { Icon } from '@/shared/components/icons'
 import { TruncatedText } from '@/shared/components/ui'
 import { cn } from '@/shared/utils/cn'
@@ -14,6 +14,8 @@ export interface FileTreeNodeProps {
   onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void
   /** Double-click starts an inline rename. */
   onRename?: (row: TreeRow) => void
+  /** Right click (plan 20). */
+  onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void
   /** Replaces the name, e.g. with an inline rename field (plan 09). */
   nameSlot?: ReactNode
   rowRef?: Ref<HTMLDivElement>
@@ -31,6 +33,7 @@ export function FileTreeNode({
   onFocus,
   onKeyDown,
   onRename,
+  onContextMenu,
   nameSlot,
   rowRef
 }: FileTreeNodeProps): React.JSX.Element {
@@ -50,6 +53,7 @@ export function FileTreeNode({
       tabIndex={tabbable ? 0 : -1}
       onClick={() => onActivate(row)}
       onDoubleClick={onRename ? () => onRename(row) : undefined}
+      onContextMenu={onContextMenu}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       style={{

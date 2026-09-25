@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import type { EditorSlotProps } from '@/core/types'
-import { EmptyState, SectionLabel, TagInput } from '@/shared/components/ui'
+import { openSearchPalette } from '@/store'
+import { Button, EmptyState, SectionLabel, TagInput } from '@/shared/components/ui'
 import { useDocumentEditorStore, useDocumentSession } from '../store/document-editor.store'
 
 /** Tags and linked diagrams of the document, in the right panel. */
@@ -14,6 +15,21 @@ export function DocumentInspector({ tab }: EditorSlotProps): React.JSX.Element |
     session.changed()
   }
 
+  // Pick a diagram in the palette, filtered on `.soardiag`; its id goes in the list.
+  const linkDiagram = (): void =>
+    openSearchPalette({
+      kind: 'soardiag',
+      placeholder: 'Link a diagram…',
+      onPick: (result) => {
+        const current = useDocumentEditorStore.getState().sessions[tab.tabId]?.linkedDiagrams ?? []
+        if (current.includes(result.fileId)) return
+        useDocumentEditorStore
+          .getState()
+          .patch(tab.tabId, { linkedDiagrams: [...current, result.fileId] })
+        session.changed()
+      }
+    })
+
   return (
     <div className="flex flex-col gap-5 overflow-y-auto p-3.5">
       <section>
@@ -26,7 +42,12 @@ export function DocumentInspector({ tab }: EditorSlotProps): React.JSX.Element |
         />
       </section>
       <section>
-        <SectionLabel>Linked diagrams</SectionLabel>
+        <div className="flex items-center justify-between gap-2">
+          <SectionLabel>Linked diagrams</SectionLabel>
+          <Button size="sm" icon="link" className="-mt-1.5 h-6 px-2" onClick={linkDiagram}>
+            Link diagram
+          </Button>
+        </div>
         {session.linkedDiagrams.length === 0 ? (
           <EmptyState className="text-left">No linked diagrams yet.</EmptyState>
         ) : (

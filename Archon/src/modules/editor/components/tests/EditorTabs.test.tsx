@@ -1,7 +1,7 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerSaveHandler } from '@/core/editor/save-registry'
-import { useEditorStore, useUiStore } from '@/store'
+import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
 import { useCloseGuardStore } from '../../store/close-guard.store'
 import { EditorTabs } from '../EditorTabs'
 import { UnsavedChangesModal } from '../UnsavedChangesModal'
@@ -135,5 +135,34 @@ describe('EditorTabs', () => {
     renderTabs(onNew)
     fireEvent.click(screen.getByRole('button', { name: 'New diagram' }))
     expect(onNew).toHaveBeenCalledOnce()
+  })
+
+  describe('context menu', () => {
+    const menuFor = (name: string): HTMLElement => {
+      fireEvent.contextMenu(tab(name), { clientX: 200, clientY: 40 })
+      return screen.getByRole('menu')
+    }
+    const item = (menu: HTMLElement, name: string): HTMLElement =>
+      within(menu).getByRole('menuitem', { name })
+
+    it('closes the others and those to the right', async () => {
+      renderTabs()
+      const titles = (): string[] => useEditorStore.getState().tabs.map((t) => t.title)
+      const first = titles()[0] ?? ''
+      fireEvent.click(item(menuFor(first), 'Close to the right'))
+      await waitFor(() => expect(titles()).toEqual([first]))
+      expect(item(menuFor(first), 'Close others')).toBeDisabled()
+    })
+
+    it('reveals the file in the sidebar and copies its path', async () => {
+      renderTabs()
+      const writeText = vi.fn(() => Promise.resolve())
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+      fireEvent.click(item(menuFor('ir-policy'), 'Copy path'))
+      await waitFor(() => expect(writeText).toHaveBeenCalledWith('Runbooks/ir-policy.soardoc'))
+
+      fireEvent.click(item(menuFor('ir-policy'), 'Reveal in sidebar'))
+      expect(useWorkspaceStore.getState().expanded.Runbooks).toBe(true)
+    })
   })
 })

@@ -15,6 +15,8 @@ export interface ModalProps {
   height?: number
   /** `top` pins the dialog near the top (command palette). */
   position?: 'center' | 'top'
+  /** CSS max-height; defaults to `100vh - 32px`. */
+  maxHeight?: string
   'aria-label'?: string
   'aria-labelledby'?: string
   initialFocusRef?: RefObject<HTMLElement | null>
@@ -32,6 +34,7 @@ export function Modal({
   width,
   height,
   position = 'center',
+  maxHeight = 'calc(100vh - 32px)',
   initialFocusRef,
   className,
   children,
@@ -90,7 +93,7 @@ export function Modal({
         style={{
           width: `min(${width}px, 100vw - 32px)`,
           height: height === undefined ? undefined : `min(${height}px, 100vh - 32px)`,
-          maxHeight: 'calc(100vh - 32px)'
+          maxHeight
         }}
         className={cn(
           '@container/modal flex flex-col overflow-hidden rounded-lg border border-border bg-bg text-fg shadow-modal outline-none',

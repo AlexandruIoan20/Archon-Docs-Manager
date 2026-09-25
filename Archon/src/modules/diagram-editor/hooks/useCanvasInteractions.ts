@@ -16,8 +16,9 @@ type CanvasProps = Pick<
   | 'elementsSelectable'
 >
 
-// Middle and right button always pan; the Pan tool adds the left one.
-const PAN_BUTTONS = [1, 2]
+// The middle button always pans; the Pan tool adds the left one. The right
+// button is the context menu (React Flow drops it when right-drag pans).
+const PAN_BUTTONS = [1]
 
 /**
  * What the canvas does with clicks and drags under the active tool: place a

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { registerSaveHandler } from '@/core/editor/save-registry'
 import { useEditorStore, useUiStore } from '@/store'
 import { useDebouncedCallback } from './useDebounce'
+import { useShortcut } from './useKeyboard'
 
 export const AUTOSAVE_DELAY_MS = 800
 
@@ -90,16 +91,7 @@ export function useFileAutosave<T>({
 
   useEffect(() => registerSaveHandler(tabId, saveImmediately), [tabId, saveImmediately])
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent): void => {
-      const mod = event.ctrlKey || event.metaKey
-      if (!mod || event.shiftKey || event.altKey || event.code !== 'KeyS') return
-      event.preventDefault()
-      void saveImmediately()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [saveImmediately])
+  useShortcut('file.save', () => void saveImmediately())
 
   return useMemo(
     () => ({ markChanged, saveNow: saveImmediately, discard }),

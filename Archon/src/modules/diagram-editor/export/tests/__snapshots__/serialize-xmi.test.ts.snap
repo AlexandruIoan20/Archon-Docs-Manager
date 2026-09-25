@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`serializeXmi > writes well-formed XMI for activity 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.5.1" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20161101">
+  <uml:Model xmi:type="uml:Model" xmi:id="_model" name="Sample activity">
+    <packagedElement xmi:type="uml:Activity" xmi:id="_activity" name="Sample activity">
+      <node xmi:type="uml:OpaqueAction" xmi:id="_N1" name="Receive alert" outgoing="_E1"/>
+      <node xmi:type="uml:OpaqueAction" xmi:id="_N2" name="Enrich indicators" incoming="_E1"/>
+      <edge xmi:type="uml:ControlFlow" xmi:id="_E1" source="_N1" target="_N2"/>
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>
+"
+`;
+
+exports[`serializeXmi > writes well-formed XMI for class 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.5.1" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20161101">
+  <uml:Model xmi:type="uml:Model" xmi:id="_model" name="Sample class">
+    <packagedElement xmi:type="uml:Class" xmi:id="_N1" name="Alert"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_N2" name="Indicator"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_E1" memberEnd="_E1_source _E1_target">
+      <ownedEnd xmi:type="uml:Property" xmi:id="_E1_source" type="_N1" association="_E1"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_E1_target" type="_N2" association="_E1"/>
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>
+"
+`;
+
+exports[`serializeXmi > writes well-formed XMI for state 1`] = `
+"<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.5.1" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.omg.org/spec/UML/20161101">
+  <uml:Model xmi:type="uml:Model" xmi:id="_model" name="Sample state">
+    <packagedElement xmi:type="uml:StateMachine" xmi:id="_stateMachine" name="Sample state">
+      <region xmi:type="uml:Region" xmi:id="_region">
+        <subvertex xmi:type="uml:State" xmi:id="_N1" name="New"/>
+        <subvertex xmi:type="uml:State" xmi:id="_N2" name="Contained"/>
+        <transition xmi:type="uml:Transition" xmi:id="_E1" kind="external" source="_N1" target="_N2"/>
+      </region>
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>
+"
+`;

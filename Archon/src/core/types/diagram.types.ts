@@ -29,4 +29,6 @@ export interface CreateDiagramOptions {
   engine?: DiagramEngine
   nodes?: DiagramNodeInput[]
   edges?: DiagramEdgeInput[]
+  /** The text of an `engine: 'mermaid'` diagram. */
+  mermaidSource?: string
 }

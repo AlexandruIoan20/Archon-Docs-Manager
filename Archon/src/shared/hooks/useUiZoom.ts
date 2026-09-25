@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useEffectEvent } from 'react'
+import { useCallback } from 'react'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { UI_ZOOM_DEFAULT, UI_ZOOM_STEPS } from '@/core/constants/app.constants'
 import { useUiStore } from '@/store'
+import { useShortcuts } from './useKeyboard'
 import { useSettings, useUpdateSettings } from './useSettings'
 
 export interface UiZoomControls {
@@ -10,10 +11,6 @@ export interface UiZoomControls {
   zoomOut: () => void
   resetZoom: () => void
 }
-
-const ZOOM_IN_CODES = new Set(['Equal', 'NumpadAdd'])
-const ZOOM_OUT_CODES = new Set(['Minus', 'NumpadSubtract'])
-const ZOOM_RESET_CODES = new Set(['Digit0', 'Numpad0'])
 
 /** The neighbouring step; stays put at either end. */
 export function stepZoom(current: number, direction: 1 | -1): number {
@@ -46,26 +43,7 @@ export function useUiZoom(): UiZoomControls {
   const zoomOut = useCallback(() => setZoom(stepZoom(zoom, -1)), [setZoom, zoom])
   const resetZoom = useCallback(() => setZoom(UI_ZOOM_DEFAULT), [setZoom])
 
-  const onKeyDown = useEffectEvent((event: KeyboardEvent) => {
-    if (!(event.ctrlKey || event.metaKey) || event.altKey) return
-    // `code`, not `key`: `+` needs Shift on many layouts and Numpad keys differ.
-    const action = ZOOM_IN_CODES.has(event.code)
-      ? zoomIn
-      : ZOOM_OUT_CODES.has(event.code)
-        ? zoomOut
-        : ZOOM_RESET_CODES.has(event.code)
-          ? resetZoom
-          : undefined
-    if (!action) return
-    event.preventDefault()
-    action()
-  })
-
-  useEffect(() => {
-    const listener = (event: KeyboardEvent): void => onKeyDown(event)
-    window.addEventListener('keydown', listener)
-    return () => window.removeEventListener('keydown', listener)
-  }, [])
+  useShortcuts({ 'zoom.in': zoomIn, 'zoom.out': zoomOut, 'zoom.reset': resetZoom })
 
   return { zoom, zoomIn, zoomOut, resetZoom }
 }

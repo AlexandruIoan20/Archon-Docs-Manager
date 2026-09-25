@@ -64,3 +64,13 @@ export function graphToFile({ meta, nodes, edges, viewport }: DiagramGraph): Soa
     }
   }
 }
+
+/** The graph with exactly `nodeIds` selected (a new diagram opens with N1 selected). */
+export function withSelectedNodes(graph: DiagramGraph, nodeIds: readonly string[]): DiagramGraph {
+  const ids = new Set(nodeIds)
+  return {
+    ...graph,
+    nodes: graph.nodes.map((node) => ({ ...node, selected: ids.has(node.id) })),
+    edges: graph.edges.map((edge) => ({ ...edge, selected: false }))
+  }
+}

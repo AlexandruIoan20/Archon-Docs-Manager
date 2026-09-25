@@ -25,7 +25,13 @@ export function SidebarFooter({
           }
         }}
       />
-      <IconButton icon="gear" label="Toggle properties" size="md" onClick={onToggleInspector} />
+      <IconButton
+        icon="gear"
+        label="Toggle properties"
+        shortcut="panel.inspector"
+        size="md"
+        onClick={onToggleInspector}
+      />
     </div>
   )
 }

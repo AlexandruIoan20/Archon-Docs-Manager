@@ -1,7 +1,8 @@
 import type { AppPlatform } from '@/core/types'
 import { Icon } from '@/shared/components/icons'
 import { Button, Kbd } from '@/shared/components/ui'
-import { formatShortcut } from '@/shared/utils/platform'
+import { getShortcut, type ShortcutId } from '@/core/constants/shortcuts'
+import { formatCombo } from '@/shared/utils/platform'
 
 export interface WelcomeScreenProps {
   platform: AppPlatform | undefined
@@ -9,13 +10,14 @@ export interface WelcomeScreenProps {
   onNewDocument: () => void
 }
 
-const SHORTCUTS: readonly { keys: string; label: string; plain?: boolean }[] = [
-  { keys: 'S', label: 'Save now' },
-  { keys: 'W', label: 'Close tab' },
-  { keys: 'Ctrl+Tab', label: 'Next tab', plain: true },
-  { keys: 'B', label: 'Toggle sidebar' },
-  { keys: 'Alt+B', label: 'Toggle properties' },
-  { keys: '=', label: 'Zoom in' }
+/** A few of the registry's shortcuts; Ctrl/Cmd+/ lists them all. */
+const HINTS: readonly ShortcutId[] = [
+  'search.open',
+  'file.save',
+  'tab.close',
+  'panel.sidebar',
+  'panel.inspector',
+  'shortcuts.help'
 ]
 
 /** The main area when no file is open. */
@@ -45,11 +47,11 @@ export function WelcomeScreen({
           </Button>
         </div>
         <dl className="grid w-full max-w-[280px] grid-cols-[1fr_auto] gap-x-6 gap-y-1.5 text-[12px]">
-          {SHORTCUTS.map(({ keys, label, plain }) => (
-            <div key={label} className="contents">
-              <dt className="text-left text-fg-muted">{label}</dt>
+          {HINTS.map(getShortcut).map(({ id, keys, description }) => (
+            <div key={id} className="contents">
+              <dt className="text-left text-fg-muted">{description}</dt>
               <dd className="m-0 text-right">
-                <Kbd>{plain ? keys : formatShortcut(platform, keys)}</Kbd>
+                <Kbd>{formatCombo(platform, keys[0] ?? '')}</Kbd>
               </dd>
             </div>
           ))}

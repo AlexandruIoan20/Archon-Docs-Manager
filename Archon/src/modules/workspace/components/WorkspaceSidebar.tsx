@@ -1,8 +1,14 @@
 import { useMemo } from 'react'
+import { ipcClient } from '@/core/ipc/ipc-client'
 import { selectActivePath, useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
+import { useContextMenu } from '@/shared/components/ui'
+import { copyText } from '@/shared/utils/copy-text'
+import { shortcutLabel } from '@/shared/utils/platform'
+import { usePlatform } from '@/shared/hooks/usePlatform'
 import { useFileActions } from '../hooks/useFileActions'
 import { useWorkspaceActions, useWorkspaceTree } from '../hooks/useWorkspace'
 import { flattenTree, type TreeRow } from '../utils/flatten-tree'
+import { treeMenuItems, type TreeMenuActions } from '../utils/tree-menu-items'
 import { FileTree } from './FileTree'
 import { InlineRename } from './InlineRename'
 import { NewMenu } from './NewMenu'
@@ -12,8 +18,8 @@ import { WorkspaceHeader } from './WorkspaceHeader'
 
 export interface WorkspaceSidebarProps {
   onToggleInspector: () => void
-  /** Opens the "New diagram" dialog; without it an empty flowchart is created. */
-  onNewDiagram?: () => void
+  /** Opens the "New diagram" dialog. */
+  onNewDiagram: () => void
 }
 
 /** Sidebar content: workspace header, Files/Diagrams, New, the tree and search. */
@@ -33,6 +39,8 @@ export function WorkspaceSidebar({
   const actions = useWorkspaceActions()
   const files = useFileActions()
   const { tree, isLoading } = useWorkspaceTree()
+  const contextMenu = useContextMenu()
+  const platform = usePlatform()
 
   const rows = useMemo(
     () => (tree ? flattenTree(tree, { expanded, query, sideTab, activePath, targetFolder }) : []),
@@ -61,6 +69,26 @@ export function WorkspaceSidebar({
     openModal('confirm-delete')
   }
 
+  const inFolder = (folder: string, run: () => void): void => {
+    store.setTargetFolder(folder)
+    run()
+  }
+  const menuActions: TreeMenuActions = {
+    open: activate,
+    newDocument: (folder) => inFolder(folder, () => void files.newDocument()),
+    newDiagram: (folder) => inFolder(folder, onNewDiagram),
+    newFolder: (folder) => inFolder(folder, () => void files.newFolder()),
+    rename: (row) => store.setRenaming(row.entry.relPath),
+    reveal: (row) => {
+      ipcClient.workspace
+        .reveal(row.entry.relPath)
+        .catch((error: Error) => useUiStore.getState().notify(error.message, 'error'))
+    },
+    copyPath: (row) => void copyText(row.entry.relPath, 'Path copied'),
+    remove: requestDelete,
+    keys: (id) => shortcutLabel(platform, id)
+  }
+
   const renderName = (row: TreeRow): React.JSX.Element | undefined =>
     row.entry.relPath === renaming ? (
       <InlineRename
@@ -75,8 +103,7 @@ export function WorkspaceSidebar({
       <WorkspaceHeader workspace={workspace} actions={actions} />
       <SidebarTabs value={sideTab} onChange={store.setSideTab} />
       <NewMenu
-        // TODO(plan-17): always open the "New diagram" dialog.
-        onNewDiagram={onNewDiagram ?? (() => void files.newDiagram('flowchart'))}
+        onNewDiagram={onNewDiagram}
         onNewDocument={() => void files.newDocument()}
         onNewFolder={() => void files.newFolder()}
       />
@@ -92,6 +119,13 @@ export function WorkspaceSidebar({
             onRename={(row) => store.setRenaming(row.entry.relPath)}
             onDelete={requestDelete}
             renderName={renderName}
+            onContextMenu={(row, event) =>
+              contextMenu.open(
+                event,
+                treeMenuItems(row, menuActions),
+                row.type === 'folder' ? row.entry.name : row.entry.baseName
+              )
+            }
           />
         )}
       </div>
@@ -100,6 +134,7 @@ export function WorkspaceSidebar({
         onQueryChange={store.setQuery}
         onToggleInspector={onToggleInspector}
       />
+      {contextMenu.element}
     </div>
   )
 }

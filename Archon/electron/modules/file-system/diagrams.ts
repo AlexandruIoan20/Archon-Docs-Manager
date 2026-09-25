@@ -44,7 +44,8 @@ export async function createDiagram(
     engine: options.engine,
     created: timestamp,
     lastModified: timestamp,
-    data: { nodes: options.nodes ?? [], edges: options.edges ?? [] }
+    data: { nodes: options.nodes ?? [], edges: options.edges ?? [] },
+    mermaidSource: options.mermaidSource ?? null
   })
   if (!parsed.success) {
     throw new AppError('INVALID_ARGUMENT', 'Invalid diagram options', parsed.error.issues)

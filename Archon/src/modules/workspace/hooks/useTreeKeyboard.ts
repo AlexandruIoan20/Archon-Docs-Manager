@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState, type KeyboardEvent } from 'react'
+import { matchesShortcut } from '@/shared/hooks/useKeyboard'
 import { parentRowIndex, type TreeRow } from '../utils/flatten-tree'
 
 export interface TreeKeyboardActions {
@@ -71,22 +72,27 @@ export function useTreeKeyboard(
         if (folder?.expanded) actions.onExpand(folder.entry.relPath, false)
         else if (parentRowIndex(rows, index) !== -1) focusIndex(parentRowIndex(rows, index))
         break
-      case 'Enter':
-        actions.onActivate(row)
-        break
-      case 'F2':
-        if (!actions.onRename) return
-        actions.onRename(row)
-        break
-      case 'Delete':
-      case 'Backspace':
-        if (!actions.onDelete) return
-        actions.onDelete(row)
-        break
       default:
-        return
+        // Enter, F2 and Delete come from the shortcut registry (`tree.*`).
+        if (!runShortcut(event.nativeEvent, row)) return
     }
     event.preventDefault()
+  }
+
+  /** The tree's registry shortcuts; plain keys, so the platform does not matter. */
+  const runShortcut = (event: globalThis.KeyboardEvent, row: TreeRow): boolean => {
+    const is = (id: 'tree.open' | 'tree.rename' | 'tree.delete'): boolean =>
+      matchesShortcut(event, id, false)
+    if (is('tree.open')) {
+      actions.onActivate(row)
+    } else if (is('tree.rename') && actions.onRename) {
+      actions.onRename(row)
+    } else if (is('tree.delete') && actions.onDelete) {
+      actions.onDelete(row)
+    } else {
+      return false
+    }
+    return true
   }
 
   return { focusedPath, setFocusedPath, registerRow, onKeyDown }

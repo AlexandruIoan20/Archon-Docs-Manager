@@ -36,6 +36,7 @@ export function InspectorPanel({
         <IconButton
           icon="close"
           label="Close properties"
+          shortcut="panel.inspector"
           size="sm"
           onClick={() => togglePanel('inspector', !panel.fits)}
         />

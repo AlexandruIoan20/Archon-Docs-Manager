@@ -14,6 +14,13 @@ export {
 export { Swatch, type SwatchProps } from './Swatch'
 export { TagInput, type TagInputProps } from './TagInput'
 export { Menu, MenuItem, type MenuProps, type MenuItemProps } from './Menu'
+export { useContextMenu, type ContextMenuControls } from './ContextMenu'
+export type {
+  ContextMenuAction,
+  ContextMenuEntry,
+  ContextMenuPoint,
+  ContextMenuSubmenu
+} from './context-menu.types'
 export { Modal, ModalBody, type ModalProps } from './Modal'
 export { Tooltip, type TooltipProps } from './Tooltip'
 export { Divider, type DividerProps } from './Divider'

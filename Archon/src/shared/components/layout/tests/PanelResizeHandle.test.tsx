@@ -83,4 +83,39 @@ describe('PanelResizeHandle', () => {
     expect(onDragChange).toHaveBeenLastCalledWith(false)
     expect(document.documentElement).not.toHaveClass('panel-resizing')
   })
+
+  it('resizes a height by a scaled vertical drag when horizontal', () => {
+    function Split(): React.JSX.Element {
+      const [ratio, setRatio] = useState(40)
+      return (
+        <PanelResizeHandle
+          value={ratio}
+          min={20}
+          max={80}
+          step={2}
+          scale={100 / 500}
+          onChange={setRatio}
+          edge="end"
+          orientation="horizontal"
+          label="Resize split"
+        />
+      )
+    }
+    render(<Split />)
+    const split = screen.getByRole('separator', { name: 'Resize split' })
+    expect(split).toHaveAttribute('aria-orientation', 'horizontal')
+
+    fireEvent.keyDown(split, { key: 'ArrowDown' })
+    expect(split).toHaveAttribute('aria-valuenow', '42')
+    fireEvent.keyDown(split, { key: 'ArrowRight' })
+    expect(split).toHaveAttribute('aria-valuenow', '42')
+
+    fireEvent.pointerDown(split, { pointerId: 2, button: 0, clientX: 0, clientY: 100 })
+    expect(document.documentElement).toHaveClass('panel-resizing-row')
+    // 50px down of a 500px container is +10%; the sideways move counts for nothing.
+    fireEvent.pointerMove(split, { pointerId: 2, clientX: 400, clientY: 150 })
+    fireEvent.pointerUp(split, { pointerId: 2, clientX: 400, clientY: 150 })
+    expect(split).toHaveAttribute('aria-valuenow', '52')
+    expect(document.documentElement).not.toHaveClass('panel-resizing-row')
+  })
 })

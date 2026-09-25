@@ -1,48 +1,36 @@
+import type { ShortcutId } from '@/core/constants/shortcuts'
 import { useUiStore } from '@/store'
-import { usePlatform } from '@/shared/hooks/usePlatform'
-import { useKeyboard, type KeyHandler } from '@/shared/hooks/useKeyboard'
-import { formatShortcut } from '@/shared/utils/platform'
+import { useShortcuts, type KeyHandler } from '@/shared/hooks/useKeyboard'
 import { TOOLS } from '../constants/tools'
 import type { DiagramStoreApi } from '../store/diagram.store'
-
-function deletedMessage(nodes: number, edges: number): string {
-  if (nodes > 1) return `${nodes} nodes deleted`
-  if (nodes === 1) return 'Node deleted'
-  return edges > 1 ? `${edges} edges deleted` : 'Edge deleted'
-}
+import { useDeleteSelection } from './useDeleteSelection'
+import { useNodeClipboard } from './useNodeClipboard'
 
 /**
- * Canvas shortcuts. Mounted with the diagram editor, so they only act on the
- * active diagram tab, and never while typing in a field.
+ * Canvas shortcuts (the registry's `diagram` scope). Mounted with the diagram
+ * editor, so they only act on the active diagram tab, and never while typing.
  */
 export function useDiagramShortcuts(store: DiagramStoreApi | null): void {
-  const platform = usePlatform()
   const notify = (message: string): void => useUiStore.getState().notify(message)
+  const remove = useDeleteSelection(store)
+  const clipboard = useNodeClipboard(store)
 
-  const remove: KeyHandler = () => {
-    if (!store) return
-    const { nodes, edges } = store.getState().deleteSelection()
-    if (nodes + edges === 0) return
-    notify(`${deletedMessage(nodes, edges)} — ${formatShortcut(platform, 'Z')} to undo`)
-  }
-  const undo: KeyHandler = () => {
-    if (store && !store.getState().undo()) notify('Nothing to undo')
-  }
-  const redo: KeyHandler = () => {
-    if (store && !store.getState().redo()) notify('Nothing to redo')
-  }
-
-  const bindings: Record<string, KeyHandler> = {
-    delete: remove,
-    backspace: remove,
-    'mod+z': undo,
-    'mod+shift+z': redo,
-    'ctrl+y': redo,
-    escape: () => store?.getState().setConnectFrom(null)
+  const handlers: Partial<Record<ShortcutId, KeyHandler>> = {
+    'diagram.delete': remove,
+    'diagram.undo': () => {
+      if (store && !store.getState().undo()) notify('Nothing to undo')
+    },
+    'diagram.redo': () => {
+      if (store && !store.getState().redo()) notify('Nothing to redo')
+    },
+    'diagram.copy': () => void clipboard.copy(),
+    'diagram.paste': () => void clipboard.paste(),
+    'diagram.duplicate': () => clipboard.duplicate(),
+    'diagram.cancel': () => store?.getState().setConnectFrom(null)
   }
   for (const tool of TOOLS) {
-    bindings[tool.shortcut.toLowerCase()] = () => store?.getState().setTool(tool.id)
+    handlers[tool.shortcutId] = () => store?.getState().setTool(tool.id)
   }
 
-  useKeyboard(bindings, { enabled: store !== null, platform })
+  useShortcuts(handlers, { enabled: store !== null })
 }

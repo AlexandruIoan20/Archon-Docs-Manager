@@ -12,9 +12,17 @@ export interface EditorTabProps {
   active: boolean
   onActivate: (id: string) => void
   onClose: (id: string) => void
+  /** Right click (plan 20). */
+  onContextMenu?: (event: MouseEvent) => void
 }
 
-export function EditorTab({ tab, active, onActivate, onClose }: EditorTabProps): React.JSX.Element {
+export function EditorTab({
+  tab,
+  active,
+  onActivate,
+  onClose,
+  onContextMenu
+}: EditorTabProps): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null)
   const [sizeRef, { width }] = useElementSize<HTMLDivElement>()
   const narrow = width > 0 && width < NARROW_TAB_WIDTH
@@ -46,6 +54,7 @@ export function EditorTab({ tab, active, onActivate, onClose }: EditorTabProps):
       // Middle-click must not start autoscroll before `auxclick` closes the tab.
       onMouseDown={(event) => event.button === 1 && event.preventDefault()}
       onAuxClick={onAuxClick}
+      onContextMenu={onContextMenu}
       className={cn(
         'group flex max-w-[220px] min-w-[96px] shrink cursor-pointer items-center gap-2 border-r border-border px-3.5',
         'border-t-2 outline-offset-[-2px]',

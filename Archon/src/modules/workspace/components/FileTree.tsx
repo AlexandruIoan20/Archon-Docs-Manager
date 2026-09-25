@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import { useTreeKeyboard, type TreeKeyboardActions } from '../hooks/useTreeKeyboard'
 import type { TreeRow } from '../utils/flatten-tree'
 import { FileTreeNode } from './FileTreeNode'
@@ -8,6 +8,7 @@ export interface FileTreeProps extends TreeKeyboardActions {
   query: string
   /** Custom name cell for a row (inline rename); `undefined` keeps the default. */
   renderName?: (row: TreeRow) => ReactNode | undefined
+  onContextMenu?: (row: TreeRow, event: MouseEvent<HTMLDivElement>) => void
 }
 
 /**
@@ -18,6 +19,7 @@ export function FileTree({
   rows,
   query,
   renderName,
+  onContextMenu,
   ...actions
 }: FileTreeProps): React.JSX.Element {
   const keyboard = useTreeKeyboard(rows, actions)
@@ -50,6 +52,14 @@ export function FileTree({
           onFocus={() => keyboard.setFocusedPath(row.entry.relPath)}
           onKeyDown={(event) => keyboard.onKeyDown(event, index)}
           onRename={actions.onRename}
+          onContextMenu={
+            onContextMenu
+              ? (event) => {
+                  keyboard.setFocusedPath(row.entry.relPath)
+                  onContextMenu(row, event)
+                }
+              : undefined
+          }
           nameSlot={renderName?.(row)}
         />
       ))}

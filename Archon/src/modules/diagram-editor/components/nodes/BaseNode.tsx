@@ -1,16 +1,14 @@
 import { memo } from 'react'
 import type { NodeProps } from '@xyflow/react'
-import { Icon, ICON_PATHS, type IconName } from '@/shared/components/icons'
+import { Icon } from '@/shared/components/icons'
 import { cn } from '@/shared/utils/cn'
-import { NODE_KINDS, nodeColor } from '../../constants/node-kinds'
+import { NODE_KINDS, nodeColor, nodeIcon } from '../../constants/node-kinds'
 import { useDiagramStore } from '../../store/DiagramStoreProvider'
 import type { FlowNode } from '../../utils/graph-mapping'
 import { useDiagramStyle } from '../diagram-style'
 import { getNodeSkin } from './node-skin'
 import { NodeHandles } from './NodeHandles'
 import { NodeSelectionChrome } from './NodeSelectionChrome'
-
-const isIconName = (name: string | null): name is IconName => name !== null && name in ICON_PATHS
 
 /**
  * The common node: skin, icon, title and subtitle, handles, selection chrome.
@@ -22,7 +20,7 @@ function BaseNodeComponent({ id, type, data, selected }: NodeProps<FlowNode>): R
   const kind = NODE_KINDS[type] ?? NODE_KINDS.element
   const pending = useDiagramStore((s) => s.connectFrom === id)
   const skin = getNodeSkin(nodeStyle, nodeColor(type, data.color), { pending })
-  const icon = isIconName(data.icon) ? data.icon : kind.defaultIcon
+  const icon = nodeIcon(type, data.icon)
   const diamond = kind.shape === 'diamond'
 
   return (

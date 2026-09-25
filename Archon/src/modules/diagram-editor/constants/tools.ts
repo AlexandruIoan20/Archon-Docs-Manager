@@ -1,4 +1,5 @@
 import type { DiagramNodeType } from '@/core/types'
+import { getShortcut, type ShortcutId } from '@/core/constants/shortcuts'
 import type { IconName } from '@/shared/components/icons'
 
 export type DiagramTool = 'select' | 'pan' | 'node' | 'connect' | 'text' | 'rect' | 'ellipse'
@@ -10,20 +11,33 @@ export interface ToolDef {
   id: DiagramTool
   label: string
   icon: IconName
-  /** Single key, without modifiers. */
+  /** Its entry in the shortcut registry. */
+  shortcutId: ShortcutId
+  /** The key shown in tooltips (from the registry). */
   shortcut: string
   /** `secondary` tools fold into the „⋯” menu in the minimal title bar. */
   priority: 'primary' | 'secondary'
 }
 
+const tool = (
+  id: DiagramTool,
+  label: string,
+  icon: IconName,
+  priority: ToolDef['priority']
+): ToolDef => {
+  const shortcutId = `diagram.tool.${id}` as ShortcutId
+  const key = getShortcut(shortcutId).keys[0] ?? ''
+  return { id, label, icon, shortcutId, shortcut: key.toUpperCase(), priority }
+}
+
 export const TOOLS: readonly ToolDef[] = [
-  { id: 'select', label: 'Select', icon: 'cursor', shortcut: 'V', priority: 'primary' },
-  { id: 'pan', label: 'Pan', icon: 'hand', shortcut: 'H', priority: 'primary' },
-  { id: 'node', label: 'Add node', icon: 'plusBox', shortcut: 'N', priority: 'primary' },
-  { id: 'connect', label: 'Connect', icon: 'link', shortcut: 'C', priority: 'primary' },
-  { id: 'text', label: 'Text', icon: 'text', shortcut: 'T', priority: 'secondary' },
-  { id: 'rect', label: 'Rectangle', icon: 'rect', shortcut: 'R', priority: 'secondary' },
-  { id: 'ellipse', label: 'Ellipse', icon: 'circle', shortcut: 'O', priority: 'secondary' }
+  tool('select', 'Select', 'cursor', 'primary'),
+  tool('pan', 'Pan', 'hand', 'primary'),
+  tool('node', 'Add node', 'plusBox', 'primary'),
+  tool('connect', 'Connect', 'link', 'primary'),
+  tool('text', 'Text', 'text', 'secondary'),
+  tool('rect', 'Rectangle', 'rect', 'secondary'),
+  tool('ellipse', 'Ellipse', 'circle', 'secondary')
 ]
 
 export const PLACEABLE_KINDS: readonly PlaceableKind[] = [

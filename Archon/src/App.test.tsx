@@ -167,4 +167,18 @@ describe('App', () => {
       })
     )
   })
+
+  it('opens the search with Ctrl+K and the shortcuts with Ctrl+/, from anywhere', async () => {
+    await renderShell()
+    act(() => void fireEvent.keyDown(window, { key: 'k', ctrlKey: true }))
+    expect(await screen.findByRole('dialog', { name: 'Search the workspace' })).toBeInTheDocument()
+    // From inside the palette's own field too.
+    act(() => void fireEvent.keyDown(screen.getByRole('combobox'), { key: '/', ctrlKey: true }))
+    const help = await screen.findByRole('dialog', { name: 'Keyboard shortcuts' })
+    for (const group of ['General', 'File tree', 'Diagram canvas', 'Document editor']) {
+      expect(within(help).getByRole('heading', { name: group })).toBeInTheDocument()
+    }
+    expect(within(help).getByText('Search the workspace')).toBeInTheDocument()
+    expect(within(help).getAllByText('Ctrl+Shift+Z').length).toBeGreaterThan(0)
+  })
 })

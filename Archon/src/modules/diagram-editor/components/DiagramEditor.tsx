@@ -5,18 +5,27 @@ import { useElementSize } from '@/shared/hooks/useElementSize'
 import { useConnectingStatus } from '../hooks/useConnectingStatus'
 import { useDiagram } from '../hooks/useDiagram'
 import { useDiagramShortcuts } from '../hooks/useDiagramShortcuts'
+import { selectIsMermaid } from '../store/diagram.store'
 import { DiagramStoreProvider } from '../store/DiagramStoreProvider'
+import { useDiagramStoreFor } from '../store/store-registry'
 import { CanvasOverlays } from './canvas/CanvasOverlays'
 import { ToolCursor } from './canvas/ToolCursor'
 import { DiagramCanvas } from './DiagramCanvas'
+import { MermaidEditor } from './MermaidEditor'
 import '../styles/react-flow.css'
 
-/** The `.soardiag` editor: the tab's store, the canvas and its overlays. */
+/**
+ * The `.soardiag` editor: the tab's store, then the canvas and its overlays,
+ * or the Mermaid text editor for `engine: 'mermaid'`.
+ */
 export function DiagramEditor({ tab }: EditorSlotProps): React.JSX.Element {
   const { store, error } = useDiagram(tab)
+  const mermaid = useDiagramStoreFor(tab.tabId, selectIsMermaid) ?? false
   const [sizeRef, { width, height }] = useElementSize<HTMLDivElement>()
-  useDiagramShortcuts(store)
-  useConnectingStatus(store)
+  // Canvas shortcuts mean nothing in a text diagram.
+  const canvasStore = mermaid ? null : store
+  useDiagramShortcuts(canvasStore)
+  useConnectingStatus(canvasStore)
 
   if (!store) {
     return (
@@ -39,6 +48,14 @@ export function DiagramEditor({ tab }: EditorSlotProps): React.JSX.Element {
     )
   }
 
+  if (mermaid) {
+    return (
+      <DiagramStoreProvider store={store}>
+        <MermaidEditor />
+      </DiagramStoreProvider>
+    )
+  }
+
   return (
     <DiagramStoreProvider store={store}>
       <ReactFlowProvider>
@@ -46,9 +63,10 @@ export function DiagramEditor({ tab }: EditorSlotProps): React.JSX.Element {
           <div
             ref={sizeRef}
             data-testid="diagram-canvas"
+            data-diagram-tab={tab.tabId}
             className="relative min-h-0 flex-1 bg-canvas"
           >
-            <DiagramCanvas>
+            <DiagramCanvas tabId={tab.tabId}>
               <CanvasOverlays width={width} height={height} />
             </DiagramCanvas>
           </div>

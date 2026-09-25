@@ -63,3 +63,9 @@ export type {
   UmlDiagramType
 } from './diagram.types'
 export type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'
+export type {
+  ExportExtension,
+  ExportPdfRequest,
+  ExportSaveRequest,
+  ExportSaveResult
+} from './export.types'
