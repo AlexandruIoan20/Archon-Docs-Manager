@@ -1,11 +1,11 @@
-import type { SoarDocument } from '@/core/types'
+import type { ArchonDocument } from '@/core/types'
 import type { SqliteDatabase } from '../db'
 import { extractText } from '../text-extract'
 import { createFileRows, type FileRecord, type FileStat } from './file-rows'
 
 export interface DocumentsRepo {
   /** Replaces everything indexed for `relPath`. Returns the file id used in the index. */
-  upsert: (relPath: string, doc: SoarDocument, stat: FileStat) => string
+  upsert: (relPath: string, doc: ArchonDocument, stat: FileStat) => string
   remove: (relPath: string) => number
   getByPath: (relPath: string) => FileRecord | undefined
   listByTag: (tag: string) => FileRecord[]
@@ -24,7 +24,7 @@ export function createDocumentsRepo(db: SqliteDatabase): DocumentsRepo {
     WHERE t.tag = ? AND f.kind = 'ardoc'
     ORDER BY f.title COLLATE NOCASE`)
 
-  const upsert = db.transaction((relPath: string, doc: SoarDocument, stat: FileStat): string => {
+  const upsert = db.transaction((relPath: string, doc: ArchonDocument, stat: FileStat): string => {
     const id = rows.insert({
       id: doc.id,
       relPath,

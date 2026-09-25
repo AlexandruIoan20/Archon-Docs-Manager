@@ -61,7 +61,7 @@ export function DiagramCanvas({
   return (
     <DiagramStyleContext value={style}>
       <ReactFlow<FlowNode, FlowEdge>
-        className="soar-flow"
+        className="ar-flow"
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}

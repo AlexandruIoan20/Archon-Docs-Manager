@@ -11,7 +11,7 @@ describe('SettingsStore', () => {
   let file: string
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'soar-settings-'))
+    dir = mkdtempSync(join(tmpdir(), 'ar-settings-'))
     file = join(dir, 'settings.json')
   })
 

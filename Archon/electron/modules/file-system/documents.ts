@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 import { join } from 'path'
-import type { SoarDocument } from '@/core/types'
+import type { ArchonDocument } from '@/core/types'
 import { DOCUMENT_FORMAT_VERSION, documentFileSchema } from '@/core/schemas/document.schema'
 import { FILE_EXTENSIONS } from '@/core/constants/file-extensions'
 import {
@@ -21,7 +21,7 @@ const DOCUMENT_OPS: JsonFileOps<typeof documentFileSchema> = {
 }
 
 export interface CreatedDocument extends EntryRefValue {
-  document: SoarDocument
+  document: ArchonDocument
 }
 
 /** `untitled-N.ardoc`, or a file named after `title`, in an existing folder. */
@@ -50,7 +50,7 @@ export async function createDocument(
   return { ...entryRef(root, path), document }
 }
 
-export function readDocument(root: string, relPath: string): Promise<SoarDocument> {
+export function readDocument(root: string, relPath: string): Promise<ArchonDocument> {
   return readAppFile(root, relPath, DOCUMENT_OPS)
 }
 
@@ -59,6 +59,6 @@ export function writeDocument(
   relPath: string,
   document: unknown,
   now?: Date
-): Promise<SoarDocument> {
+): Promise<ArchonDocument> {
   return writeAppFile(root, relPath, document, DOCUMENT_OPS, now)
 }

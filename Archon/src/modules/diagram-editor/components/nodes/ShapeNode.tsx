@@ -15,20 +15,20 @@ function ShapeNodeComponent({ type, data, selected }: NodeProps<FlowNode>): Reac
         isVisible={Boolean(selected)}
         minWidth={text ? 40 : 32}
         minHeight={text ? 20 : 24}
-        lineClassName="soar-resize-line"
-        handleClassName="soar-resize-handle"
+        lineClassName="ar-resize-line"
+        handleClassName="ar-resize-handle"
       />
       <div
         role="group"
         aria-label={`${NODE_KINDS[type].label} ${data.label}`.trim()}
         style={shapeStyle(data, text)}
         className={cn(
-          'soar-shape',
-          type === 'shape-ellipse' && 'soar-shape--ellipse',
-          text && 'soar-shape--text'
+          'ar-shape',
+          type === 'shape-ellipse' && 'ar-shape--ellipse',
+          text && 'ar-shape--text'
         )}
       >
-        {data.label && <span className="soar-shape-label">{data.label}</span>}
+        {data.label && <span className="ar-shape-label">{data.label}</span>}
       </div>
       {!text && <NodeHandles />}
     </>

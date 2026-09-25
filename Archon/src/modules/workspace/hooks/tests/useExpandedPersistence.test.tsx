@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
 import { selectExpandedPaths, useWorkspaceStore } from '@/store'
 import { settingsQuery } from '@/shared/hooks/useSettings'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { createTestQueryClient, queryWrapper } from '@/test/render-with-query'
 import { SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
 import { EXPANDED_SAVE_DELAY_MS, useExpandedPersistence } from '../useExpandedPersistence'
@@ -12,7 +12,7 @@ import { EXPANDED_SAVE_DELAY_MS, useExpandedPersistence } from '../useExpandedPe
 const initialState = useWorkspaceStore.getState()
 
 describe('useExpandedPersistence', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -20,8 +20,8 @@ describe('useExpandedPersistence', () => {
     const settings = mergeSettings(DEFAULT_SETTINGS, {
       session: { expandedByWorkspace: { [SAMPLE_WORKSPACE.id]: ['Playbooks'], other: ['X'] } }
     })
-    mock = createSoarApiMock({ settings })
-    window.soar = mock.api
+    mock = createArchonApiMock({ settings })
+    window.archon = mock.api
     const client = createTestQueryClient()
     client.setQueryData(settingsQuery.queryKey, settings)
     renderHook(() => useExpandedPersistence(), { wrapper: queryWrapper(client) })
@@ -29,7 +29,7 @@ describe('useExpandedPersistence', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-    delete window.soar
+    delete window.archon
   })
 
   it('restores the expanded folders of the workspace that opens', () => {

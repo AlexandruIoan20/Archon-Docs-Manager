@@ -1,5 +1,5 @@
 import type { EdgeChange, NodeChange, Viewport, XYPosition } from '@xyflow/react'
-import type { DiagramNodeType, SoarDiagram } from '@/core/types'
+import type { DiagramNodeType, ArchonDiagram } from '@/core/types'
 import type { DiagramTool, PlaceableKind } from '../constants/tools'
 import type { DiagramGraph, FlowEdge, FlowNodeData, FlowNode } from '../utils/graph-mapping'
 import type { StyleDefaults } from '../utils/node-factory'
@@ -73,7 +73,7 @@ export interface DiagramState extends DiagramGraph, ToolState, GraphEdits, Merma
   /** Bumped by every change that belongs in the file; autosave follows it. */
   revision: number
   /** The disk version the state is based on (set on load, save and reload). */
-  base: SoarDiagram | null
+  base: ArchonDiagram | null
   /** A drag or resize is under way: its undo step was already recorded. */
   gestureOpen: boolean
 
@@ -88,7 +88,7 @@ export interface DiagramState extends DiagramGraph, ToolState, GraphEdits, Merma
   patchMeta: (patch: Partial<DiagramGraph['meta']>, options?: { save?: boolean }) => void
   /** Replaces the graph with a version from disk; not a change to save. */
   replaceGraph: (graph: DiagramGraph) => void
-  setBase: (base: SoarDiagram) => void
+  setBase: (base: ArchonDiagram) => void
 }
 
 export type SetState = (

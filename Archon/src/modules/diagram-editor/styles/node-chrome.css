@@ -1,21 +1,21 @@
 /* Around SOAR nodes (plan 14): connection handles and the selection chrome. */
 
 /* Handles: hidden until the node is hovered or the connect tool is on. */
-.soar-flow .soar-handle {
+.ar-flow .ar-handle {
   opacity: 0;
   transition: opacity 120ms;
 }
 
-.soar-flow .react-flow__node:hover .soar-handle,
-.soar-flow .react-flow__node.selected .soar-handle,
-.soar-flow .soar-node--connecting .soar-handle,
-.soar-flow .soar-handle.connectingfrom,
-.soar-flow .soar-handle.connectingto {
+.ar-flow .react-flow__node:hover .ar-handle,
+.ar-flow .react-flow__node.selected .ar-handle,
+.ar-flow .ar-node--connecting .ar-handle,
+.ar-flow .ar-handle.connectingfrom,
+.ar-flow .ar-handle.connectingto {
   opacity: 1;
 }
 
 /* Selection chrome. */
-.soar-node-ring {
+.ar-node-ring {
   position: absolute;
   inset: -6px;
   border: 1.5px solid var(--accent);
@@ -23,7 +23,7 @@
   pointer-events: none;
 }
 
-.soar-node-grip {
+.ar-node-grip {
   position: absolute;
   width: 8px;
   height: 8px;
@@ -33,32 +33,32 @@
   pointer-events: none;
 }
 
-.soar-node-grip--tl {
+.ar-node-grip--tl {
   top: -10px;
   left: -10px;
 }
-.soar-node-grip--tc {
+.ar-node-grip--tc {
   top: -10px;
   left: calc(50% - 4px);
 }
-.soar-node-grip--tr {
+.ar-node-grip--tr {
   top: -10px;
   right: -10px;
 }
-.soar-node-grip--bl {
+.ar-node-grip--bl {
   bottom: -10px;
   left: -10px;
 }
-.soar-node-grip--bc {
+.ar-node-grip--bc {
   bottom: -10px;
   left: calc(50% - 4px);
 }
-.soar-node-grip--br {
+.ar-node-grip--br {
   right: -10px;
   bottom: -10px;
 }
 
-.soar-node-toolbar {
+.ar-node-toolbar {
   position: absolute;
   top: -30px;
   right: -6px;
@@ -68,7 +68,7 @@
   cursor: default;
 }
 
-.soar-node-badge {
+.ar-node-badge {
   display: inline-flex;
   align-items: center;
   height: 20px;
@@ -81,7 +81,7 @@
   font-weight: 600;
 }
 
-.soar-node-delete {
+.ar-node-delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;

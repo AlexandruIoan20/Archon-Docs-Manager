@@ -1,5 +1,5 @@
-export const ARROW_MARKER_ID = 'soar-arrow'
-export const HOT_ARROW_MARKER_ID = 'soar-arrow-hot'
+export const ARROW_MARKER_ID = 'ar-arrow'
+export const HOT_ARROW_MARKER_ID = 'ar-arrow-hot'
 
 /** The two arrowheads, defined once per canvas. */
 export function EdgeMarkers(): React.JSX.Element {
@@ -7,8 +7,8 @@ export function EdgeMarkers(): React.JSX.Element {
     <svg aria-hidden width="0" height="0" className="absolute">
       <defs>
         {[
-          { id: ARROW_MARKER_ID, className: 'soar-arrow' },
-          { id: HOT_ARROW_MARKER_ID, className: 'soar-arrow soar-arrow--hot' }
+          { id: ARROW_MARKER_ID, className: 'ar-arrow' },
+          { id: HOT_ARROW_MARKER_ID, className: 'ar-arrow ar-arrow--hot' }
         ].map(({ id, className }) => (
           <marker
             key={id}

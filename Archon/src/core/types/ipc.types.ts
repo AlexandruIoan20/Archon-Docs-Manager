@@ -1,12 +1,12 @@
 /**
  * Single source of truth for every IPC channel between main and renderer.
  * Main registers handlers against this map, preload invokes against it and the
- * renderer consumes the resulting `SoarApi` — a mismatch fails at compile time.
+ * renderer consumes the resulting `ArchonApi` — a mismatch fails at compile time.
  */
 
-import type { CreateDiagramOptions, SoarDiagram } from './diagram.types'
+import type { CreateDiagramOptions, ArchonDiagram } from './diagram.types'
 import type { ExportPdfRequest, ExportSaveRequest, ExportSaveResult } from './export.types'
-import type { SoarDocument } from './document.types'
+import type { ArchonDocument } from './document.types'
 import type { Result } from './result.types'
 import type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'
 import type { AppSettings, ResolvedTheme, SettingsPatch } from './settings.types'
@@ -78,13 +78,16 @@ export interface IpcInvokeContract {
   }
   /** `new-folder-N` when no name is given. */
   'fs:create-folder': { args: [parentRel: string, name?: string]; result: Result<EntryRef> }
-  'fs:read-document': { args: [relPath: string]; result: Result<SoarDocument> }
+  'fs:read-document': { args: [relPath: string]; result: Result<ArchonDocument> }
   'fs:write-document': {
-    args: [relPath: string, document: SoarDocument]
-    result: Result<SoarDocument>
+    args: [relPath: string, document: ArchonDocument]
+    result: Result<ArchonDocument>
   }
-  'fs:read-diagram': { args: [relPath: string]; result: Result<SoarDiagram> }
-  'fs:write-diagram': { args: [relPath: string, diagram: SoarDiagram]; result: Result<SoarDiagram> }
+  'fs:read-diagram': { args: [relPath: string]; result: Result<ArchonDiagram> }
+  'fs:write-diagram': {
+    args: [relPath: string, diagram: ArchonDiagram]
+    result: Result<ArchonDiagram>
+  }
   /** Files keep their extension; `newName` is the name shown in the tree. */
   'fs:rename': { args: [relPath: string, newName: string]; result: Result<EntryRef> }
   'fs:move': { args: [relPath: string, targetFolderRel: string]; result: Result<EntryRef> }

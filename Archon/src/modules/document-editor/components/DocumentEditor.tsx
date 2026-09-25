@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { EditorContent } from '@tiptap/react'
-import type { EditorSlotProps, EditorTabRef, SoarDocument } from '@/core/types'
+import type { EditorSlotProps, EditorTabRef, ArchonDocument } from '@/core/types'
 import { EmptyState } from '@/shared/components/ui'
 import { useElementSize } from '@/shared/hooks/useElementSize'
 import { truncateMiddle } from '@/shared/utils/truncate-middle'
@@ -33,8 +33,8 @@ function DocumentView({
   latest
 }: {
   tab: EditorTabRef
-  initial: SoarDocument
-  latest: SoarDocument | undefined
+  initial: ArchonDocument
+  latest: ArchonDocument | undefined
 }): React.JSX.Element {
   const { editor, setTitle } = useDocumentController(tab, initial, latest)
   const title = useDocumentSession(tab.tabId)?.title ?? initial.title
@@ -79,7 +79,7 @@ export function DocumentEditor({ tab }: EditorSlotProps): React.JSX.Element {
 }
 
 /** The first version loaded; later versions reach the editor as reloads, not remounts. */
-function useInitial(data: SoarDocument | undefined): SoarDocument | undefined {
+function useInitial(data: ArchonDocument | undefined): ArchonDocument | undefined {
   const [initial, setInitial] = useState(data)
   if (!initial && data) setInitial(data)
   return initial ?? data

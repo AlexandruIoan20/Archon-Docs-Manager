@@ -1,12 +1,12 @@
 import type { Edge, Node, Viewport } from '@xyflow/react'
-import type { DiagramEdge, DiagramNode, DiagramNodeType, SoarDiagram } from '@/core/types'
+import type { DiagramEdge, DiagramNode, DiagramNodeType, ArchonDiagram } from '@/core/types'
 
 export type FlowNodeData = DiagramNode['data']
 export type FlowNode = Node<FlowNodeData, DiagramNodeType>
 export type FlowEdge = Edge
 
 /** Everything in the file except the graph itself (title, type, style, tags…). */
-export type DiagramMeta = Omit<SoarDiagram, 'data'>
+export type DiagramMeta = Omit<ArchonDiagram, 'data'>
 
 export interface DiagramGraph {
   meta: DiagramMeta
@@ -34,7 +34,7 @@ export function isDefaultViewport({ x, y, zoom }: Viewport): boolean {
 }
 
 /** `.ardiag` (defaults already applied by the schema) → React Flow state. */
-export function fileToGraph(diagram: SoarDiagram): DiagramGraph {
+export function fileToGraph(diagram: ArchonDiagram): DiagramGraph {
   const { data, ...meta } = diagram
   return {
     meta,
@@ -50,7 +50,7 @@ export function fileToGraph(diagram: SoarDiagram): DiagramGraph {
 }
 
 /** React Flow state → `.ardiag`, without runtime-only fields. */
-export function graphToFile({ meta, nodes, edges, viewport }: DiagramGraph): SoarDiagram {
+export function graphToFile({ meta, nodes, edges, viewport }: DiagramGraph): ArchonDiagram {
   return {
     ...meta,
     data: {

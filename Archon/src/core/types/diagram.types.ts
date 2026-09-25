@@ -15,7 +15,7 @@ export type DiagramEngine = z.infer<typeof diagramEngineSchema>
 export type DiagramNodeType = (typeof DIAGRAM_NODE_TYPES)[number]
 
 /** A `.ardiag` file as read from disk (defaults applied). */
-export type SoarDiagram = z.infer<typeof diagramFileSchema>
+export type ArchonDiagram = z.infer<typeof diagramFileSchema>
 export type DiagramNode = z.infer<typeof diagramNodeSchema>
 export type DiagramEdge = z.infer<typeof diagramEdgeSchema>
 /** Nodes and edges as callers may pass them; missing fields get their defaults. */

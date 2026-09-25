@@ -5,7 +5,7 @@ import type {
   IpcEvent,
   IpcEventPayload,
   IpcResult,
-  SoarApi
+  ArchonApi
 } from '@/core/types'
 
 // Only whitelisted, typed calls are exposed. `ipcRenderer` itself never reaches
@@ -42,7 +42,7 @@ function on<E extends IpcEvent>(
   }
 }
 
-const api: SoarApi = {
+const api: ArchonApi = {
   app: {
     getInfo: () => invoke('app:get-info'),
     enableCloseGuard: () => invoke('app:enable-close-guard'),
@@ -100,4 +100,4 @@ const api: SoarApi = {
   on
 }
 
-contextBridge.exposeInMainWorld('soar', api)
+contextBridge.exposeInMainWorld('archon', api)

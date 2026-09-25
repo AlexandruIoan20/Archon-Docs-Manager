@@ -46,7 +46,7 @@ export async function svgToPdf(svg: string, width: number, height: number): Prom
   const h = Math.ceil(height)
 
   // A file, not a data: URL: large diagrams exceed the URL length limit.
-  const file = join(tmpdir(), `soar-export-${randomUUID()}.html`)
+  const file = join(tmpdir(), `ar-export-${randomUUID()}.html`)
   await fsp.writeFile(file, pdfPageHtml(svg, w, h), 'utf8')
   const window = new BrowserWindow({
     show: false,

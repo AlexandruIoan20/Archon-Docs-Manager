@@ -23,11 +23,11 @@ Se actualizează la finalul fiecărui plan.
 └───────────────────────────────▲──────────────────┬──────────────────────┘
           ipcRenderer.invoke    │                  │  webContents.send
 ┌───────────────────────────────┴──────────────────▼──────────────────────┐
-│ electron/preload.ts   contextBridge → window.soar (SoarApi)             │
+│ electron/preload.ts   contextBridge → window.archon (ArchonApi)             │
 │                       whitelist de canale + whitelist de evenimente     │
 └───────────────────────────────▲─────────────────────────────────────────┘
 ┌───────────────────────── Procesul RENDERER (React) ─────────────────────┐
-│ src/core/ipc/ipc-client.ts   singurul punct care atinge window.soar     │
+│ src/core/ipc/ipc-client.ts   singurul punct care atinge window.archon     │
 │ src/App.tsx                  compoziția: shell + contribuții de editor  │
 │ src/modules/*                module independente (nu se importă între   │
 │                              ele; comunică prin store-uri și contracte) │
@@ -38,7 +38,7 @@ Se actualizează la finalul fiecărui plan.
 **Contractul IPC** (`src/core/types/ipc.types.ts`) este sursa unică de adevăr:
 - `IpcInvokeContract` descrie cererile renderer → main;
 - `IpcEventContract` descrie evenimentele main → renderer;
-- `SoarApi` descrie suprafața expusă pe `window.soar`.
+- `ArchonApi` descrie suprafața expusă pe `window.archon`.
 
 Main, preload și renderer se tipează din el, deci un canal inexistent sau un payload greșit nu compilează.
 
@@ -93,7 +93,7 @@ Archon/
 ```
 electron/
 ├── main.ts                        ✅ single-instance lock, meniul aplicației [05], înregistrare IPC, creare fereastră
-├── preload.ts                     ✅ contextBridge: SoarApi (app, window, on); whitelist de evenimente [03]
+├── preload.ts                     ✅ contextBridge: ArchonApi (app, window, on); whitelist de evenimente [03]
 └── modules/
     ├── window-manager.ts          ✅ BrowserWindow securizat, ramă per platformă, emite maximized-changed [03]
     │                                 [05*] fundal după tema salvată, bounds + maximized + zoom restaurate, fără pinch-zoom
@@ -163,10 +163,10 @@ src/
 ├── App.tsx                        ✅ [04] singurul loc de compoziție: AppShell, contribuții de editor,
 │                                     modale, scurtăturile Ctrl+B / Ctrl+Alt+B
 ├── App.test.tsx                   ✅
-├── env.d.ts                       ✅ tipul global window.soar
+├── env.d.ts                       ✅ tipul global window.archon
 └── test/
     ├── setup.ts                   ✅ jest-dom + cleanup
-    ├── soar-api-mock.ts           ✅ mock complet pentru window.soar, cu emit() [03]   [05*] setări stocate în memorie
+    ├── archon-api-mock.ts           ✅ mock complet pentru window.archon, cu emit() [03]   [05*] setări stocate în memorie
     └── render-with-query.tsx      ✅ [05] QueryClient proaspăt pentru render / renderHook
 ```
 
@@ -179,7 +179,7 @@ src/core/
 │                                     apelurile nu aruncă sincron: bridge lipsă → promise respins
 ├── types/
 │   ├── index.ts                   ✅ barrel
-│   ├── ipc.types.ts               ✅ IpcInvokeContract, IpcEventContract, SoarApi [03]   [05*] settings, system, set-zoom
+│   ├── ipc.types.ts               ✅ IpcInvokeContract, IpcEventContract, ArchonApi [03]   [05*] settings, system, set-zoom
 │   ├── editor.types.ts            ✅ [04] FileKind, EditorTabRef, EditorContribution
 │   ├── layout.types.ts            ✅ [04] PanelId, PanelMode, PanelPreference, PanelState, PanelLayout
 │   ├── ui.types.ts                ✅ [04] ModalId
@@ -398,7 +398,7 @@ src/modules/
 │   │   ├── filter-catalog.ts                     ✅ [17] categorie + căutare, grupat
 │   │   ├── folder-paths.ts                       ✅ [17] folderele arborelui, pentru „saves to”
 │   │   ├── mermaid-layout.ts                     ✅ [18] aranjamentul după lățime
-│   │   ├── clipboard.ts                          ✅ [20] application/x-soar-nodes (JSON ca text), remapare id-uri, +24px
+│   │   ├── clipboard.ts                          ✅ [20] application/x-archon-nodes (JSON ca text), remapare id-uri, +24px
 │   │   └── canvas-menu-items.ts                  ✅ [20] meniurile canvas-ului și ale nodului
 │   ├── mermaid/                                  ✅ [18] pachetul `mermaid`, chunk separat
 │   │   ├── mermaid-loader.ts                     ✅ import() leneș, strict + base, id unic per randare

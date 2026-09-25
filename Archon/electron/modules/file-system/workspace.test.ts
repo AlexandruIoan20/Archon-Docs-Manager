@@ -19,7 +19,7 @@ describe('workspace', () => {
   let base: string
 
   beforeEach(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), 'soar-workspace-')))
+    base = realpathSync(mkdtempSync(join(tmpdir(), 'ar-workspace-')))
   })
 
   afterEach(async () => {

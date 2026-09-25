@@ -12,7 +12,7 @@ export type {
   IpcUnsubscribe,
   TitleBarColors
 } from './ipc.types'
-export type { SoarApi } from './soar-api.types'
+export type { ArchonApi } from './archon-api.types'
 export type { EditorContribution, EditorSlotProps, EditorTabRef, FileKind } from './editor.types'
 export type {
   PanelId,
@@ -49,7 +49,7 @@ export type {
   WorkspaceSettings,
   WorkspaceThemeOverride
 } from './workspace.types'
-export type { SoarDocument, TiptapDoc } from './document.types'
+export type { ArchonDocument, TiptapDoc } from './document.types'
 export type {
   CreateDiagramOptions,
   DiagramEdge,
@@ -59,7 +59,7 @@ export type {
   DiagramNodeInput,
   DiagramNodeType,
   DiagramType,
-  SoarDiagram,
+  ArchonDiagram,
   UmlDiagramType
 } from './diagram.types'
 export type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'

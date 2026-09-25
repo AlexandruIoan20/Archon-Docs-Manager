@@ -1,6 +1,6 @@
 import { fireEvent, render, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createSoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { matchesCombo, useKeyboard, useShortcuts } from '../useKeyboard'
 
@@ -50,11 +50,11 @@ describe('matchesCombo, with a modifier', () => {
 
 describe('useShortcuts', () => {
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   const setup = (): { save: ReturnType<typeof vi.fn>; undo: ReturnType<typeof vi.fn> } => {
-    window.soar = createSoarApiMock({ platform: 'linux' }).api
+    window.archon = createArchonApiMock({ platform: 'linux' }).api
     const save = vi.fn()
     const undo = vi.fn()
     renderHook(() => useShortcuts({ 'file.save': save, 'diagram.undo': undo }), {

@@ -2,7 +2,7 @@ import { act, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { EditorTabRef } from '@/core/types'
 import { useUiStore } from '@/store'
-import type { SoarApiMock } from '@/test/soar-api-mock'
+import type { ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import {
   DOC,
@@ -15,7 +15,7 @@ import {
 } from './document-test-utils'
 
 describe('DocumentEditor, file changed on disk', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   let tab: EditorTabRef
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe('DocumentEditor, file changed on disk', () => {
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('reloads a clean document changed on disk', async () => {

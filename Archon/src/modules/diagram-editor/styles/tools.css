@@ -1,27 +1,27 @@
 /* Tools (plan 15): canvas cursors, shapes and free text, resize handles. */
 
-[data-tool='node'] .soar-flow .react-flow__pane,
-[data-tool='text'] .soar-flow .react-flow__pane,
-[data-tool='rect'] .soar-flow .react-flow__pane,
-[data-tool='ellipse'] .soar-flow .react-flow__pane {
+[data-tool='node'] .ar-flow .react-flow__pane,
+[data-tool='text'] .ar-flow .react-flow__pane,
+[data-tool='rect'] .ar-flow .react-flow__pane,
+[data-tool='ellipse'] .ar-flow .react-flow__pane {
   cursor: copy;
 }
 
-[data-tool='pan'] .soar-flow .react-flow__pane {
+[data-tool='pan'] .ar-flow .react-flow__pane {
   cursor: grab;
 }
 
-[data-tool='pan'] .soar-flow .react-flow__pane.dragging {
+[data-tool='pan'] .ar-flow .react-flow__pane.dragging {
   cursor: grabbing;
 }
 
-[data-tool='connect'] .soar-flow .react-flow__pane,
-[data-tool='connect'] .soar-flow .react-flow__node,
-[data-tool='connect'] .soar-flow .soar-node {
+[data-tool='connect'] .ar-flow .react-flow__pane,
+[data-tool='connect'] .ar-flow .react-flow__node,
+[data-tool='connect'] .ar-flow .ar-node {
   cursor: crosshair;
 }
 
-.soar-shape {
+.ar-shape {
   display: flex;
   box-sizing: border-box;
   align-items: center;
@@ -38,27 +38,27 @@
   text-align: center;
 }
 
-.soar-shape--ellipse {
+.ar-shape--ellipse {
   border-radius: 50%;
 }
 
-.soar-shape--text {
+.ar-shape--text {
   border-color: transparent;
   color: var(--shape-stroke);
 }
 
-.soar-shape-label {
+.ar-shape-label {
   overflow: hidden;
   line-height: 1.3;
   text-overflow: ellipsis;
   overflow-wrap: anywhere;
 }
 
-.soar-flow .soar-resize-line {
+.ar-flow .ar-resize-line {
   border-color: var(--accent);
 }
 
-.soar-flow .soar-resize-handle {
+.ar-flow .ar-resize-handle {
   width: 8px;
   height: 8px;
   border: 1.5px solid var(--accent);

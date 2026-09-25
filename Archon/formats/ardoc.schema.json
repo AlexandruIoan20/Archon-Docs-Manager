@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://soar-docs-studio.local/formats/ardoc.schema.json",
+  "$id": "https://archon-docs-studio.local/formats/ardoc.schema.json",
   "title": "Archon Docs Studio document (.ardoc)",
   "description": "A rich-text document. Mirrors src/core/schemas/document.schema.ts, which is the source of truth.",
   "type": "object",

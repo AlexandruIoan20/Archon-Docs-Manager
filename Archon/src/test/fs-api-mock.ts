@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import type { EntryRef, SoarApi } from '@/core/types'
+import type { EntryRef, ArchonApi } from '@/core/types'
 import { ok, type MockedSection } from './workspace-api-mock'
 
 const ref = (relPath: string): EntryRef => ({
@@ -10,10 +10,10 @@ const join = (folder: string, name: string): string => (folder ? `${folder}/${na
 const parent = (relPath: string): string => relPath.split('/').slice(0, -1).join('/')
 
 /**
- * Fake `window.soar.fs`. Creation returns predictable names (`untitled-1`,
+ * Fake `window.archon.fs`. Creation returns predictable names (`untitled-1`,
  * `new-folder-1`, `flowchart-1`); tests override single calls when needed.
  */
-export function createFsApiMock(): MockedSection<SoarApi['fs']> {
+export function createFsApiMock(): MockedSection<ArchonApi['fs']> {
   return {
     createDocument: vi.fn((folder: string) =>
       Promise.resolve(ok(ref(join(folder, 'untitled-1.ardoc'))))
@@ -29,7 +29,7 @@ export function createFsApiMock(): MockedSection<SoarApi['fs']> {
     readDiagram: vi.fn(),
     writeDiagram: vi.fn((_rel, diagram) => Promise.resolve(ok(diagram))),
     rename: vi.fn((relPath: string, newName: string) => {
-      const ext = /\.soar(doc|diag)$/.exec(relPath)?.[0] ?? ''
+      const ext = /\.ar(doc|diag)$/.exec(relPath)?.[0] ?? ''
       return Promise.resolve(ok(ref(join(parent(relPath), `${newName}${ext}`))))
     }),
     move: vi.fn((relPath: string, target: string) =>

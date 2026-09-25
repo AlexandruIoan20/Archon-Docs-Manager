@@ -31,7 +31,7 @@ function SoarEdgeComponent({
       <BaseEdge
         id={id}
         path={d}
-        className={cn('soar-edge', hot && 'soar-edge--hot')}
+        className={cn('ar-edge', hot && 'ar-edge--hot')}
         markerEnd={`url(#${hot ? HOT_ARROW_MARKER_ID : ARROW_MARKER_ID})`}
         interactionWidth={16}
         // A style picked in the toolbar; a hot edge shows the accent instead.
@@ -47,7 +47,7 @@ function SoarEdgeComponent({
       {typeof label === 'string' && label !== '' && (
         <EdgeLabelRenderer>
           <div
-            className="soar-edge-label nopan"
+            className="ar-edge-label nopan"
             style={{ transform: `translate(-50%, -100%) translate(${labelX}px, ${labelY - 4}px)` }}
           >
             {label}

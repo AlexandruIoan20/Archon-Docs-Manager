@@ -4,7 +4,7 @@ import type { EditorTabRef } from '@/core/types'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { useEditorStore, useUiStore } from '@/store'
 import { TitleBarDensityContext } from '@/shared/components/layout/title-bar/TitleBarDensityContext'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -35,7 +35,7 @@ const TEXT_DIAGRAM = diagramFileSchema.parse({
 const initial = { editor: useEditorStore.getState(), ui: useUiStore.getState() }
 
 describe('MermaidEditor', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   let tab: EditorTabRef
 
   function renderEditor(): void {
@@ -58,9 +58,9 @@ describe('MermaidEditor', () => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
     renderMermaid.mockClear()
-    mock = createSoarApiMock({ platform: 'linux' })
+    mock = createArchonApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(ok(TEXT_DIAGRAM))
-    window.soar = mock.api
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('flows/alert.ardiag', 'ardiag')
     tab = { tabId, filePath: 'flows/alert.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -68,7 +68,7 @@ describe('MermaidEditor', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('shows the source and its preview instead of the canvas', async () => {

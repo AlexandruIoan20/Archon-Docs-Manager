@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { Editor, JSONContent } from '@tiptap/core'
-import type { EditorTabRef, SoarDocument } from '@/core/types'
+import type { EditorTabRef, ArchonDocument } from '@/core/types'
 import { useExternalChanges } from '@/shared/hooks/useExternalChanges'
 import { useDocumentEditorStore } from '../store/document-editor.store'
 import { useAutosave } from './useAutosave'
 import { useDocumentEditor, wordsOf } from './useDocumentEditor'
 
 /** Replaces the content, keeping the cursor where it was as far as the new text allows. */
-function replaceContent(editor: Editor, content: SoarDocument['content']): void {
+function replaceContent(editor: Editor, content: ArchonDocument['content']): void {
   const { from, to } = editor.state.selection
   editor.commands.setContent(content as JSONContent, { emitUpdate: false })
   const size = editor.state.doc.content.size
@@ -26,8 +26,8 @@ export interface DocumentController {
  */
 export function useDocumentController(
   tab: EditorTabRef,
-  initial: SoarDocument,
-  latest: SoarDocument | undefined
+  initial: ArchonDocument,
+  latest: ArchonDocument | undefined
 ): DocumentController {
   const { tabId, filePath } = tab
   /** The disk version the editor content is based on. */
@@ -36,14 +36,14 @@ export function useDocumentController(
 
   const editor = useDocumentEditor(tabId, initial, () => changeRef.current())
 
-  const build = useCallback((): SoarDocument | null => {
+  const build = useCallback((): ArchonDocument | null => {
     if (!editor) return null
     const session = useDocumentEditorStore.getState().sessions[tabId]
     return {
       ...known.current,
       title: session?.title ?? known.current.title,
       tags: session?.tags ?? known.current.tags,
-      content: editor.getJSON() as SoarDocument['content']
+      content: editor.getJSON() as ArchonDocument['content']
     }
   }, [editor, tabId])
 

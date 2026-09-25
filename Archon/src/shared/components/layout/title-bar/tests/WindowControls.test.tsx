@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { WindowControls } from '../WindowControls'
 
 describe('WindowControls', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('calls the window IPC for each button', () => {

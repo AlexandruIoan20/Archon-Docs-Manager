@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it } from 'vitest'
-import type { SoarDiagram, SoarDocument } from '@/core/types'
+import type { ArchonDiagram, ArchonDocument } from '@/core/types'
 import { SEARCH_MATCH_END, SEARCH_MATCH_START } from '@/core/constants/search.constants'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { documentFileSchema } from '@/core/schemas/document.schema'
@@ -15,7 +15,7 @@ import { createSearchRepo, toFtsQuery } from './search.repo'
 const NOW = '2026-09-01T10:00:00.000Z'
 const STAT = { mtimeMs: 1000.7, size: 42 }
 
-const doc = (overrides: Partial<SoarDocument> = {}): SoarDocument =>
+const doc = (overrides: Partial<ArchonDocument> = {}): ArchonDocument =>
   documentFileSchema.parse({
     version: '1.0.0',
     id: 'doc-1',
@@ -31,7 +31,7 @@ const doc = (overrides: Partial<SoarDocument> = {}): SoarDocument =>
     ...overrides
   })
 
-const phishingDiagram = (overrides: Partial<SoarDiagram> = {}): SoarDiagram =>
+const phishingDiagram = (overrides: Partial<ArchonDiagram> = {}): ArchonDiagram =>
   diagramFileSchema.parse({
     version: '1.0.0',
     id: 'diag-1',

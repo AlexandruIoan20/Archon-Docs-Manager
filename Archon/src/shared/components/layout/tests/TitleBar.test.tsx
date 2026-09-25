@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { AppPlatform } from '@/core/types'
 import { APP_NAME } from '@/core/constants/app.constants'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { TitleBar, type TitleBarProps } from '../TitleBar'
 import { useTitleBarDensity } from '../title-bar/TitleBarDensityContext'
 
@@ -13,9 +13,9 @@ function withQueryClient(ui: ReactNode): React.JSX.Element {
   return <QueryClientProvider client={client}>{ui}</QueryClientProvider>
 }
 
-function renderBar(props: TitleBarProps = {}, platform?: AppPlatform): SoarApiMock | undefined {
-  const mock = platform ? createSoarApiMock({ platform }) : undefined
-  if (mock) window.soar = mock.api
+function renderBar(props: TitleBarProps = {}, platform?: AppPlatform): ArchonApiMock | undefined {
+  const mock = platform ? createArchonApiMock({ platform }) : undefined
+  if (mock) window.archon = mock.api
   render(withQueryClient(<TitleBar {...props} />))
   return mock
 }
@@ -44,7 +44,7 @@ function stubResizeObserver(width: number): void {
 
 describe('TitleBar', () => {
   afterEach(() => {
-    delete window.soar
+    delete window.archon
     vi.unstubAllGlobals()
   })
 

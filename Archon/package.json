@@ -1,5 +1,5 @@
 {
-  "name": "soar-docs-studio",
+  "name": "archon-docs-studio",
   "version": "1.0.0",
   "description": "Desktop studio for technical documentation of SOAR platforms",
   "main": "./out/main/index.js",

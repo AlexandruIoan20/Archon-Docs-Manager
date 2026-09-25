@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EditorTabRef } from '@/core/types'
 import { useEditorStore, useStatusStore, useUiStore } from '@/store'
 import { TitleBarDensityContext } from '@/shared/components/layout/title-bar/TitleBarDensityContext'
-import { createSoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -42,9 +42,9 @@ describe('diagram tools', () => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
     useStatusStore.setState(initial.status, true)
-    const mock = createSoarApiMock({ platform: 'linux' })
+    const mock = createArchonApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(ok(PHISHING))
-    window.soar = mock.api
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('flows/phishing.ardiag', 'ardiag')
     tab = { tabId, filePath: 'flows/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -52,7 +52,7 @@ describe('diagram tools', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('places a node with Add node, selects it and returns to Select', async () => {

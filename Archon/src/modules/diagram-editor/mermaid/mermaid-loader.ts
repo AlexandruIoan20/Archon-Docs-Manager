@@ -53,7 +53,7 @@ export async function renderMermaid(
     ...(htmlLabels === undefined ? {} : { htmlLabels })
   })
   // A new id per render: tabs rendering at once never share an element.
-  const id = `soar-mermaid-${++renders}`
+  const id = `ar-mermaid-${++renders}`
   try {
     const { svg } = await mermaid.render(id, source)
     return { svg }

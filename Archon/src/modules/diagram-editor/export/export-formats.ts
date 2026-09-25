@@ -1,11 +1,11 @@
-import type { ExportExtension, SoarDiagram } from '@/core/types'
+import type { ExportExtension, ArchonDiagram } from '@/core/types'
 import { supportsXmi } from './xmi/serialize-xmi'
 
 export interface ExportFormat {
   id: ExportExtension
   label: string
   extension: `.${ExportExtension}`
-  isAvailable: (diagram: Pick<SoarDiagram, 'type' | 'engine'>) => boolean
+  isAvailable: (diagram: Pick<ArchonDiagram, 'type' | 'engine'>) => boolean
 }
 
 /** The Export menu, in order. */

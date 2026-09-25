@@ -48,7 +48,7 @@ describe('resolveInWorkspace', () => {
   let root: string
 
   beforeEach(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), 'soar-paths-')))
+    base = realpathSync(mkdtempSync(join(tmpdir(), 'ar-paths-')))
     root = join(base, 'ws')
     mkdirSync(join(root, 'Playbooks'), { recursive: true })
     mkdirSync(join(base, 'secret'))

@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 import { join } from 'path'
-import type { CreateDiagramOptions, SoarDiagram } from '@/core/types'
+import type { CreateDiagramOptions, ArchonDiagram } from '@/core/types'
 import { DIAGRAM_FORMAT_VERSION, diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { FILE_EXTENSIONS } from '@/core/constants/file-extensions'
 import { AppError } from '../errors'
@@ -22,7 +22,7 @@ const DIAGRAM_OPS: JsonFileOps<typeof diagramFileSchema> = {
 }
 
 export interface CreatedDiagram extends EntryRefValue {
-  diagram: SoarDiagram
+  diagram: ArchonDiagram
 }
 
 /** `<type>-N.ardiag`, or a file named after `title`, with optional starter content. */
@@ -54,7 +54,7 @@ export async function createDiagram(
   const fileName = cleanTitle
     ? await availableName(dir, slugify(cleanTitle, parsed.data.type), FILE_EXTENSIONS.diagram)
     : await nextAvailableName(dir, parsed.data.type, FILE_EXTENSIONS.diagram)
-  const diagram: SoarDiagram = {
+  const diagram: ArchonDiagram = {
     ...parsed.data,
     title: cleanTitle || fileName.slice(0, -FILE_EXTENSIONS.diagram.length)
   }
@@ -63,7 +63,7 @@ export async function createDiagram(
   return { ...entryRef(root, path), diagram }
 }
 
-export function readDiagram(root: string, relPath: string): Promise<SoarDiagram> {
+export function readDiagram(root: string, relPath: string): Promise<ArchonDiagram> {
   return readAppFile(root, relPath, DIAGRAM_OPS)
 }
 
@@ -72,6 +72,6 @@ export function writeDiagram(
   relPath: string,
   diagram: unknown,
   now?: Date
-): Promise<SoarDiagram> {
+): Promise<ArchonDiagram> {
   return writeAppFile(root, relPath, diagram, DIAGRAM_OPS, now)
 }

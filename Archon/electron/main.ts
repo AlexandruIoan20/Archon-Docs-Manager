@@ -10,7 +10,7 @@ import {
   startWorkspaceServices
 } from './modules/workspace-services'
 
-const APP_USER_MODEL_ID = 'com.archon.soardocsstudio'
+const APP_USER_MODEL_ID = 'com.archon.docsstudio'
 /** Longest the app waits for its cleanup (watcher, index) when quitting. */
 const SHUTDOWN_TIMEOUT_MS = 3000
 

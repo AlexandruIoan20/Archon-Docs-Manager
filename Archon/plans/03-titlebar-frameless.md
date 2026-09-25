@@ -46,7 +46,7 @@ Pragurile sunt în `TITLEBAR_DENSITY` (overview, „Strategie responsive”).
 - `src/core/types/ipc.types.ts` (modificat):
   - canale noi: `window:minimize`, `window:toggle-maximize`, `window:close`, `window:is-maximized`, `window:set-titlebar-colors`;
   - contract nou `IpcEventContract` pentru evenimente main → renderer: `window:maximized-changed`;
-  - `SoarApi.window` și `SoarApi.on`.
+  - `ArchonApi.window` și `ArchonApi.on`.
 - `electron/modules/ipc/typed-ipc.ts` (modificat): helper `send<E>(window, event, payload)` tipat pe `IpcEventContract`.
 - `electron/modules/ipc/window.handler.ts`: handlerele de fereastră. Fereastra se ia din `BrowserWindow.fromWebContents(event.sender)`.
 - `electron/modules/window-manager.ts` (modificat): opțiunile de ramă per platformă și emiterea `maximized-changed` pe evenimentele `maximize`/`unmaximize`.
@@ -67,7 +67,7 @@ Pragurile sunt în `TITLEBAR_DENSITY` (overview, „Strategie responsive”).
 
 ## Pași
 1. Extinde contractul IPC cu canalele de fereastră și cu `IpcEventContract`.
-   Actualizează `SoarApi` și rulează typecheck-ul.
+   Actualizează `ArchonApi` și rulează typecheck-ul.
    Toate trei straturile trebuie să eșueze la compilare până sunt implementate.
 2. Implementează `window.handler.ts` și înregistrează-l în `ipc/index.ts`.
 3. Adaugă `send()` în `typed-ipc.ts`. În `window-manager.ts`, emite `window:maximized-changed`.
@@ -91,7 +91,7 @@ Pragurile sunt în `TITLEBAR_DENSITY` (overview, „Strategie responsive”).
     - `TitleBar` randează sloturile și ascunde separatoarele goale;
     - `resolveTitleBarDensity`: praguri și histerezis (999 → `compact`, apoi 1010 rămâne `compact`, 1024 → `full`);
     - `BrandMark` în `minimal` ascunde numele;
-    - `WindowControls` apelează `ipcClient.window.*` (mock pe `window.soar`).
+    - `WindowControls` apelează `ipcClient.window.*` (mock pe `window.archon`).
 
 ## Criterii de acceptare
 - Fereastra se mută trăgând de bară și se maximizează/restaurează/închide corect pe Linux.

@@ -2,7 +2,7 @@ import { act, fireEvent, render, renderHook, screen, waitFor, within } from '@te
 import { ReactFlowProvider } from '@xyflow/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ReactNode } from 'react'
-import type { NodeStyle, SoarDiagram } from '@/core/types'
+import type { NodeStyle, ArchonDiagram } from '@/core/types'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { queryWrapper } from '@/test/render-with-query'
 import { useIsHotEdge } from '../../../hooks/useHotEdges'
@@ -18,7 +18,7 @@ const node = (id: string, type: string, label: string, subtitle = ''): object =>
   data: { label, subtitle }
 })
 
-const diagram = (nodeStyle: NodeStyle | null = null): SoarDiagram =>
+const diagram = (nodeStyle: NodeStyle | null = null): ArchonDiagram =>
   diagramFileSchema.parse({
     version: '1.0.0',
     id: 'd1',
@@ -41,7 +41,7 @@ const diagram = (nodeStyle: NodeStyle | null = null): SoarDiagram =>
     }
   })
 
-async function renderCanvas(file: SoarDiagram): Promise<DiagramStoreApi> {
+async function renderCanvas(file: ArchonDiagram): Promise<DiagramStoreApi> {
   const store = createDiagramStore(fileToGraph(file), file)
   const Wrapper = queryWrapper()
   render(
@@ -80,15 +80,15 @@ describe('SOAR nodes', () => {
 
   it('draws decisions as a diamond and the rest as rectangles', async () => {
     await renderCanvas(diagram())
-    expect(nodeGroup('Decision Malicious?')).toHaveClass('soar-node--diamond')
+    expect(nodeGroup('Decision Malicious?')).toHaveClass('ar-node--diamond')
     expect(nodeGroup('Decision Malicious?')).toHaveAttribute('data-shape', 'diamond')
-    expect(nodeGroup('Action Contain Host')).not.toHaveClass('soar-node--diamond')
+    expect(nodeGroup('Action Contain Host')).not.toHaveClass('ar-node--diamond')
   })
 
   it('uses the kind color and the diagram skin', async () => {
     await renderCanvas(diagram('solid'))
     const action = nodeGroup('Action Contain Host')
-    expect(action).toHaveClass('soar-node--solid')
+    expect(action).toHaveClass('ar-node--solid')
     expect(action.style.getPropertyValue('--node-color')).toBe('#2563EB')
     expect(nodeGroup('Trigger Phishing report').style.getPropertyValue('--node-color')).toBe(
       '#7C3AED'

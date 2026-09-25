@@ -1,9 +1,9 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { EditorTabRef, SoarDiagram } from '@/core/types'
+import type { EditorTabRef, ArchonDiagram } from '@/core/types'
 import { useEditorStore, useUiStore } from '@/store'
 import { TitleBarDensityContext } from '@/shared/components/layout/title-bar/TitleBarDensityContext'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -22,11 +22,11 @@ const initial = { editor: useEditorStore.getState(), ui: useUiStore.getState() }
 const toast = (): string | undefined => useUiStore.getState().toast?.message
 
 describe('ExportMenu', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   let tab: EditorTabRef
 
   async function renderMenu(
-    diagram: SoarDiagram = PHISHING,
+    diagram: ArchonDiagram = PHISHING,
     density: 'full' | 'minimal' = 'full'
   ): Promise<DiagramStoreApi> {
     mock.api.fs.readDiagram.mockResolvedValue(ok(diagram))
@@ -52,8 +52,8 @@ describe('ExportMenu', () => {
     useUiStore.setState(initial.ui, true)
     htmlToImage.toSvg.mockClear()
     htmlToImage.toPng.mockClear()
-    mock = createSoarApiMock({ platform: 'linux' })
-    window.soar = mock.api
+    mock = createArchonApiMock({ platform: 'linux' })
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('flows/phishing.ardiag', 'ardiag')
     tab = { tabId, filePath: 'flows/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -61,7 +61,7 @@ describe('ExportMenu', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('lists the four formats with their extensions', async () => {

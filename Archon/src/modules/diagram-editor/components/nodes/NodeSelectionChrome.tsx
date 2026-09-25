@@ -8,16 +8,16 @@ export function NodeSelectionChrome({ id }: { id: string }): React.JSX.Element {
   const store = useDiagramStoreApi()
   return (
     <>
-      <div aria-hidden className="soar-node-ring" />
+      <div aria-hidden className="ar-node-ring" />
       {GRIPS.map((grip) => (
-        <span key={grip} aria-hidden className={`soar-node-grip soar-node-grip--${grip}`} />
+        <span key={grip} aria-hidden className={`ar-node-grip ar-node-grip--${grip}`} />
       ))}
-      <div className="soar-node-toolbar nodrag nopan">
-        <span className="soar-node-badge">{id}</span>
+      <div className="ar-node-toolbar nodrag nopan">
+        <span className="ar-node-badge">{id}</span>
         <button
           type="button"
           aria-label={`Delete ${id}`}
-          className="soar-node-delete"
+          className="ar-node-delete"
           onClick={(event) => {
             event.stopPropagation()
             store.getState().removeNodes([id])

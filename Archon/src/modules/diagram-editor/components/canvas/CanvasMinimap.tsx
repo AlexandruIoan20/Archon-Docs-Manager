@@ -12,7 +12,7 @@ export function CanvasMinimap(): React.JSX.Element {
     <MiniMap<FlowNode>
       position="bottom-right"
       ariaLabel="Diagram overview"
-      className="soar-minimap"
+      className="ar-minimap"
       style={{ width: 120, height: 80 }}
       nodeColor={minimapColor}
       nodeStrokeColor={nodeStroke}

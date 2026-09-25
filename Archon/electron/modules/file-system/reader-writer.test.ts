@@ -17,7 +17,7 @@ describe('file-system reader & writer', () => {
   let root: string
 
   beforeEach(() => {
-    root = mkdtempSync(join(tmpdir(), 'soar-ws-'))
+    root = mkdtempSync(join(tmpdir(), 'ar-ws-'))
   })
 
   afterEach(() => {

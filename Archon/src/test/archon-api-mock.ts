@@ -6,7 +6,7 @@ import type {
   IpcEvent,
   IpcEventPayload,
   ResolvedTheme,
-  SoarApi
+  ArchonApi
 } from '@/core/types'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
@@ -20,23 +20,23 @@ import {
 
 type Listener = (payload: unknown) => void
 
-export interface SoarApiMockOptions extends Partial<AppInfo>, WorkspaceMockOptions {
+export interface ArchonApiMockOptions extends Partial<AppInfo>, WorkspaceMockOptions {
   settings?: AppSettings
   systemTheme?: ResolvedTheme
   indexStatus?: IndexStatus
 }
 
-export interface SoarApiMock {
-  api: SoarApi & {
-    app: Mocked<SoarApi['app']>
-    window: Mocked<SoarApi['window']>
-    settings: Mocked<SoarApi['settings']>
-    system: Mocked<SoarApi['system']>
-    workspace: Mocked<SoarApi['workspace']>
-    fs: Mocked<SoarApi['fs']>
-    index: Mocked<SoarApi['index']>
-    search: Mocked<SoarApi['search']>
-    export: Mocked<SoarApi['export']>
+export interface ArchonApiMock {
+  api: ArchonApi & {
+    app: Mocked<ArchonApi['app']>
+    window: Mocked<ArchonApi['window']>
+    settings: Mocked<ArchonApi['settings']>
+    system: Mocked<ArchonApi['system']>
+    workspace: Mocked<ArchonApi['workspace']>
+    fs: Mocked<ArchonApi['fs']>
+    index: Mocked<ArchonApi['index']>
+    search: Mocked<ArchonApi['search']>
+    export: Mocked<ArchonApi['export']>
   }
   /** Simulates a main → renderer event reaching every current subscriber. */
   emit: <E extends IpcEvent>(event: E, payload: IpcEventPayload<E>) => void
@@ -48,8 +48,8 @@ export interface SoarApiMock {
 const resolved = <T>(value: T): Mock<() => Promise<T>> =>
   vi.fn<() => Promise<T>>(() => Promise.resolve(value))
 
-/** A complete fake `window.soar`. Install it with `window.soar = mock.api`. */
-export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock {
+/** A complete fake `window.archon`. Install it with `window.archon = mock.api`. */
+export function createArchonApiMock(options: ArchonApiMockOptions = {}): ArchonApiMock {
   const {
     settings = DEFAULT_SETTINGS,
     systemTheme = 'dark',
@@ -61,7 +61,7 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
   const listeners = new Map<IpcEvent, Set<Listener>>()
   let stored = structuredClone(settings)
 
-  const api: SoarApiMock['api'] = {
+  const api: ArchonApiMock['api'] = {
     app: {
       getInfo: resolved<AppInfo>({
         name: 'Archon Docs Studio',
@@ -82,7 +82,7 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
     },
     settings: {
       get: vi.fn(() => Promise.resolve(structuredClone(stored))),
-      update: vi.fn<SoarApi['settings']['update']>((patch) => {
+      update: vi.fn<ArchonApi['settings']['update']>((patch) => {
         stored = mergeSettings(stored, patch)
         return Promise.resolve(structuredClone(stored))
       })

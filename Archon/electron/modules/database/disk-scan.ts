@@ -1,6 +1,6 @@
 import { lstat } from 'fs/promises'
 import { join } from 'path'
-import type { FileKind, SoarDiagram, SoarDocument, TreeEntry } from '@/core/types'
+import type { FileKind, ArchonDiagram, ArchonDocument, TreeEntry } from '@/core/types'
 import { fileKindFromPath } from '@/core/constants/file-extensions'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { documentFileSchema } from '@/core/schemas/document.schema'
@@ -19,8 +19,8 @@ export interface DiskFile {
 /** A file read for indexing; neither `doc` nor `diagram` when it could not be read. */
 export interface ReadFile {
   file: DiskFile
-  doc?: SoarDocument
-  diagram?: SoarDiagram
+  doc?: ArchonDocument
+  diagram?: ArchonDiagram
 }
 
 const absolute = (root: string, relPath: string): string =>

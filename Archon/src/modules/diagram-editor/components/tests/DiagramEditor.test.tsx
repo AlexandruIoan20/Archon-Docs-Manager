@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EditorTabRef } from '@/core/types'
 import { useEditorStore, useUiStore } from '@/store'
 import { AUTOSAVE_DELAY_MS } from '@/shared/hooks/useFileAutosave'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -21,7 +21,7 @@ const isDirty = (tabId: string): boolean =>
   useEditorStore.getState().tabs.find((tab) => tab.id === tabId)?.dirty ?? false
 
 describe('DiagramEditor', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   let tab: EditorTabRef
 
   const loaded = async (): Promise<DiagramStoreApi> => {
@@ -32,9 +32,9 @@ describe('DiagramEditor', () => {
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
-    mock = createSoarApiMock()
+    mock = createArchonApiMock()
     mock.api.fs.readDiagram.mockResolvedValue(ok(PHISHING))
-    window.soar = mock.api
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('Playbooks/phishing.ardiag', 'ardiag')
     tab = { tabId, filePath: 'Playbooks/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -42,7 +42,7 @@ describe('DiagramEditor', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('loads the diagram into the tab store and the status bar', async () => {

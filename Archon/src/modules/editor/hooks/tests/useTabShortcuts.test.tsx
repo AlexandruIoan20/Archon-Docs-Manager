@@ -1,7 +1,7 @@
 import { fireEvent, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { selectActivePath, useEditorStore, useUiStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { useCloseGuardStore } from '../../store/close-guard.store'
 import { useQuitGuard } from '../useQuitGuard'
@@ -39,18 +39,18 @@ describe('tab shortcuts', () => {
 })
 
 describe('useQuitGuard', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
     useCloseGuardStore.setState(initial.guard, true)
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('announces itself to main, so the window waits for it', () => {

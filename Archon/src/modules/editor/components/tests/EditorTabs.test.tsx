@@ -43,7 +43,7 @@ describe('EditorTabs', () => {
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('marks the active tab and shows the file path as tooltip', () => {

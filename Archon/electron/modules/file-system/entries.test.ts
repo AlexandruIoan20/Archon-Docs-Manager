@@ -17,7 +17,7 @@ describe('entries', () => {
   let root: string
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'soar-entries-')))
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ar-entries-')))
     mkdirSync(join(root, 'Playbooks', 'Phishing'), { recursive: true })
     mkdirSync(join(root, 'Runbooks'))
     writeFileSync(join(root, 'Playbooks', 'triage.ardiag'), '{}')

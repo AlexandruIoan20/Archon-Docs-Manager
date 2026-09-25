@@ -7,8 +7,8 @@ import { Handle, Position } from '@xyflow/react'
 export function NodeHandles(): React.JSX.Element {
   return (
     <>
-      <Handle type="target" position={Position.Left} className="soar-handle" />
-      <Handle type="source" position={Position.Right} className="soar-handle" />
+      <Handle type="target" position={Position.Left} className="ar-handle" />
+      <Handle type="source" position={Position.Right} className="ar-handle" />
     </>
   )
 }

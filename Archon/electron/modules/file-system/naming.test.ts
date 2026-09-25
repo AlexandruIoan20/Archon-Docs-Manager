@@ -47,7 +47,7 @@ describe('numbered names', () => {
   let dir: string
 
   beforeEach(() => {
-    dir = mkdtempSync(join(tmpdir(), 'soar-naming-'))
+    dir = mkdtempSync(join(tmpdir(), 'ar-naming-'))
   })
 
   afterEach(() => {

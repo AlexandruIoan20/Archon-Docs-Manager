@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EditorTabRef } from '@/core/types'
 import { useEditorStore, useUiStore } from '@/store'
-import { createSoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -32,9 +32,9 @@ describe('canvas context menus and the node clipboard', () => {
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
-    const mock = createSoarApiMock({ platform: 'linux' })
+    const mock = createArchonApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(ok(PHISHING))
-    window.soar = mock.api
+    window.archon = mock.api
     clipboardText = ''
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -53,7 +53,7 @@ describe('canvas context menus and the node clipboard', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('adds a node where the canvas was right-clicked', async () => {
@@ -84,7 +84,7 @@ describe('canvas context menus and the node clipboard', () => {
     const store = await renderDiagram()
     act(() => store.getState().selectNodes(['N1', 'N2']))
     fireEvent.keyDown(window, { key: 'c', ctrlKey: true })
-    await waitFor(() => expect(clipboardText).toContain('application/x-soar-nodes'))
+    await waitFor(() => expect(clipboardText).toContain('application/x-archon-nodes'))
 
     fireEvent.keyDown(window, { key: 'v', ctrlKey: true })
     await waitFor(() => expect(ids(store)).toEqual(['N1', 'N2', 'N3', 'N4']))

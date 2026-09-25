@@ -82,7 +82,7 @@ describe('database files', () => {
   let userData: string
 
   beforeEach(async () => {
-    userData = await mkdtemp(join(tmpdir(), 'soar-db-'))
+    userData = await mkdtemp(join(tmpdir(), 'ar-db-'))
   })
 
   afterEach(async () => {

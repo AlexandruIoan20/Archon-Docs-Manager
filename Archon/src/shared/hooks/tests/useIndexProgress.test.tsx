@@ -1,26 +1,26 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useStatusStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { INDEXING_STATUS, useIndexProgress } from '../useIndexProgress'
 
 const initialStatus = useStatusStore.getState()
 const statusText = (): string => useStatusStore.getState().statusText
 
 describe('useIndexProgress', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
     useStatusStore.setState(initialStatus, true)
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('shows „Indexing…” while a sync runs and „Ready” after', async () => {
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
     renderHook(() => useIndexProgress())
     await waitFor(() => expect(mock.listenerCount('index:progress')).toBe(1))
 
@@ -32,17 +32,17 @@ describe('useIndexProgress', () => {
   })
 
   it('picks up a sync that started before the window loaded', async () => {
-    mock = createSoarApiMock({
+    mock = createArchonApiMock({
       indexStatus: { indexing: true, files: 0, skipped: 0, lastSync: null }
     })
-    window.soar = mock.api
+    window.archon = mock.api
     renderHook(() => useIndexProgress())
     await waitFor(() => expect(statusText()).toBe(INDEXING_STATUS))
   })
 
   it('leaves another status alone when indexing ends', async () => {
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
     renderHook(() => useIndexProgress())
     await waitFor(() => expect(mock.api.index.getStatus).toHaveBeenCalled())
 
@@ -52,8 +52,8 @@ describe('useIndexProgress', () => {
   })
 
   it('unsubscribes on unmount', async () => {
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
     const { unmount } = renderHook(() => useIndexProgress())
     await waitFor(() => expect(mock.listenerCount('index:progress')).toBe(1))
     unmount()

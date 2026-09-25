@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
-import type { SoarApiMockOptions } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
+import type { ArchonApiMockOptions } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { SAMPLE_TREE } from '@/test/sample-tree'
 import { ok, SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
@@ -12,9 +12,9 @@ const initialUi = useUiStore.getState()
 const initialWorkspace = useWorkspaceStore.getState()
 const initialEditor = useEditorStore.getState()
 
-function install(options: SoarApiMockOptions = {}): SoarApiMock {
-  const mock = createSoarApiMock({ platform: 'linux', ...options })
-  window.soar = mock.api
+function install(options: ArchonApiMockOptions = {}): ArchonApiMock {
+  const mock = createArchonApiMock({ platform: 'linux', ...options })
+  window.archon = mock.api
   return mock
 }
 
@@ -23,7 +23,7 @@ function renderApp(): void {
 }
 
 /** Renders the app with a workspace open and waits for the shell body. */
-async function renderShell(options: SoarApiMockOptions = {}): Promise<SoarApiMock> {
+async function renderShell(options: ArchonApiMockOptions = {}): Promise<ArchonApiMock> {
   const mock = install(options)
   renderApp()
   await screen.findByTestId('tab-bar')
@@ -50,7 +50,7 @@ describe('App', () => {
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('renders the shell with title bar, panels and status bar', async () => {

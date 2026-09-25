@@ -16,9 +16,9 @@ const EXCLUDED_CLASSES = [
   'react-flow__handle',
   'react-flow__resize-control',
   'react-flow__nodesselection',
-  'soar-node-ring',
-  'soar-node-grip',
-  'soar-node-toolbar'
+  'ar-node-ring',
+  'ar-node-grip',
+  'ar-node-toolbar'
 ]
 
 export function keepInExport(node: HTMLElement): boolean {

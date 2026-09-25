@@ -1,5 +1,5 @@
 import { vi, type Mock } from 'vitest'
-import type { FolderEntry, IpcErrorPayload, Result, SoarApi, WorkspaceInfo } from '@/core/types'
+import type { FolderEntry, IpcErrorPayload, Result, ArchonApi, WorkspaceInfo } from '@/core/types'
 
 export type MockedSection<T> = {
   [K in keyof T]: T[K] extends (...args: never[]) => unknown ? Mock<T[K]> : T[K]
@@ -31,10 +31,10 @@ export interface WorkspaceMockOptions {
   tree?: FolderEntry
 }
 
-/** Fake `window.soar.workspace`: a small in-memory main process. */
+/** Fake `window.archon.workspace`: a small in-memory main process. */
 export function createWorkspaceApiMock(
   options: WorkspaceMockOptions = {}
-): MockedSection<SoarApi['workspace']> {
+): MockedSection<ArchonApi['workspace']> {
   let current = options.workspace === undefined ? SAMPLE_WORKSPACE : options.workspace
   const tree = options.tree ?? EMPTY_TREE
   const open = (info: WorkspaceInfo): Promise<Result<WorkspaceInfo>> => {

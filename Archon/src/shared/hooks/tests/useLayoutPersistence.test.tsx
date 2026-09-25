@@ -1,26 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useUiStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { LAYOUT_SAVE_DELAY_MS, useLayoutPersistence } from '../useLayoutPersistence'
 
 const initialUi = useUiStore.getState()
 
 describe('useLayoutPersistence', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
     vi.useFakeTimers()
     useUiStore.setState(initialUi, true)
-    mock = createSoarApiMock()
-    window.soar = mock.api
+    mock = createArchonApiMock()
+    window.archon = mock.api
     renderHook(() => useLayoutPersistence(), { wrapper: queryWrapper() })
   })
 
   afterEach(() => {
     vi.useRealTimers()
-    delete window.soar
+    delete window.archon
   })
 
   const flush = async (): Promise<void> => {

@@ -1,4 +1,4 @@
-appId: com.archon.soardocsstudio
+appId: com.archon.docsstudio
 productName: Archon Docs Studio
 directories:
   buildResources: build
@@ -16,7 +16,7 @@ asarUnpack:
   - resources/**
   - '**/node_modules/better-sqlite3/**'
 win:
-  executableName: soar-docs-studio
+  executableName: archon-docs-studio
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
 import { useUiStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { fail } from '@/test/workspace-api-mock'
 import { WorkspaceLanding } from '../WorkspaceLanding'
@@ -15,20 +15,20 @@ const RECENT = [
 const initialUi = useUiStore.getState()
 
 describe('WorkspaceLanding', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(() => {
     useUiStore.setState(initialUi, true)
-    mock = createSoarApiMock({
+    mock = createArchonApiMock({
       workspace: null,
       settings: mergeSettings(DEFAULT_SETTINGS, { recentWorkspaces: RECENT })
     })
-    window.soar = mock.api
+    window.archon = mock.api
     render(<WorkspaceLanding />, { wrapper: queryWrapper() })
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('creates a workspace with the typed name', async () => {

@@ -19,9 +19,9 @@ describe('canvas export', () => {
   })
 
   it('leaves handles, resize grips and selection chrome out', () => {
-    expect(keepInExport(element('react-flow__handle soar-handle'))).toBe(false)
-    expect(keepInExport(element('soar-node-ring'))).toBe(false)
-    expect(keepInExport(element('soar-node-toolbar nodrag'))).toBe(false)
+    expect(keepInExport(element('react-flow__handle ar-handle'))).toBe(false)
+    expect(keepInExport(element('ar-node-ring'))).toBe(false)
+    expect(keepInExport(element('ar-node-toolbar nodrag'))).toBe(false)
     expect(keepInExport(element('react-flow__node'))).toBe(true)
   })
 

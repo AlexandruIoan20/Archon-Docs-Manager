@@ -1,6 +1,6 @@
-import type { CreateDiagramOptions, SoarDiagram } from './diagram.types'
+import type { CreateDiagramOptions, ArchonDiagram } from './diagram.types'
 import type { ExportPdfRequest, ExportSaveRequest, ExportSaveResult } from './export.types'
-import type { SoarDocument } from './document.types'
+import type { ArchonDocument } from './document.types'
 import type {
   AppInfo,
   EntryRef,
@@ -14,8 +14,8 @@ import type { IndexStatus, SearchResult, TagCount } from './search.types'
 import type { AppSettings, ResolvedTheme, SettingsPatch } from './settings.types'
 import type { FolderEntry, WorkspaceInfo, WorkspaceSettings } from './workspace.types'
 
-/** API surface exposed on `window.soar` by the preload script. */
-export interface SoarApi {
+/** API surface exposed on `window.archon` by the preload script. */
+export interface ArchonApi {
   app: {
     getInfo: () => Promise<AppInfo>
     enableCloseGuard: () => Promise<void>
@@ -50,10 +50,10 @@ export interface SoarApi {
     createDocument: (folderRel: string, title?: string) => Promise<Result<EntryRef>>
     createDiagram: (folderRel: string, options: CreateDiagramOptions) => Promise<Result<EntryRef>>
     createFolder: (parentRel: string, name?: string) => Promise<Result<EntryRef>>
-    readDocument: (relPath: string) => Promise<Result<SoarDocument>>
-    writeDocument: (relPath: string, document: SoarDocument) => Promise<Result<SoarDocument>>
-    readDiagram: (relPath: string) => Promise<Result<SoarDiagram>>
-    writeDiagram: (relPath: string, diagram: SoarDiagram) => Promise<Result<SoarDiagram>>
+    readDocument: (relPath: string) => Promise<Result<ArchonDocument>>
+    writeDocument: (relPath: string, document: ArchonDocument) => Promise<Result<ArchonDocument>>
+    readDiagram: (relPath: string) => Promise<Result<ArchonDiagram>>
+    writeDiagram: (relPath: string, diagram: ArchonDiagram) => Promise<Result<ArchonDiagram>>
     rename: (relPath: string, newName: string) => Promise<Result<EntryRef>>
     move: (relPath: string, targetFolderRel: string) => Promise<Result<EntryRef>>
     delete: (relPath: string) => Promise<Result<null>>

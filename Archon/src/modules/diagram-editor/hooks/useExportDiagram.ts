@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import type { EditorTabRef, ExportSaveResult, SoarDiagram } from '@/core/types'
+import type { EditorTabRef, ExportSaveResult, ArchonDiagram } from '@/core/types'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { titleFromPath, useEditorStore, useUiStore } from '@/store'
 import { canvasToPng, canvasToSvg } from '../export/export-canvas'
@@ -75,7 +75,7 @@ export function useExportDiagram({ tabId, filePath }: EditorTabRef): ExportDiagr
     const saved = await ipcClient.fs.writeDiagram(filePath, next)
     store.getState().patchMeta({ exportedAt: saved.exportedAt }, { save: false })
     queryClient.setQueryData(queryKey, saved)
-    store.getState().setBase(queryClient.getQueryData<SoarDiagram>(queryKey) ?? saved)
+    store.getState().setBase(queryClient.getQueryData<ArchonDiagram>(queryKey) ?? saved)
   }
 
   const run = async (format: ExportFormat): Promise<void> => {

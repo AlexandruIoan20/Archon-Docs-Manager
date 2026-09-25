@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
 import { ModalHost } from '@/shared/components/layout/ModalHost'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok, SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { SAMPLE_TREE } from '@/test/sample-tree'
@@ -29,14 +29,14 @@ const shownTypes = (): string[] =>
     .map((option) => option.dataset.type ?? '')
 
 describe('NewDiagramDialog', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   beforeEach(async () => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
     useWorkspaceStore.setState(initial.workspace, true)
-    mock = createSoarApiMock({ tree: SAMPLE_TREE, platform: 'linux' })
-    window.soar = mock.api
+    mock = createArchonApiMock({ tree: SAMPLE_TREE, platform: 'linux' })
+    window.archon = mock.api
     useWorkspaceStore.getState().setCurrent(SAMPLE_WORKSPACE)
     useWorkspaceStore.getState().setTargetFolder('Playbooks')
     render(<ModalHost modals={{ 'new-diagram': NewDiagramDialog }} />, {
@@ -48,7 +48,7 @@ describe('NewDiagramDialog', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('opens with the focus in the search, all 14 types and Class selected', () => {
@@ -162,12 +162,12 @@ describe('NewDiagramDialog', () => {
 
 describe('a new diagram, once open', () => {
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('has N1 selected and an empty history', async () => {
     useEditorStore.setState(initial.editor, true)
-    const mock = createSoarApiMock({ platform: 'linux' })
+    const mock = createArchonApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(
       ok(
         diagramFileSchema.parse({
@@ -181,7 +181,7 @@ describe('a new diagram, once open', () => {
         })
       )
     )
-    window.soar = mock.api
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('Playbooks/state-1.ardiag', 'ardiag')
     useEditorStore.getState().setPendingSelection(tabId, ['N1'])
 

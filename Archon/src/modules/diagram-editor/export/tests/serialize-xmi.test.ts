@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import type { DiagramEdgeInput, DiagramNodeInput, SoarDiagram } from '@/core/types'
+import type { DiagramEdgeInput, DiagramNodeInput, ArchonDiagram } from '@/core/types'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { buildStarterGraph } from '../../utils/build-starter-graph'
 import { serializeXmi, supportsXmi } from '../xmi/serialize-xmi'
 
 function diagram(
-  type: SoarDiagram['type'],
+  type: ArchonDiagram['type'],
   extra: { nodes?: DiagramNodeInput[]; edges?: DiagramEdgeInput[] } = {}
-): SoarDiagram {
+): ArchonDiagram {
   const graph = buildStarterGraph(type as never)
   return diagramFileSchema.parse({
     version: '1.0.0',

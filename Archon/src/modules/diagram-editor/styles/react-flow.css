@@ -1,7 +1,7 @@
 /* React Flow's structural styles, themed with the app tokens (plan 13). */
 @import '@xyflow/react/dist/base.css';
 
-.soar-flow {
+.ar-flow {
   --xy-background-color: var(--canvas);
   --xy-background-pattern-dots-color: var(--dot);
   --xy-edge-stroke: var(--text3);
@@ -23,27 +23,27 @@
 }
 
 /* The canvas takes the pointer; text selection would fight node dragging. */
-.soar-flow .react-flow__pane {
+.ar-flow .react-flow__pane {
   cursor: default;
 }
 
-.soar-flow .react-flow__handle {
+.ar-flow .react-flow__handle {
   width: 8px;
   height: 8px;
   border-width: 1.5px;
   border-radius: var(--radius-xs);
 }
 
-.soar-flow .react-flow__edge-textbg {
+.ar-flow .react-flow__edge-textbg {
   fill: var(--canvas);
 }
 
-.soar-flow .react-flow__edge-text {
+.ar-flow .react-flow__edge-text {
   fill: var(--text2);
   font-size: 11px;
 }
 
-.soar-flow .soar-minimap {
+.ar-flow .ar-minimap {
   margin: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -51,12 +51,12 @@
 }
 
 /* Kept (see plan 13), but out of the way. */
-.soar-flow .react-flow__attribution {
+.ar-flow .react-flow__attribution {
   padding: 2px 6px;
   font-size: 9px;
   opacity: 0.55;
 }
 
-.soar-flow .react-flow__attribution a {
+.ar-flow .react-flow__attribution a {
   color: var(--text3);
 }

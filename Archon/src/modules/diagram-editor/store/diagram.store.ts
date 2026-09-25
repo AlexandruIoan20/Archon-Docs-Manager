@@ -1,6 +1,6 @@
 import { applyEdgeChanges, applyNodeChanges, type EdgeChange, type NodeChange } from '@xyflow/react'
 import { createStore, type StoreApi } from 'zustand/vanilla'
-import type { SoarDiagram } from '@/core/types'
+import type { ArchonDiagram } from '@/core/types'
 import { withSelectedNodes, type DiagramGraph, type FlowNode } from '../utils/graph-mapping'
 import type { DiagramSelection, DiagramState } from './diagram-state'
 import { createGraphEdits, edit } from './graph-edits'
@@ -37,7 +37,7 @@ function gesturePhase(changes: NodeChange<FlowNode>[]): 'start' | 'move' | 'end'
 /** One store per open diagram tab (see `store-registry.ts`). */
 export function createDiagramStore(
   graph: DiagramGraph,
-  base: SoarDiagram | null = null
+  base: ArchonDiagram | null = null
 ): DiagramStoreApi {
   return createStore<DiagramState>()((set, get) => ({
     ...graph,

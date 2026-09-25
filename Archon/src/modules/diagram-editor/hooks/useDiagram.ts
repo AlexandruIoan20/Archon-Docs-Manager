@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react'
-import type { EditorTabRef, SoarDiagram } from '@/core/types'
+import type { EditorTabRef, ArchonDiagram } from '@/core/types'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { useEditorStore } from '@/store'
 import { useExternalChanges } from '@/shared/hooks/useExternalChanges'
@@ -51,13 +51,13 @@ export function useDiagram({ tabId, filePath }: EditorTabRef): DiagramLoad {
   }, [store, tabId])
 
   const build = useCallback(
-    (): SoarDiagram | null => (store ? graphToFile(store.getState()) : null),
+    (): ArchonDiagram | null => (store ? graphToFile(store.getState()) : null),
     [store]
   )
   const autosave = useFileAutosave({
     tabId,
     queryKey,
-    write: (diagram: SoarDiagram) => ipcClient.fs.writeDiagram(filePath, diagram),
+    write: (diagram: ArchonDiagram) => ipcClient.fs.writeDiagram(filePath, diagram),
     build,
     onSaved: (saved) => store?.getState().setBase(saved)
   })

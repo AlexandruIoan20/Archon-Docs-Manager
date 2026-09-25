@@ -3,7 +3,7 @@ import type { NodeStyle } from '@/core/types'
 import { hexToRgba } from '@/shared/utils/color'
 
 export interface NodeSkin {
-  /** `soar-node--card` / `--outline` / `--solid` (+ `--pending`), styled in `nodes.css`. */
+  /** `ar-node--card` / `--outline` / `--solid` (+ `--pending`), styled in `nodes.css`. */
   className: string
   /** Per-node colors as CSS variables; the stylesheet does the rest. */
   style: CSSProperties
@@ -34,7 +34,7 @@ export function getNodeSkin(
     vars['--node-tint'] = 'rgba(255, 255, 255, 0.22)'
   }
   return {
-    className: ['soar-node', `soar-node--${skin}`, pending && 'soar-node--pending']
+    className: ['ar-node', `ar-node--${skin}`, pending && 'ar-node--pending']
       .filter(Boolean)
       .join(' '),
     style: vars as CSSProperties

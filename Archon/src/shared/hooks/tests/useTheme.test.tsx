@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
 import { useUiStore, useWorkspaceStore } from '@/store'
 import { SAMPLE_WORKSPACE } from '@/test/workspace-api-mock'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { useTheme, type ThemeControls } from '../useTheme'
 
@@ -19,9 +19,9 @@ function settingsWith(
   return mergeSettings(DEFAULT_SETTINGS, { appearance: { theme, accent } })
 }
 
-function install(settings: AppSettings, platform: 'linux' | 'win32' = 'linux'): SoarApiMock {
-  const mock = createSoarApiMock({ settings, platform, systemTheme: 'light' })
-  window.soar = mock.api
+function install(settings: AppSettings, platform: 'linux' | 'win32' = 'linux'): ArchonApiMock {
+  const mock = createArchonApiMock({ settings, platform, systemTheme: 'light' })
+  window.archon = mock.api
   return mock
 }
 
@@ -37,7 +37,7 @@ describe('useTheme', () => {
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('applies an explicit dark theme', async () => {

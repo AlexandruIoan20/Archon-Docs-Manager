@@ -14,9 +14,9 @@ import type {
   ResolvedTheme,
   SearchResult,
   SettingsPatch,
-  SoarApi,
-  SoarDiagram,
-  SoarDocument,
+  ArchonApi,
+  ArchonDiagram,
+  ArchonDocument,
   TagCount,
   TitleBarColors,
   WorkspaceInfo,
@@ -26,13 +26,13 @@ import { unwrap } from './ipc-error'
 
 /**
  * The only renderer-side entry point to the main process. Modules call this client,
- * never `window.soar` directly, so the bridge can be mocked or swapped in one place.
+ * never `window.archon` directly, so the bridge can be mocked or swapped in one place.
  */
-function bridge(): SoarApi {
-  if (!window.soar) {
-    throw new Error('IPC bridge unavailable: preload script did not expose window.soar')
+function bridge(): ArchonApi {
+  if (!window.archon) {
+    throw new Error('IPC bridge unavailable: preload script did not expose window.archon')
   }
-  return window.soar
+  return window.archon
 }
 
 /**
@@ -40,7 +40,7 @@ function bridge(): SoarApi {
  * Channels answering with `Result<T>` are unwrapped with `unwrap`, so failures
  * reach callers as a typed `IpcError`.
  */
-function call<T>(run: (api: SoarApi) => Promise<T>): Promise<T> {
+function call<T>(run: (api: ArchonApi) => Promise<T>): Promise<T> {
   try {
     return run(bridge())
   } catch (error) {
@@ -50,7 +50,7 @@ function call<T>(run: (api: SoarApi) => Promise<T>): Promise<T> {
 
 export const ipcClient = {
   /** False in unit tests or if the preload script failed to load. */
-  isAvailable: (): boolean => window.soar !== undefined,
+  isAvailable: (): boolean => window.archon !== undefined,
   app: {
     getInfo: (): Promise<AppInfo> => call((api) => api.app.getInfo()),
     enableCloseGuard: (): Promise<void> => call((api) => api.app.enableCloseGuard()),
@@ -97,13 +97,13 @@ export const ipcClient = {
       unwrap(call((api) => api.fs.createDiagram(folderRel, options))),
     createFolder: (parentRel: string, name?: string): Promise<EntryRef> =>
       unwrap(call((api) => api.fs.createFolder(parentRel, name))),
-    readDocument: (relPath: string): Promise<SoarDocument> =>
+    readDocument: (relPath: string): Promise<ArchonDocument> =>
       unwrap(call((api) => api.fs.readDocument(relPath))),
-    writeDocument: (relPath: string, document: SoarDocument): Promise<SoarDocument> =>
+    writeDocument: (relPath: string, document: ArchonDocument): Promise<ArchonDocument> =>
       unwrap(call((api) => api.fs.writeDocument(relPath, document))),
-    readDiagram: (relPath: string): Promise<SoarDiagram> =>
+    readDiagram: (relPath: string): Promise<ArchonDiagram> =>
       unwrap(call((api) => api.fs.readDiagram(relPath))),
-    writeDiagram: (relPath: string, diagram: SoarDiagram): Promise<SoarDiagram> =>
+    writeDiagram: (relPath: string, diagram: ArchonDiagram): Promise<ArchonDiagram> =>
       unwrap(call((api) => api.fs.writeDiagram(relPath, diagram))),
     rename: (relPath: string, newName: string): Promise<EntryRef> =>
       unwrap(call((api) => api.fs.rename(relPath, newName))),

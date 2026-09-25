@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, renderHook, waitFor, type RenderHookResult } from '@testing-library/react'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { stepZoom, useUiZoom, type UiZoomControls } from '../useUiZoom'
 
@@ -21,13 +21,13 @@ describe('stepZoom', () => {
 })
 
 describe('useUiZoom', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   const render = async (uiZoom: number): Promise<RenderHookResult<UiZoomControls, unknown>> => {
-    mock = createSoarApiMock({
+    mock = createArchonApiMock({
       settings: mergeSettings(DEFAULT_SETTINGS, { appearance: { uiZoom } })
     })
-    window.soar = mock.api
+    window.archon = mock.api
     const hook = renderHook(() => useUiZoom(), { wrapper: queryWrapper() })
     await waitFor(() => expect(hook.result.current.zoom).toBe(uiZoom))
     return hook
@@ -38,11 +38,11 @@ describe('useUiZoom', () => {
   }
 
   beforeEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
   })
 
   it('zooms in with Ctrl+= and persists the factor', async () => {

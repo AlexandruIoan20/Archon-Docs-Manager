@@ -1,10 +1,10 @@
 import type { Editor } from '@tiptap/core'
 import { render, screen, waitFor, type RenderResult } from '@testing-library/react'
 import { expect } from 'vitest'
-import type { EditorTabRef, SoarDocument } from '@/core/types'
+import type { EditorTabRef, ArchonDocument } from '@/core/types'
 import { useEditorStore, useUiStore } from '@/store'
 import { TitleBarDensityContext } from '@/shared/components/layout/title-bar/TitleBarDensityContext'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { useDocumentEditorStore } from '../../store/document-editor.store'
@@ -23,7 +23,7 @@ export const paragraph = (text: string): object => ({
   content: [{ type: 'text', text }]
 })
 
-export const DOC: SoarDocument = {
+export const DOC: ArchonDocument = {
   version: '1.0.0',
   id: 'doc-1',
   title: 'IR policy',
@@ -44,13 +44,13 @@ export const isDirty = (tabId: string): boolean =>
   useEditorStore.getState().tabs.find((tab) => tab.id === tabId)?.dirty ?? false
 
 /** Fresh stores and a fake bridge serving `DOC`; returns the open tab. */
-export function setupDocument(): { mock: SoarApiMock; tab: EditorTabRef } {
+export function setupDocument(): { mock: ArchonApiMock; tab: EditorTabRef } {
   useEditorStore.setState(initial.editor, true)
   useUiStore.setState(initial.ui, true)
   useDocumentEditorStore.setState(initial.docs, true)
-  const mock = createSoarApiMock()
+  const mock = createArchonApiMock()
   mock.api.fs.readDocument.mockResolvedValue(ok(DOC))
-  window.soar = mock.api
+  window.archon = mock.api
   const tabId = useEditorStore.getState().openFile('Runbooks/ir-policy.ardoc', 'ardoc')
   return { mock, tab: { tabId, filePath: 'Runbooks/ir-policy.ardoc', kind: 'ardoc' } }
 }

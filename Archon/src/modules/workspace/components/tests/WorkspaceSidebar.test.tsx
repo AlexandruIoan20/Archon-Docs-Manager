@@ -8,7 +8,7 @@ import {
   useWorkspaceStore
 } from '@/store'
 import { ModalHost } from '@/shared/components/layout/ModalHost'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { SAMPLE_TREE } from '@/test/sample-tree'
 import { SAMPLE_WORKSPACE, fail } from '@/test/workspace-api-mock'
@@ -25,7 +25,7 @@ const row = (name: string): HTMLElement => screen.getByRole('treeitem', { name }
 const queryRow = (name: string): HTMLElement | null => screen.queryByRole('treeitem', { name })
 
 describe('WorkspaceSidebar', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   const onToggleInspector = vi.fn()
 
   beforeEach(async () => {
@@ -33,8 +33,8 @@ describe('WorkspaceSidebar', () => {
     useWorkspaceStore.setState(initial.workspace, true)
     useEditorStore.setState(initial.editor, true)
     useWorkspaceStore.getState().setCurrent(SAMPLE_WORKSPACE)
-    mock = createSoarApiMock({ tree: SAMPLE_TREE })
-    window.soar = mock.api
+    mock = createArchonApiMock({ tree: SAMPLE_TREE })
+    window.archon = mock.api
     render(
       <>
         <WorkspaceSidebar onToggleInspector={onToggleInspector} onNewDiagram={vi.fn()} />
@@ -46,7 +46,7 @@ describe('WorkspaceSidebar', () => {
   })
 
   afterEach(() => {
-    delete window.soar
+    delete window.archon
     onToggleInspector.mockReset()
   })
 

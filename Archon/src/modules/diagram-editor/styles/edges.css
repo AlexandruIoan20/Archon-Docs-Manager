@@ -1,25 +1,25 @@
 /* SOAR edges (plan 14): colors from tokens, arrowheads from `EdgeMarkers`. */
 
-.soar-flow .soar-edge {
+.ar-flow .ar-edge {
   stroke: var(--text3);
   stroke-width: 1.6;
 }
 
-.soar-flow .soar-edge--hot {
+.ar-flow .ar-edge--hot {
   stroke: var(--accent);
   stroke-dasharray: 6 6;
   animation: dashflow 1.4s linear infinite;
 }
 
-.soar-arrow {
+.ar-arrow {
   fill: var(--text3);
 }
 
-.soar-arrow--hot {
+.ar-arrow--hot {
   fill: var(--accent);
 }
 
-.soar-edge-label {
+.ar-edge-label {
   position: absolute;
   padding: 0 4px;
   border-radius: var(--radius-xs);
@@ -32,7 +32,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .soar-flow .soar-edge--hot {
+  .ar-flow .ar-edge--hot {
     animation: none;
   }
 }

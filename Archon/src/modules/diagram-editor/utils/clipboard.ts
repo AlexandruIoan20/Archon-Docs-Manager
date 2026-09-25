@@ -4,7 +4,7 @@ import type { FlowEdge, FlowNode } from './graph-mapping'
 import { nextId } from './node-factory'
 
 /** Marks our payload in the clipboard (written as text: JSON with this type). */
-export const CLIPBOARD_MIME = 'application/x-soar-nodes'
+export const CLIPBOARD_MIME = 'application/x-archon-nodes'
 export const PASTE_OFFSET = 24
 
 export interface NodeClipboard {

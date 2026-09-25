@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import type { Editor, JSONContent } from '@tiptap/core'
 import type { EditorView } from '@tiptap/pm/view'
 import { useEditor } from '@tiptap/react'
-import type { SoarDocument } from '@/core/types'
+import type { ArchonDocument } from '@/core/types'
 import { DOCUMENT_EXTENSIONS } from '../components/extensions'
 import { useDocumentEditorStore } from '../store/document-editor.store'
 import { countWords } from '../utils/word-count'
@@ -26,7 +26,7 @@ function openLinkOnModClick(_view: EditorView, _pos: number, event: MouseEvent):
  */
 export function useDocumentEditor(
   tabId: string,
-  initial: SoarDocument,
+  initial: ArchonDocument,
   onChange: () => void
 ): Editor | null {
   const onChangeRef = useRef(onChange)

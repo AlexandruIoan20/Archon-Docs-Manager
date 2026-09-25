@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { EditorTabRef } from '@/core/types'
 import { useEditorStore, useUiStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { PHISHING } from '@/test/sample-diagram'
@@ -19,7 +19,7 @@ const node = (store: DiagramStoreApi, id: string): FlowNode | undefined =>
 const steps = (store: DiagramStoreApi): number => store.getState().history.past.length
 
 describe('PropertiesPanel', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
   let tab: EditorTabRef
 
   async function renderPanel(): Promise<DiagramStoreApi> {
@@ -46,7 +46,7 @@ describe('PropertiesPanel', () => {
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
-    mock = createSoarApiMock({ platform: 'linux' })
+    mock = createArchonApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(ok(PHISHING))
     mock.api.index.listTags.mockResolvedValue(
       ok([
@@ -54,7 +54,7 @@ describe('PropertiesPanel', () => {
         { tag: 't1566', count: 4 }
       ])
     )
-    window.soar = mock.api
+    window.archon = mock.api
     const tabId = useEditorStore.getState().openFile('flows/phishing.ardiag', 'ardiag')
     tab = { tabId, filePath: 'flows/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
@@ -62,7 +62,7 @@ describe('PropertiesPanel', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('shows the empty state without a selection', async () => {

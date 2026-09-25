@@ -1,4 +1,4 @@
-import type { SoarDocument } from '@/core/types'
+import type { ArchonDocument } from '@/core/types'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { useFileAutosave, type FileAutosave } from '@/shared/hooks/useFileAutosave'
 import { documentQueryKey } from './useDocumentFile'
@@ -9,9 +9,9 @@ export interface AutosaveOptions {
   tabId: string
   relPath: string
   /** The document as it should be written now; `null` while there is nothing to save. */
-  build: () => SoarDocument | null
+  build: () => ArchonDocument | null
   /** The version now on disk (as cached), after every successful save. */
-  onSaved: (saved: SoarDocument) => void
+  onSaved: (saved: ArchonDocument) => void
 }
 
 /** Autosave of one document tab (`useFileAutosave` on `fs:write-document`). */

@@ -1,8 +1,8 @@
-import type { SoarDiagram } from '@/core/types'
+import type { ArchonDiagram } from '@/core/types'
 import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 
 /** A small diagram: two nodes, two edges, a saved viewport and a field from the future. */
-export const PHISHING: SoarDiagram = diagramFileSchema.parse({
+export const PHISHING: ArchonDiagram = diagramFileSchema.parse({
   version: '1.0.0',
   id: 'diag-1',
   title: 'Phishing triage',

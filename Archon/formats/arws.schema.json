@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://soar-docs-studio.local/formats/arws.schema.json",
+  "$id": "https://archon-docs-studio.local/formats/arws.schema.json",
   "title": "Archon Docs Studio workspace (.arws)",
   "description": "Marks a folder as a workspace. Mirrors src/core/schemas/workspace.schema.ts, which is the source of truth.",
   "type": "object",

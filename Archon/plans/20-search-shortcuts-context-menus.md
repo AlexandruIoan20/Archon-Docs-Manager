@@ -55,7 +55,7 @@ Prototipul nu are aceste ecrane. Ele se construiesc exclusiv din primitivele exi
 - `src/modules/diagram-editor/components/nodes/NodeContextMenu.tsx`: Duplicate, Copy, Copy id, Change type ▸, Delete.
 
 ### Clipboard
-- `src/modules/diagram-editor/utils/clipboard.ts`: serializare JSON cu tip MIME propriu (`application/x-soar-nodes`, cu fallback text).
+- `src/modules/diagram-editor/utils/clipboard.ts`: serializare JSON cu tip MIME propriu (`application/x-archon-nodes`, cu fallback text).
   Id-urile se remapează la paste, cu offset de +24px la fiecare paste repetat.
 
 ## Pași

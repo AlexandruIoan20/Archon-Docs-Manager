@@ -4,7 +4,7 @@ import type { FolderEntry } from '@/core/types'
 import { DEFAULT_SETTINGS } from '@/core/constants/app.constants'
 import { mergeSettings } from '@/core/settings/normalize-settings'
 import { selectActivePath, useEditorStore, useUiStore } from '@/store'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { SAMPLE_TREE } from '@/test/sample-tree'
 import { TABS_SAVE_DELAY_MS, useTabSession } from '../useTabSession'
@@ -14,7 +14,7 @@ const initial = { editor: useEditorStore.getState(), ui: useUiStore.getState() }
 const paths = (): string[] => useEditorStore.getState().tabs.map((tab) => tab.relPath)
 
 describe('useTabSession', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   type Props = { id: string | undefined; root: FolderEntry | undefined }
   const render = (
@@ -28,7 +28,7 @@ describe('useTabSession', () => {
 
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
-    mock = createSoarApiMock({
+    mock = createArchonApiMock({
       settings: mergeSettings(DEFAULT_SETTINGS, {
         session: {
           tabsByWorkspace: {
@@ -44,12 +44,12 @@ describe('useTabSession', () => {
         }
       })
     })
-    window.soar = mock.api
+    window.archon = mock.api
   })
 
   afterEach(() => {
     vi.useRealTimers()
-    delete window.soar
+    delete window.archon
   })
 
   it('restores the saved tabs that still exist, once the tree is known', async () => {

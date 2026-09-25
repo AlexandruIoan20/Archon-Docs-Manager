@@ -51,7 +51,7 @@ describe('indexer', () => {
     db.prepare<[], string>('SELECT rel_path FROM files ORDER BY rel_path').pluck().all()
 
   beforeEach(async () => {
-    root = await mkdtemp(join(tmpdir(), 'soar-index-'))
+    root = await mkdtemp(join(tmpdir(), 'ar-index-'))
     db = openDatabase(':memory:', WORKSPACE_MIGRATIONS)
     vi.spyOn(console, 'info').mockImplementation(() => undefined)
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)

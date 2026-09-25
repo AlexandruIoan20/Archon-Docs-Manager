@@ -14,7 +14,7 @@ describe('watcher', () => {
   let events: WatchEvent[]
 
   beforeEach(async () => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'soar-watch-')))
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ar-watch-')))
     onTreeChanged = vi.fn<() => void>()
     events = []
     await startWatcher(root, { onTreeChanged, onFileEvent: (event) => events.push(event) })

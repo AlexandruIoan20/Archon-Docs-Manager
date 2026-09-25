@@ -15,7 +15,7 @@ describe('documents and diagrams', () => {
   let root: string
 
   beforeEach(() => {
-    root = realpathSync(mkdtempSync(join(tmpdir(), 'soar-files-')))
+    root = realpathSync(mkdtempSync(join(tmpdir(), 'ar-files-')))
     mkdirSync(join(root, 'Playbooks'))
   })
 

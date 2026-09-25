@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://soar-docs-studio.local/formats/ardiag.schema.json",
+  "$id": "https://archon-docs-studio.local/formats/ardiag.schema.json",
   "title": "Archon Docs Studio diagram (.ardiag)",
   "description": "A diagram. Mirrors src/core/schemas/diagram.schema.ts, which is the source of truth. Nodes and edges use the React Flow shape.",
   "type": "object",

@@ -4,7 +4,7 @@ import type { SearchResult } from '@/core/types'
 import { SEARCH_MATCH_END as E, SEARCH_MATCH_START as S } from '@/core/constants/search.constants'
 import { openSearchPalette, useEditorStore, useUiStore } from '@/store'
 import { ModalHost } from '@/shared/components/layout/ModalHost'
-import { createSoarApiMock, type SoarApiMock } from '@/test/soar-api-mock'
+import { createArchonApiMock, type ArchonApiMock } from '@/test/archon-api-mock'
 import { ok } from '@/test/workspace-api-mock'
 import { queryWrapper } from '@/test/render-with-query'
 import { GlobalSearch } from '../GlobalSearch'
@@ -35,7 +35,7 @@ const RESULTS: SearchResult[] = [
 ]
 
 describe('GlobalSearch', () => {
-  let mock: SoarApiMock
+  let mock: ArchonApiMock
 
   const palette = (): HTMLElement => screen.getByRole('dialog', { name: 'Search the workspace' })
   const type = (text: string): void => {
@@ -45,15 +45,15 @@ describe('GlobalSearch', () => {
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     useUiStore.setState(initial.ui, true)
-    mock = createSoarApiMock({ platform: 'linux' })
+    mock = createArchonApiMock({ platform: 'linux' })
     mock.api.search.query.mockResolvedValue(ok(RESULTS))
-    window.soar = mock.api
+    window.archon = mock.api
     render(<ModalHost modals={{ 'command-palette': GlobalSearch }} />, { wrapper: queryWrapper() })
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
-    delete window.soar
+    delete window.archon
   })
 
   it('searches after 2 characters and groups the results', async () => {
