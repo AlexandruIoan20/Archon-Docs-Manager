@@ -37,8 +37,8 @@ describe('EditorTabs', () => {
     useCloseGuardStore.setState(initial.guard, true)
     const { openFile } = useEditorStore.getState()
     ids = {
-      policy: openFile('Runbooks/ir-policy.soardoc', 'soardoc'),
-      flow: openFile('phishing.soardiag', 'soardiag')
+      policy: openFile('Runbooks/ir-policy.ardoc', 'ardoc'),
+      flow: openFile('phishing.ardiag', 'ardiag')
     }
   })
 
@@ -52,7 +52,7 @@ describe('EditorTabs', () => {
     expect(tab('phishing')).toHaveAttribute('aria-selected', 'true')
     expect(tab('phishing')).toHaveClass('border-t-accent', 'bg-canvas')
     expect(tab('ir-policy')).toHaveAttribute('aria-selected', 'false')
-    expect(tab('ir-policy')).toHaveAttribute('title', 'Runbooks/ir-policy.soardoc')
+    expect(tab('ir-policy')).toHaveAttribute('title', 'Runbooks/ir-policy.ardoc')
 
     fireEvent.click(tab('ir-policy'))
     expect(tab('ir-policy')).toHaveAttribute('aria-selected', 'true')
@@ -159,7 +159,7 @@ describe('EditorTabs', () => {
       const writeText = vi.fn(() => Promise.resolve())
       Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
       fireEvent.click(item(menuFor('ir-policy'), 'Copy path'))
-      await waitFor(() => expect(writeText).toHaveBeenCalledWith('Runbooks/ir-policy.soardoc'))
+      await waitFor(() => expect(writeText).toHaveBeenCalledWith('Runbooks/ir-policy.ardoc'))
 
       fireEvent.click(item(menuFor('ir-policy'), 'Reveal in sidebar'))
       expect(useWorkspaceStore.getState().expanded.Runbooks).toBe(true)

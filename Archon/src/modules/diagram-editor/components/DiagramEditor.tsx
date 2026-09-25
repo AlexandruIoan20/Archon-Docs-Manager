@@ -15,7 +15,7 @@ import { MermaidEditor } from './MermaidEditor'
 import '../styles/react-flow.css'
 
 /**
- * The `.soardiag` editor: the tab's store, then the canvas and its overlays,
+ * The `.ardiag` editor: the tab's store, then the canvas and its overlays,
  * or the Mermaid text editor for `engine: 'mermaid'`.
  */
 export function DiagramEditor({ tab }: EditorSlotProps): React.JSX.Element {

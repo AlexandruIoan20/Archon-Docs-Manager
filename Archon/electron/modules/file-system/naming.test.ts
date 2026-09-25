@@ -55,23 +55,23 @@ describe('numbered names', () => {
   })
 
   it('starts at 1 and continues after the highest number', async () => {
-    expect(await nextAvailableName(dir, 'untitled', '.soardoc')).toBe('untitled-1.soardoc')
-    writeFileSync(join(dir, 'untitled-1.soardoc'), '')
-    writeFileSync(join(dir, 'Untitled-7.soardoc'), '')
-    writeFileSync(join(dir, 'untitled-9.soardiag'), '')
-    writeFileSync(join(dir, 'untitled-x.soardoc'), '')
-    expect(await nextAvailableName(dir, 'untitled', '.soardoc')).toBe('untitled-8.soardoc')
+    expect(await nextAvailableName(dir, 'untitled', '.ardoc')).toBe('untitled-1.ardoc')
+    writeFileSync(join(dir, 'untitled-1.ardoc'), '')
+    writeFileSync(join(dir, 'Untitled-7.ardoc'), '')
+    writeFileSync(join(dir, 'untitled-9.ardiag'), '')
+    writeFileSync(join(dir, 'untitled-x.ardoc'), '')
+    expect(await nextAvailableName(dir, 'untitled', '.ardoc')).toBe('untitled-8.ardoc')
   })
 
   it('numbers folders without an extension', async () => {
     mkdirSync(join(dir, 'new-folder-2'))
-    writeFileSync(join(dir, 'new-folder-5.soardoc'), '')
+    writeFileSync(join(dir, 'new-folder-5.ardoc'), '')
     expect(await nextAvailableName(dir, 'new-folder', '')).toBe('new-folder-3')
   })
 
   it('uses the plain name when it is free', async () => {
-    expect(await availableName(dir, 'policy', '.soardoc')).toBe('policy.soardoc')
-    writeFileSync(join(dir, 'Policy.soardoc'), '')
-    expect(await availableName(dir, 'policy', '.soardoc')).toBe('policy-1.soardoc')
+    expect(await availableName(dir, 'policy', '.ardoc')).toBe('policy.ardoc')
+    writeFileSync(join(dir, 'Policy.ardoc'), '')
+    expect(await availableName(dir, 'policy', '.ardoc')).toBe('policy-1.ardoc')
   })
 })

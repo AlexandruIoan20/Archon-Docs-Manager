@@ -51,8 +51,8 @@ export function setupDocument(): { mock: SoarApiMock; tab: EditorTabRef } {
   const mock = createSoarApiMock()
   mock.api.fs.readDocument.mockResolvedValue(ok(DOC))
   window.soar = mock.api
-  const tabId = useEditorStore.getState().openFile('Runbooks/ir-policy.soardoc', 'soardoc')
-  return { mock, tab: { tabId, filePath: 'Runbooks/ir-policy.soardoc', kind: 'soardoc' } }
+  const tabId = useEditorStore.getState().openFile('Runbooks/ir-policy.ardoc', 'ardoc')
+  return { mock, tab: { tabId, filePath: 'Runbooks/ir-policy.ardoc', kind: 'ardoc' } }
 }
 
 /** Toolbar, body and status items, as the shell places them in their slots. */

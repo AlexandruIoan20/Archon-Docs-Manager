@@ -1,5 +1,5 @@
 /**
- * The semantic node colors. They are data (saved in `.soardiag`), not theme:
+ * The semantic node colors. They are data (saved in `.ardiag`), not theme:
  * the only hex colors allowed outside the theme files.
  */
 export const NODE_PALETTE = [

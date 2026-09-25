@@ -1,12 +1,12 @@
 # 12 — Document editor (TipTap)
 
 ## Scop
-Editorul pentru `.soardoc`: text formatat cu TipTap, layout-ul vizual al documentului din prototip, bara de formatare în TitleBar, autosave cu debounce și contribuțiile în status bar și inspector.
+Editorul pentru `.ardoc`: text formatat cu TipTap, layout-ul vizual al documentului din prototip, bara de formatare în TitleBar, autosave cu debounce și contribuțiile în status bar și inspector.
 
 ## Referință design (view-ul „doc” din prototip)
 - **Container:** flex-1, fundal `--canvas`, `overflow-y: auto`, `padding: clamp(20px, 5vh, 40px) 0`, `container-type: inline-size`.
 - **Coloană:** `width: min(640px, 100% - 48px)`, centrată.
-  - Cale: mono 11px text3, mb10 (ex. `Runbooks/ir-policy.soardoc`).
+  - Cale: mono 11px text3, mb10 (ex. `Runbooks/ir-policy.ardoc`).
   - Titlu: 26px, 700, letter-spacing -.3px, mb16.
   - Corp: Inter 14px, line-height 1.75, culoare text2, fără border, fundal transparent, `min-height: min(420px, 50vh)`.
 - **Responsive:**

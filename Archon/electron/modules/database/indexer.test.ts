@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IndexProgress } from '@/core/types'
 import { openDatabase, type SqliteDatabase } from './db'
 import { createIndexer } from './indexer'
-import { WORKSPACE_MIGRATIONS } from './migrations/001_initial'
+import { WORKSPACE_MIGRATIONS } from './migrations/workspace'
 import { createSearchRepo } from './repositories/search.repo'
 
 const NOW = '2026-09-01T10:00:00.000Z'
@@ -64,35 +64,35 @@ describe('indexer', () => {
   })
 
   it('indexes the workspace, then only what changed', async () => {
-    await write('runbooks/a.soardoc', docJson('a', 'Alpha'))
-    await write('flows/p.soardiag', diagramJson('p'))
+    await write('runbooks/a.ardoc', docJson('a', 'Alpha'))
+    await write('flows/p.ardiag', diagramJson('p'))
     await write('notes.txt', 'not an app file')
-    await write('.hidden/x.soardoc', docJson('x', 'Hidden'))
+    await write('.hidden/x.ardoc', docJson('x', 'Hidden'))
     const indexer = createIndexer({ db, root })
 
     expect(await indexer.fullSync()).toEqual({ indexed: 2, removed: 0, unchanged: 0, skipped: 0 })
-    expect(paths()).toEqual(['flows/p.soardiag', 'runbooks/a.soardoc'])
+    expect(paths()).toEqual(['flows/p.ardiag', 'runbooks/a.ardoc'])
     expect(createSearchRepo(db).query('isolate')[0]?.nodeLabel).toBe('Contain Host')
 
     // An unchanged workspace is not read again.
     expect(await indexer.fullSync()).toEqual({ indexed: 0, removed: 0, unchanged: 2, skipped: 0 })
 
-    await write('runbooks/a.soardoc', docJson('a', 'Alpha, second edition'))
-    await utimes(join(root, 'runbooks/a.soardoc'), new Date(), new Date(Date.now() + 5000))
+    await write('runbooks/a.ardoc', docJson('a', 'Alpha, second edition'))
+    await utimes(join(root, 'runbooks/a.ardoc'), new Date(), new Date(Date.now() + 5000))
     await rm(join(root, 'flows'), { recursive: true })
     expect(await indexer.fullSync()).toEqual({ indexed: 1, removed: 1, unchanged: 0, skipped: 0 })
-    expect(paths()).toEqual(['runbooks/a.soardoc'])
+    expect(paths()).toEqual(['runbooks/a.ardoc'])
     expect(createSearchRepo(db).query('edition')).toHaveLength(1)
   })
 
   it('skips an invalid file without stopping the sync', async () => {
-    await write('broken.soardoc', '{ not json')
-    await write('wrong.soardiag', { title: 42 })
-    await write('good.soardoc', docJson('g', 'Good'))
+    await write('broken.ardoc', '{ not json')
+    await write('wrong.ardiag', { title: 42 })
+    await write('good.ardoc', docJson('g', 'Good'))
     const indexer = createIndexer({ db, root })
 
     expect(await indexer.fullSync()).toMatchObject({ indexed: 1, skipped: 2 })
-    expect(paths()).toEqual(['good.soardoc'])
+    expect(paths()).toEqual(['good.ardoc'])
     expect(indexer.getStatus()).toMatchObject({ indexing: false, files: 1, skipped: 2 })
     expect(indexer.getStatus().lastSync).not.toBeNull()
   })
@@ -101,17 +101,17 @@ describe('indexer', () => {
     const indexer = createIndexer({ db, root })
     await indexer.fullSync()
 
-    await write('ops/a.soardoc', docJson('a', 'A'))
-    await write('ops/sub/b.soardoc', docJson('b', 'B'))
+    await write('ops/a.ardoc', docJson('a', 'A'))
+    await write('ops/sub/b.ardoc', docJson('b', 'B'))
     await indexer.syncPath('ops')
-    expect(paths()).toEqual(['ops/a.soardoc', 'ops/sub/b.soardoc'])
+    expect(paths()).toEqual(['ops/a.ardoc', 'ops/sub/b.ardoc'])
 
     await rm(join(root, 'ops/sub'), { recursive: true })
     await indexer.syncPath('ops/sub')
-    expect(paths()).toEqual(['ops/a.soardoc'])
+    expect(paths()).toEqual(['ops/a.ardoc'])
 
-    await rm(join(root, 'ops/a.soardoc'))
-    await indexer.syncPath('ops/a.soardoc')
+    await rm(join(root, 'ops/a.ardoc'))
+    await indexer.syncPath('ops/a.ardoc')
     expect(paths()).toEqual([])
   })
 
@@ -122,7 +122,7 @@ describe('indexer', () => {
   })
 
   it('works in batches and reports progress', async () => {
-    for (let i = 0; i < 7; i++) await write(`f${i}.soardoc`, docJson(`id-${i}`, `File ${i}`))
+    for (let i = 0; i < 7; i++) await write(`f${i}.ardoc`, docJson(`id-${i}`, `File ${i}`))
     const progress: IndexProgress[] = []
     const indexer = createIndexer({ db, root, batchSize: 3, onProgress: (p) => progress.push(p) })
 
@@ -138,11 +138,11 @@ describe('indexer', () => {
   })
 
   it('runs operations one after another and stops after dispose', async () => {
-    for (let i = 0; i < 6; i++) await write(`f${i}.soardoc`, docJson(`id-${i}`, `File ${i}`))
+    for (let i = 0; i < 6; i++) await write(`f${i}.ardoc`, docJson(`id-${i}`, `File ${i}`))
     const indexer = createIndexer({ db, root, batchSize: 2 })
 
     const sync = indexer.fullSync()
-    const single = indexer.syncPath('f0.soardoc', true)
+    const single = indexer.syncPath('f0.ardoc', true)
     await indexer.dispose()
     await Promise.all([sync, single])
     expect(paths().length).toBeLessThan(6)

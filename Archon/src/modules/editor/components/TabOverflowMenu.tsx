@@ -41,7 +41,7 @@ export function TabOverflowMenu({
         {tabs.map((tab) => (
           <MenuItem
             key={tab.id}
-            icon={tab.kind === 'soardiag' ? 'flow' : 'file'}
+            icon={tab.kind === 'ardiag' ? 'flow' : 'file'}
             onSelect={() => onActivate(tab.id)}
             className={cn(tab.id === activeId && 'font-semibold text-accent')}
             suffix={

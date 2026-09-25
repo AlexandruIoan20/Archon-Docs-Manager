@@ -1,15 +1,15 @@
 import type { Migration } from './index'
 
-/** Workspace index: files, tags, document ↔ diagram links, diagram nodes, full-text search. */
-export const migration001Initial: Migration = {
-  version: 1,
-  name: 'initial',
-  up: (db) => {
-    db.exec(`
+/**
+ * Workspace index: files, tags, document ↔ diagram links, diagram nodes, full-text search.
+ * `kinds` are the two allowed `files.kind` values; migration 002 recreates the schema with new ones.
+ */
+export function workspaceSchemaSql(kinds: readonly [string, string]): string {
+  return `
       CREATE TABLE files (
         id           TEXT PRIMARY KEY,
         rel_path     TEXT UNIQUE NOT NULL,
-        kind         TEXT NOT NULL CHECK (kind IN ('soardoc', 'soardiag')),
+        kind         TEXT NOT NULL CHECK (kind IN ('${kinds[0]}', '${kinds[1]}')),
         title        TEXT NOT NULL,
         diagram_type TEXT,
         created      TEXT,
@@ -58,8 +58,11 @@ export const migration001Initial: Migration = {
         body,
         tokenize = 'unicode61 remove_diacritics 2'
       );
-    `)
-  }
+    `
 }
 
-export const WORKSPACE_MIGRATIONS: readonly Migration[] = [migration001Initial]
+export const migration001Initial: Migration = {
+  version: 1,
+  name: 'initial',
+  up: (db) => db.exec(workspaceSchemaSql(['soardoc', 'soardiag']))
+}

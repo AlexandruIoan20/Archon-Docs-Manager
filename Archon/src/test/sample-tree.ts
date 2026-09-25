@@ -3,7 +3,7 @@ import type { FileEntry, FolderEntry, TreeEntry } from '@/core/types'
 const file = (relPath: string): FileEntry => {
   const name = relPath.split('/').pop() as string
   return {
-    kind: name.endsWith('.soardiag') ? 'soardiag' : 'soardoc',
+    kind: name.endsWith('.ardiag') ? 'ardiag' : 'ardoc',
     name,
     baseName: name.slice(0, name.lastIndexOf('.')),
     relPath
@@ -21,18 +21,18 @@ const folder = (relPath: string, children: TreeEntry[]): FolderEntry => ({
 export const SAMPLE_TREE: FolderEntry = folder('', [
   folder('Architecture', [
     folder('Architecture/Reference', [
-      file('Architecture/Reference/platform-overview.soardiag'),
-      file('Architecture/Reference/data-flows.soardoc')
+      file('Architecture/Reference/platform-overview.ardiag'),
+      file('Architecture/Reference/data-flows.ardoc')
     ])
   ]),
   folder('Playbooks', [
     folder('Playbooks/Phishing', [
-      file('Playbooks/Phishing/phishing-triage.soardiag'),
-      file('Playbooks/Phishing/triage-notes.soardoc')
+      file('Playbooks/Phishing/phishing-triage.ardiag'),
+      file('Playbooks/Phishing/triage-notes.ardoc')
     ]),
-    folder('Playbooks/Ransomware', [file('Playbooks/Ransomware/containment.soardiag')])
+    folder('Playbooks/Ransomware', [file('Playbooks/Ransomware/containment.ardiag')])
   ]),
-  folder('Runbooks', [file('Runbooks/on-call.soardoc')]),
+  folder('Runbooks', [file('Runbooks/on-call.ardoc')]),
   folder('Empty', []),
-  file('incident-policy.soardoc')
+  file('incident-policy.ardoc')
 ])

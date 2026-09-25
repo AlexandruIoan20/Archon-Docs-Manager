@@ -46,22 +46,22 @@ describe('EditorPane', () => {
   })
 
   it('renders the editor registered for the active file kind', () => {
-    useEditorStore.getState().openFile('Runbooks/a.soardoc', 'soardoc')
-    renderPane([{ kind: 'soardoc', Editor: DocEditor }])
-    expect(screen.getByTestId('doc-editor')).toHaveTextContent('Runbooks/a.soardoc')
+    useEditorStore.getState().openFile('Runbooks/a.ardoc', 'ardoc')
+    renderPane([{ kind: 'ardoc', Editor: DocEditor }])
+    expect(screen.getByTestId('doc-editor')).toHaveTextContent('Runbooks/a.ardoc')
   })
 
   it('explains when no editor handles the kind', () => {
-    useEditorStore.getState().openFile('flow.soardiag', 'soardiag')
-    renderPane([{ kind: 'soardoc', Editor: DocEditor }])
-    expect(screen.getByRole('alert')).toHaveTextContent('No editor is available for flow.soardiag')
+    useEditorStore.getState().openFile('flow.ardiag', 'ardiag')
+    renderPane([{ kind: 'ardoc', Editor: DocEditor }])
+    expect(screen.getByRole('alert')).toHaveTextContent('No editor is available for flow.ardiag')
   })
 
   it('contains a crashing editor and lets it retry', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     explode = true
-    useEditorStore.getState().openFile('flow.soardiag', 'soardiag')
-    renderPane([{ kind: 'soardiag', Editor: Crashing }])
+    useEditorStore.getState().openFile('flow.ardiag', 'ardiag')
+    renderPane([{ kind: 'ardiag', Editor: Crashing }])
 
     expect(screen.getByRole('alert')).toHaveTextContent('flow could not be displayed')
     explode = false

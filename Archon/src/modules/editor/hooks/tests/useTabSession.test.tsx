@@ -34,11 +34,11 @@ describe('useTabSession', () => {
           tabsByWorkspace: {
             ws1: {
               tabs: [
-                { relPath: 'Runbooks/on-call.soardoc', kind: 'soardoc' },
-                { relPath: 'gone.soardoc', kind: 'soardoc' },
-                { relPath: 'incident-policy.soardoc', kind: 'soardoc' }
+                { relPath: 'Runbooks/on-call.ardoc', kind: 'ardoc' },
+                { relPath: 'gone.ardoc', kind: 'ardoc' },
+                { relPath: 'incident-policy.ardoc', kind: 'ardoc' }
               ],
-              active: 'Runbooks/on-call.soardoc'
+              active: 'Runbooks/on-call.ardoc'
             }
           }
         }
@@ -57,15 +57,15 @@ describe('useTabSession', () => {
     expect(paths()).toEqual([])
     rerender({ id: 'ws1', root: SAMPLE_TREE })
     await waitFor(() =>
-      expect(paths()).toEqual(['Runbooks/on-call.soardoc', 'incident-policy.soardoc'])
+      expect(paths()).toEqual(['Runbooks/on-call.ardoc', 'incident-policy.ardoc'])
     )
-    expect(selectActivePath(useEditorStore.getState())).toBe('Runbooks/on-call.soardoc')
+    expect(selectActivePath(useEditorStore.getState())).toBe('Runbooks/on-call.ardoc')
   })
 
   it('saves changes after a pause, and not before the restore', async () => {
     const { rerender } = render('ws1', undefined)
     await waitFor(() => expect(mock.api.settings.get).toHaveBeenCalled())
-    act(() => void useEditorStore.getState().openFile('x.soardoc', 'soardoc'))
+    act(() => void useEditorStore.getState().openFile('x.ardoc', 'ardoc'))
     await new Promise((resolve) => setTimeout(resolve, TABS_SAVE_DELAY_MS + 50))
     expect(mock.api.settings.update).not.toHaveBeenCalled()
 
@@ -73,33 +73,31 @@ describe('useTabSession', () => {
     await waitFor(() => expect(paths()).toHaveLength(2))
     act(
       () =>
-        void useEditorStore
-          .getState()
-          .openFile('Playbooks/Ransomware/containment.soardiag', 'soardiag')
+        void useEditorStore.getState().openFile('Playbooks/Ransomware/containment.ardiag', 'ardiag')
     )
     await waitFor(() => expect(mock.api.settings.update).toHaveBeenCalledOnce(), {
       timeout: TABS_SAVE_DELAY_MS * 3
     })
     expect(mock.storedSettings().session.tabsByWorkspace?.ws1).toEqual({
       tabs: [
-        { relPath: 'Runbooks/on-call.soardoc', kind: 'soardoc' },
-        { relPath: 'incident-policy.soardoc', kind: 'soardoc' },
-        { relPath: 'Playbooks/Ransomware/containment.soardiag', kind: 'soardiag' }
+        { relPath: 'Runbooks/on-call.ardoc', kind: 'ardoc' },
+        { relPath: 'incident-policy.ardoc', kind: 'ardoc' },
+        { relPath: 'Playbooks/Ransomware/containment.ardiag', kind: 'ardiag' }
       ],
-      active: 'Playbooks/Ransomware/containment.soardiag'
+      active: 'Playbooks/Ransomware/containment.ardiag'
     })
   })
 
   it('saves at once when the workspace closes, then clears the tabs', async () => {
     const { rerender } = render('ws1', SAMPLE_TREE)
     await waitFor(() => expect(paths()).toHaveLength(2))
-    act(() => void useEditorStore.getState().openFile('Runbooks/on-call.soardoc', 'soardoc'))
+    act(() => void useEditorStore.getState().openFile('Runbooks/on-call.ardoc', 'ardoc'))
     act(() => useEditorStore.getState().close(useEditorStore.getState().tabs[1]?.id ?? ''))
 
     rerender({ id: undefined, root: undefined })
     await waitFor(() => expect(mock.api.settings.update).toHaveBeenCalledOnce())
     expect(mock.storedSettings().session.tabsByWorkspace?.ws1?.tabs).toEqual([
-      { relPath: 'Runbooks/on-call.soardoc', kind: 'soardoc' }
+      { relPath: 'Runbooks/on-call.ardoc', kind: 'ardoc' }
     ])
     expect(paths()).toEqual([])
   })
@@ -113,10 +111,10 @@ describe('useTabReconciliation', () => {
 
   it('closes tabs whose files are gone, with a toast', () => {
     const { openFile } = useEditorStore.getState()
-    openFile('Runbooks/on-call.soardoc', 'soardoc')
-    openFile('deleted-elsewhere.soardoc', 'soardoc')
+    openFile('Runbooks/on-call.ardoc', 'ardoc')
+    openFile('deleted-elsewhere.ardoc', 'ardoc')
     renderHook(() => useTabReconciliation(SAMPLE_TREE))
-    expect(paths()).toEqual(['Runbooks/on-call.soardoc'])
+    expect(paths()).toEqual(['Runbooks/on-call.ardoc'])
     expect(useUiStore.getState().toast?.message).toBe('deleted-elsewhere was deleted')
   })
 })

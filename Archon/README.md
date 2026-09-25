@@ -1,4 +1,4 @@
-# SOAR Docs Studio
+# Archon Docs Studio
 
 Cross-platform desktop app (Electron + React + TypeScript) for writing and managing
 technical documentation and diagrams for SOAR platforms.
@@ -7,7 +7,7 @@ technical documentation and diagrams for SOAR platforms.
 
 - `electron/` — main process (`main.ts`), secure bridge (`preload.ts`), OS-level modules
 - `src/` — React renderer (`core/`, `store/`, `modules/`, `shared/`, `styles/`)
-- `formats/` — JSON schemas for `.soarws`, `.soardoc`, `.soardiag`
+- `formats/` — JSON schemas for `.arws`, `.ardoc`, `.ardiag`
 
 ## Scripts
 

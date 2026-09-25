@@ -54,7 +54,7 @@ export interface IpcInvokeContract {
   'system:get-theme': { args: []; result: ResolvedTheme }
 
   // Channels from plan 07 on answer with `Result<T>`.
-  /** Asks for a folder, then creates `workspace.soarws` in it; `null` if cancelled. */
+  /** Asks for a folder, then creates `workspace.arws` in it; `null` if cancelled. */
   'workspace:create': { args: [name: string]; result: Result<WorkspaceInfo | null> }
   /** `null` if the dialog was cancelled. */
   'workspace:open-dialog': { args: []; result: Result<WorkspaceInfo | null> }

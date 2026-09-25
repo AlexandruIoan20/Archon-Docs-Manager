@@ -15,7 +15,7 @@ interface Entry {
   isFolder: boolean
 }
 
-/** A folder or an app file: never the root, `workspace.soarws` or hidden files. */
+/** A folder or an app file: never the root, `workspace.arws` or hidden files. */
 async function resolveEntry(root: string, relPath: string): Promise<Entry> {
   const rel = normalizeRelPath(relPath)
   if (rel === '') throw new AppError('INVALID_ARGUMENT', 'The workspace root cannot be changed')

@@ -6,7 +6,7 @@ import { diagramFileSchema } from '@/core/schemas/diagram.schema'
 import { documentFileSchema } from '@/core/schemas/document.schema'
 import { openDatabase, type SqliteDatabase } from '../db'
 import { APP_MIGRATIONS } from '../migrations/app/001_projects'
-import { WORKSPACE_MIGRATIONS } from '../migrations/001_initial'
+import { WORKSPACE_MIGRATIONS } from '../migrations/workspace'
 import { createDiagramsRepo } from './diagrams.repo'
 import { createDocumentsRepo } from './documents.repo'
 import { createProjectsRepo } from './projects.repo'
@@ -67,11 +67,11 @@ describe('workspace repositories', () => {
 
   it('stores a document with tags and diagram links', () => {
     const documents = createDocumentsRepo(db)
-    documents.upsert('runbooks/containment.soardoc', doc(), STAT)
+    documents.upsert('runbooks/containment.ardoc', doc(), STAT)
 
-    expect(documents.getByPath('runbooks/containment.soardoc')).toMatchObject({
+    expect(documents.getByPath('runbooks/containment.ardoc')).toMatchObject({
       id: 'doc-1',
-      kind: 'soardoc',
+      kind: 'ardoc',
       title: 'Containment runbook',
       mtimeMs: 1000,
       size: 42
@@ -82,14 +82,14 @@ describe('workspace repositories', () => {
 
   it('replaces the previous rows on upsert and removes them all', () => {
     const documents = createDocumentsRepo(db)
-    documents.upsert('a.soardoc', doc(), STAT)
-    documents.upsert('a.soardoc', doc({ title: 'Renamed', tags: ['new'] }), STAT)
+    documents.upsert('a.ardoc', doc(), STAT)
+    documents.upsert('a.ardoc', doc({ title: 'Renamed', tags: ['new'] }), STAT)
 
-    expect(documents.getByPath('a.soardoc')?.title).toBe('Renamed')
+    expect(documents.getByPath('a.ardoc')?.title).toBe('Renamed')
     expect(db.prepare('SELECT tag FROM file_tags').pluck().all()).toEqual(['new'])
     expect(db.prepare('SELECT COUNT(*) FROM search_fts').pluck().get()).toBe(1)
 
-    expect(documents.remove('a.soardoc')).toBe(1)
+    expect(documents.remove('a.ardoc')).toBe(1)
     for (const table of ['files', 'file_tags', 'doc_links', 'search_fts']) {
       expect(db.prepare(`SELECT COUNT(*) FROM ${table}`).pluck().get()).toBe(0)
     }
@@ -97,50 +97,50 @@ describe('workspace repositories', () => {
 
   it('gives a copied file with a duplicate id its own row', () => {
     const documents = createDocumentsRepo(db)
-    documents.upsert('a.soardoc', doc(), STAT)
-    const copyId = documents.upsert('copy/a.soardoc', doc(), STAT)
+    documents.upsert('a.ardoc', doc(), STAT)
+    const copyId = documents.upsert('copy/a.ardoc', doc(), STAT)
 
-    expect(copyId).toBe('doc-1@copy/a.soardoc')
-    expect(documents.getByPath('a.soardoc')?.id).toBe('doc-1')
+    expect(copyId).toBe('doc-1@copy/a.ardoc')
+    expect(documents.getByPath('a.ardoc')?.id).toBe('doc-1')
   })
 
   it('removes everything under a folder', () => {
     const documents = createDocumentsRepo(db)
-    documents.upsert('ops/a.soardoc', doc({ id: 'a' }), STAT)
-    documents.upsert('ops/sub/b.soardoc', doc({ id: 'b' }), STAT)
-    documents.upsert('ops-other/c.soardoc', doc({ id: 'c' }), STAT)
+    documents.upsert('ops/a.ardoc', doc({ id: 'a' }), STAT)
+    documents.upsert('ops/sub/b.ardoc', doc({ id: 'b' }), STAT)
+    documents.upsert('ops-other/c.ardoc', doc({ id: 'c' }), STAT)
 
     expect(documents.remove('ops')).toBe(2)
-    expect(documents.getByPath('ops-other/c.soardoc')).toBeDefined()
+    expect(documents.getByPath('ops-other/c.ardoc')).toBeDefined()
   })
 
   it('stores diagram nodes with cascading deletes', () => {
     const diagrams = createDiagramsRepo(db)
-    diagrams.upsert('flows/phishing.soardiag', phishingDiagram(), STAT)
+    diagrams.upsert('flows/phishing.ardiag', phishingDiagram(), STAT)
 
-    expect(diagrams.getByPath('flows/phishing.soardiag')?.diagramType).toBe('flowchart')
+    expect(diagrams.getByPath('flows/phishing.ardiag')?.diagramType).toBe('flowchart')
     expect(diagrams.listNodes('diag-1').map((node) => node.label)).toEqual([
       'Alert received',
       'Contain Host'
     ])
     expect(db.prepare('SELECT COUNT(*) FROM search_fts').pluck().get()).toBe(3)
 
-    diagrams.remove('flows/phishing.soardiag')
+    diagrams.remove('flows/phishing.ardiag')
     for (const table of ['diagram_nodes', 'node_tags', 'search_fts']) {
       expect(db.prepare(`SELECT COUNT(*) FROM ${table}`).pluck().get()).toBe(0)
     }
   })
 
   it('finds the „Contain Host” node by a word of its description', () => {
-    createDiagramsRepo(db).upsert('flows/phishing.soardiag', phishingDiagram(), STAT)
-    createDocumentsRepo(db).upsert('runbooks/containment.soardoc', doc(), STAT)
+    createDiagramsRepo(db).upsert('flows/phishing.ardiag', phishingDiagram(), STAT)
+    createDocumentsRepo(db).upsert('runbooks/containment.ardoc', doc(), STAT)
 
     const [hit, ...rest] = createSearchRepo(db).query('isolate')
     expect(rest).toEqual([])
     expect(hit).toMatchObject({
       fileId: 'diag-1',
-      relPath: 'flows/phishing.soardiag',
-      kind: 'soardiag',
+      relPath: 'flows/phishing.ardiag',
+      kind: 'ardiag',
       fileTitle: 'Phishing response',
       nodeId: 'N2',
       nodeLabel: 'Contain Host'
@@ -149,11 +149,7 @@ describe('workspace repositories', () => {
   })
 
   it('searches document text, ignores diacritics and FTS syntax', () => {
-    createDocumentsRepo(db).upsert(
-      'a.soardoc',
-      doc({ title: 'Răspuns la incident', tags: [] }),
-      STAT
-    )
+    createDocumentsRepo(db).upsert('a.ardoc', doc({ title: 'Răspuns la incident', tags: [] }), STAT)
     const search = createSearchRepo(db)
     expect(search.query('raspuns')).toHaveLength(1)
     expect(search.query('quarantine mailbox')[0]?.nodeId).toBeNull()
@@ -162,8 +158,8 @@ describe('workspace repositories', () => {
   })
 
   it('counts tags from files and nodes', () => {
-    createDiagramsRepo(db).upsert('p.soardiag', phishingDiagram(), STAT)
-    createDocumentsRepo(db).upsert('a.soardoc', doc(), STAT)
+    createDiagramsRepo(db).upsert('p.ardiag', phishingDiagram(), STAT)
+    createDocumentsRepo(db).upsert('a.ardoc', doc(), STAT)
     expect(createSearchRepo(db).listTags()).toEqual([
       { tag: 'ir', count: 2 },
       { tag: 'edr', count: 1 },

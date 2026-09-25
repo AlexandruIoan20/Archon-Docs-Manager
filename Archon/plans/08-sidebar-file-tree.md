@@ -12,7 +12,7 @@ Butonul „New” e doar UI aici; acțiunile lui se leagă în plan 09.
 - **Files/Diagrams (padding 10 12 8, gap 4):**
   - două butoane flex-1 h28 r4 12px 500, cu iconițe folder / flow 13;
   - activ: fundal surface + text; inactiv: transparent + text2;
-  - „Diagrams” filtrează arborele doar la `.soardiag`.
+  - „Diagrams” filtrează arborele doar la `.ardiag`.
 - **Split button „New” (padding 0 12 12):**
   - principal h30 flex-1, accent, iconiță plus 14 și „New” 12px 600;
   - chevron 26×30.

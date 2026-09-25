@@ -16,10 +16,10 @@ const parent = (relPath: string): string => relPath.split('/').slice(0, -1).join
 export function createFsApiMock(): MockedSection<SoarApi['fs']> {
   return {
     createDocument: vi.fn((folder: string) =>
-      Promise.resolve(ok(ref(join(folder, 'untitled-1.soardoc'))))
+      Promise.resolve(ok(ref(join(folder, 'untitled-1.ardoc'))))
     ),
     createDiagram: vi.fn((folder: string, options) =>
-      Promise.resolve(ok(ref(join(folder, `${options.type}-1.soardiag`))))
+      Promise.resolve(ok(ref(join(folder, `${options.type}-1.ardiag`))))
     ),
     createFolder: vi.fn((folder: string, name?: string) =>
       Promise.resolve(ok(ref(join(folder, name ?? 'new-folder-1'))))

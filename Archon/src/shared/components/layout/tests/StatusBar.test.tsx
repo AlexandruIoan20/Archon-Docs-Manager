@@ -8,7 +8,7 @@ import { StatusSegment } from '../StatusSegment'
 
 const initialUi = useUiStore.getState()
 const initialStatus = useStatusStore.getState()
-const LONG_PATH = 'Playbooks/Phishing/Enrichment/Deep/Nested/incident-triage.soardiag'
+const LONG_PATH = 'Playbooks/Phishing/Enrichment/Deep/Nested/incident-triage.ardiag'
 
 /** Reports a fixed width for every observed element. */
 function stubResizeObserver(width: number): void {
@@ -69,14 +69,14 @@ describe('StatusPath', () => {
 
     const path = screen.getByTestId('status-path')
     await vi.waitFor(() =>
-      expect(path).toHaveTextContent('Playbooks/…/Nested/incident-triage.soardiag')
+      expect(path).toHaveTextContent('Playbooks/…/Nested/incident-triage.ardiag')
     )
     expect(path.parentElement).toHaveAttribute('title', LONG_PATH)
   })
 
   it('shows a short path as is', () => {
-    render(<StatusPath path="Docs/overview.soardoc" />)
-    expect(screen.getByTestId('status-path')).toHaveTextContent('Docs/overview.soardoc')
+    render(<StatusPath path="Docs/overview.ardoc" />)
+    expect(screen.getByTestId('status-path')).toHaveTextContent('Docs/overview.ardoc')
   })
 })
 

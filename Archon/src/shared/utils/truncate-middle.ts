@@ -11,7 +11,7 @@ function truncateText(text: string, maxChars: number): string {
 
 /**
  * Shortens a relative path so the file name stays readable:
- * `Playbooks/Phishing/Deep/triage.soardiag` → `Playbooks/…/triage.soardiag`.
+ * `Playbooks/Phishing/Deep/triage.ardiag` → `Playbooks/…/triage.ardiag`.
  * Falls back to `…/name`, then to shortening the name itself.
  */
 export function truncateMiddle(path: string, maxChars: number): string {

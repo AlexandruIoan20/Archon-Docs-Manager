@@ -17,7 +17,7 @@ function fakeOverflow(scrollLeft = 0): void {
 describe('tab overflow', () => {
   beforeEach(() => {
     useEditorStore.setState(initialEditor, true)
-    for (let i = 1; i <= 20; i++) useEditorStore.getState().openFile(`doc-${i}.soardoc`, 'soardoc')
+    for (let i = 1; i <= 20; i++) useEditorStore.getState().openFile(`doc-${i}.ardoc`, 'ardoc')
   })
 
   it('shows fades and a menu with every tab once the strip overflows', () => {

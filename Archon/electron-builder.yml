@@ -1,5 +1,5 @@
 appId: com.archon.soardocsstudio
-productName: SOAR Docs Studio
+productName: Archon Docs Studio
 directories:
   buildResources: build
 files:
@@ -25,7 +25,7 @@ nsis:
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
-    - NSDocumentsFolderUsageDescription: SOAR Docs Studio needs access to open and save workspaces in your Documents folder.
+    - NSDocumentsFolderUsageDescription: Archon Docs Studio needs access to open and save workspaces in your Documents folder.
   notarize: false
 dmg:
   artifactName: ${name}-${version}.${ext}

@@ -54,7 +54,7 @@ export function useFileActions(): FileActions {
   const newDocument = useCallback(async () => {
     const created = await createInTarget((folder) => ipcClient.fs.createDocument(folder))
     if (!created) return
-    useEditorStore.getState().openFile(created.relPath, 'soardoc')
+    useEditorStore.getState().openFile(created.relPath, 'ardoc')
     useUiStore.getState().notify(`Document created in ${folderLabel(created.relPath)}`)
   }, [createInTarget])
 

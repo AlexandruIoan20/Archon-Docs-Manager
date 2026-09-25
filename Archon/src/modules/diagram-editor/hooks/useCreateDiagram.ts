@@ -26,7 +26,7 @@ function folderLabel(folder: string): string {
 }
 
 /**
- * Creates `<type>-N.soardiag` in `folder`, with its starter nodes (or its
+ * Creates `<type>-N.ardiag` in `folder`, with its starter nodes (or its
  * Mermaid template), then shows it: the folder expands, the tab opens with N1
  * selected, a toast confirms.
  */
@@ -62,7 +62,7 @@ export function useCreateDiagram(): CreateDiagram {
       })
     }
     const editor = useEditorStore.getState()
-    const tabId = editor.openFile(created.relPath, 'soardiag')
+    const tabId = editor.openFile(created.relPath, 'ardiag')
     if (request.engine !== 'mermaid') editor.setPendingSelection(tabId, ['N1'])
     notify(`${catalogEntry(request.type).name} diagram created in ${folderLabel(request.folder)}`)
     return created

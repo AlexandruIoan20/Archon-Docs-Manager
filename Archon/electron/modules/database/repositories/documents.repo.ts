@@ -11,7 +11,7 @@ export interface DocumentsRepo {
   listByTag: (tag: string) => FileRecord[]
 }
 
-/** Index rows of `.soardoc` files: metadata, tags, diagram links and search text. */
+/** Index rows of `.ardoc` files: metadata, tags, diagram links and search text. */
 export function createDocumentsRepo(db: SqliteDatabase): DocumentsRepo {
   const rows = createFileRows(db)
   const insertLink = db.prepare(
@@ -21,14 +21,14 @@ export function createDocumentsRepo(db: SqliteDatabase): DocumentsRepo {
     SELECT f.id, f.rel_path AS relPath, f.kind, f.title, f.diagram_type AS diagramType,
            f.created, f.modified, f.mtime_ms AS mtimeMs, f.size
     FROM files f JOIN file_tags t ON t.file_id = f.id
-    WHERE t.tag = ? AND f.kind = 'soardoc'
+    WHERE t.tag = ? AND f.kind = 'ardoc'
     ORDER BY f.title COLLATE NOCASE`)
 
   const upsert = db.transaction((relPath: string, doc: SoarDocument, stat: FileStat): string => {
     const id = rows.insert({
       id: doc.id,
       relPath,
-      kind: 'soardoc',
+      kind: 'ardoc',
       title: doc.title,
       created: doc.created,
       modified: doc.lastModified,

@@ -18,7 +18,7 @@ export interface DiagramsRepo {
   listNodes: (fileId: string) => DiagramNodeRecord[]
 }
 
-/** Index rows of `.soardiag` files: metadata, tags, nodes and their search text. */
+/** Index rows of `.ardiag` files: metadata, tags, nodes and their search text. */
 export function createDiagramsRepo(db: SqliteDatabase): DiagramsRepo {
   const rows = createFileRows(db)
   const insertNode = db.prepare(`INSERT OR REPLACE INTO diagram_nodes
@@ -34,7 +34,7 @@ export function createDiagramsRepo(db: SqliteDatabase): DiagramsRepo {
     const id = rows.insert({
       id: diagram.id,
       relPath,
-      kind: 'soardiag',
+      kind: 'ardiag',
       title: diagram.title,
       diagramType: diagram.type,
       created: diagram.created,

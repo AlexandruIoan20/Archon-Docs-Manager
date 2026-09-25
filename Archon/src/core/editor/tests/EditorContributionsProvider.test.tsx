@@ -4,7 +4,7 @@ import type { EditorContribution, FileKind } from '@/core/types'
 import { EditorContributionsProvider, useEditorContribution } from '../EditorContributionsProvider'
 
 const docEditor: EditorContribution = {
-  kind: 'soardoc',
+  kind: 'ardoc',
   Editor: () => <p>document editor</p>
 }
 
@@ -12,14 +12,14 @@ function Lookup({ kind }: { kind: FileKind | undefined }): React.JSX.Element {
   const contribution = useEditorContribution(kind)
   if (!contribution) return <p>none</p>
   const { Editor } = contribution
-  return <Editor tab={{ tabId: 't1', filePath: '/a.soardoc', kind: contribution.kind }} />
+  return <Editor tab={{ tabId: 't1', filePath: '/a.ardoc', kind: contribution.kind }} />
 }
 
 describe('EditorContributionsProvider', () => {
   it('finds the contribution registered for a kind', () => {
     render(
       <EditorContributionsProvider contributions={[docEditor]}>
-        <Lookup kind="soardoc" />
+        <Lookup kind="ardoc" />
       </EditorContributionsProvider>
     )
     expect(screen.getByText('document editor')).toBeInTheDocument()
@@ -28,7 +28,7 @@ describe('EditorContributionsProvider', () => {
   it('returns nothing for unregistered or missing kinds', () => {
     render(
       <EditorContributionsProvider contributions={[docEditor]}>
-        <Lookup kind="soardiag" />
+        <Lookup kind="ardiag" />
         <Lookup kind={undefined} />
       </EditorContributionsProvider>
     )
@@ -41,10 +41,10 @@ describe('EditorContributionsProvider', () => {
     expect(() =>
       render(
         <EditorContributionsProvider contributions={[docEditor, { ...docEditor }]}>
-          <Lookup kind="soardoc" />
+          <Lookup kind="ardoc" />
         </EditorContributionsProvider>
       )
-    ).toThrow('Duplicate editor contribution for "soardoc"')
+    ).toThrow('Duplicate editor contribution for "ardoc"')
     spy.mockRestore()
   })
 })

@@ -33,12 +33,12 @@ describe('workspace', () => {
     return dir
   }
 
-  it('creates a valid .soarws and opens the workspace', async () => {
+  it('creates a valid .arws and opens the workspace', async () => {
     const dir = folder('secops')
     const created = await createWorkspace(dir, '  SecOps Core ', new Date('2026-01-02T03:04:05Z'))
 
     const file = workspaceFileSchema.parse(
-      JSON.parse(readFileSync(join(dir, 'workspace.soarws'), 'utf8'))
+      JSON.parse(readFileSync(join(dir, 'workspace.arws'), 'utf8'))
     )
     expect(file).toMatchObject({
       version: '1.0.0',
@@ -78,14 +78,14 @@ describe('workspace', () => {
     await closeWorkspace()
 
     expect((await openWorkspace(dir)).file.id).toBe(file.id)
-    expect((await openWorkspace(join(dir, 'workspace.soarws'))).root).toBe(dir)
+    expect((await openWorkspace(join(dir, 'workspace.arws'))).root).toBe(dir)
   })
 
   it('reports typed errors for missing and invalid workspaces', async () => {
     await expect(openWorkspace(folder('plain'))).rejects.toMatchObject({ code: 'NOT_FOUND' })
 
     const broken = folder('broken')
-    writeFileSync(join(broken, 'workspace.soarws'), '{"version":"1.0.0","name":""}')
+    writeFileSync(join(broken, 'workspace.arws'), '{"version":"1.0.0","name":""}')
     await expect(openWorkspace(broken)).rejects.toMatchObject({ code: 'INVALID_FILE' })
 
     const notes = join(base, 'notes.txt')
@@ -114,7 +114,7 @@ describe('workspace', () => {
     const updated = await updateWorkspaceSettings({ theme: 'light' })
 
     expect(updated.file.settings.theme).toBe('light')
-    const onDisk = JSON.parse(readFileSync(join(dir, 'workspace.soarws'), 'utf8'))
+    const onDisk = JSON.parse(readFileSync(join(dir, 'workspace.arws'), 'utf8'))
     expect(onDisk.settings.theme).toBe('light')
     await expect(updateWorkspaceSettings({ theme: 'sepia' as never })).rejects.toMatchObject({
       code: 'INVALID_ARGUMENT'

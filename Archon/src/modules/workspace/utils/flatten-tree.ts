@@ -34,7 +34,7 @@ type FilePredicate = (file: FileEntry) => boolean
 export function fileFilter(sideTab: SideTab, query: string): FilePredicate {
   const needle = query.trim().toLowerCase()
   return (file) =>
-    (sideTab === 'files' || file.kind === 'soardiag') &&
+    (sideTab === 'files' || file.kind === 'ardiag') &&
     (needle === '' || file.baseName.toLowerCase().includes(needle))
 }
 

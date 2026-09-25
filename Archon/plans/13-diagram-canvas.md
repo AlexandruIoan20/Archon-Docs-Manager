@@ -1,7 +1,7 @@
 # 13 — Diagram canvas (React Flow)
 
 ## Scop
-Canvas-ul de diagramă peste React Flow: încărcare și salvare `.soardiag`, grila de puncte, controalele de zoom, minimap-ul și starea per tab.
+Canvas-ul de diagramă peste React Flow: încărcare și salvare `.ardiag`, grila de puncte, controalele de zoom, minimap-ul și starea per tab.
 Nodurile sunt deocamdată cele implicite; aspectul SOAR vine în plan 14.
 
 ## Referință design
@@ -48,7 +48,7 @@ Nodurile sunt deocamdată cele implicite; aspectul SOAR vine în plan 14.
 - `src/modules/diagram-editor/components/DiagramEditor.tsx`: `Editor` din contribuție (provider + canvas + overlay-uri).
 - `src/modules/diagram-editor/components/DiagramStatusItems.tsx`: contoare, selecție, zoom.
 - `src/modules/diagram-editor/styles/react-flow.css`: importă `@xyflow/react/dist/base.css` și suprascrie variabilele `--xy-*` cu tokenurile aplicației (selecție, handle-uri, controale).
-- `src/modules/diagram-editor/index.ts`: `diagramEditorContribution` (kind `soardiag`).
+- `src/modules/diagram-editor/index.ts`: `diagramEditorContribution` (kind `ardiag`).
 - `src/App.tsx` (modificat): înregistrează contribuția.
 
 ## Pași
@@ -67,7 +67,7 @@ Nodurile sunt deocamdată cele implicite; aspectul SOAR vine în plan 14.
 8. `ZoomControls`, `CanvasMinimap` și `CanvasHint` (fără text încă), cu regulile responsive de mai sus.
    Test: la 500px lățime, minimap-ul nu se randează.
 9. `DiagramStatusItems`: segmentul de zoom din status bar (plan 06) vine de aici.
-10. Contribuția și înregistrarea ei. Deschiderea unui `.soardiag` din arbore afișează canvas-ul cu nodurile implicite.
+10. Contribuția și înregistrarea ei. Deschiderea unui `.ardiag` din arbore afișează canvas-ul cu nodurile implicite.
 11. Teste:
     - încărcarea unei diagrame produce N noduri în store;
     - zoom +/− respectă limitele;

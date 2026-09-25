@@ -33,7 +33,7 @@ export function isDefaultViewport({ x, y, zoom }: Viewport): boolean {
   return x === 0 && y === 0 && zoom === 1
 }
 
-/** `.soardiag` (defaults already applied by the schema) → React Flow state. */
+/** `.ardiag` (defaults already applied by the schema) → React Flow state. */
 export function fileToGraph(diagram: SoarDiagram): DiagramGraph {
   const { data, ...meta } = diagram
   return {
@@ -49,7 +49,7 @@ export function fileToGraph(diagram: SoarDiagram): DiagramGraph {
   }
 }
 
-/** React Flow state → `.soardiag`, without runtime-only fields. */
+/** React Flow state → `.ardiag`, without runtime-only fields. */
 export function graphToFile({ meta, nodes, edges, viewport }: DiagramGraph): SoarDiagram {
   return {
     ...meta,

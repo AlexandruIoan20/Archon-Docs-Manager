@@ -61,8 +61,8 @@ describe('MermaidEditor', () => {
     mock = createSoarApiMock({ platform: 'linux' })
     mock.api.fs.readDiagram.mockResolvedValue(ok(TEXT_DIAGRAM))
     window.soar = mock.api
-    const tabId = useEditorStore.getState().openFile('flows/alert.soardiag', 'soardiag')
-    tab = { tabId, filePath: 'flows/alert.soardiag', kind: 'soardiag' }
+    const tabId = useEditorStore.getState().openFile('flows/alert.ardiag', 'ardiag')
+    tab = { tabId, filePath: 'flows/alert.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
   })
 

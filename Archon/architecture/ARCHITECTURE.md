@@ -1,4 +1,4 @@
-# SOAR Docs Studio — Arhitectura fișierelor
+# Archon Docs Studio — Arhitectura fișierelor
 
 Documentul descrie structura completă a proiectului: ce există deja și ce adaugă fiecare plan din `plans/`.
 Se actualizează la finalul fiecărui plan.
@@ -68,9 +68,9 @@ Archon/
 ├── build/                         ✅ resurse electron-builder (icoane, entitlements macOS)
 ├── resources/                     ✅ assets statice împachetate (icon.png)
 ├── formats/                       JSON Schema pentru formatele custom
-│   ├── soarws.schema.json            [07]
-│   ├── soardoc.schema.json           [09]
-│   └── soardiag.schema.json          [09]
+│   ├── arws.schema.json            [07]
+│   ├── ardoc.schema.json           [09]
+│   └── ardiag.schema.json          [09]
 ├── electron/                      procesul main (vezi §3)
 ├── src/                           procesul renderer (vezi §4)
 ├── index.html                     ✅ entry HTML, CSP strict (default-src 'self')
@@ -110,7 +110,7 @@ electron/
     │   │                             [05*] window:set-zoom (validat 0.8–1.5)
     │   ├── settings.handler.ts    ✅ [05] settings:get / update, system:get-theme, evenimentul system:theme-changed
     │   ├── workspace.handler.ts      [07] creare / deschidere workspace, evenimente watcher
-    │   ├── fs.handler.ts             [09] CRUD .soardoc / .soardiag / foldere
+    │   ├── fs.handler.ts             [09] CRUD .ardoc / .ardiag / foldere
     │   ├── db.handler.ts          ✅ [10] index:get-status / rebuild / list-tags, search:query
     │   └── export.handler.ts      ✅ [19] export:save, export:pdf-from-svg
     ├── settings/
@@ -119,13 +119,13 @@ electron/
     │   └── settings.test.ts       ✅ [05] Node, pe un director temporar
     ├── file-system/
     │   ├── paths.ts                  [07] rezolvare și validare căi în workspace
-    │   ├── workspace.ts              [07] .soarws: creare, deschidere, recente
+    │   ├── workspace.ts              [07] .arws: creare, deschidere, recente
     │   ├── reader.ts                 [07] citire + validare zod
     │   ├── writer.ts                 [07] scriere atomică
     │   ├── watcher.ts                [07] chokidar → evenimente către renderer
     │   ├── entries.ts                [09] arbore de fișiere / foldere
-    │   ├── documents.ts              [09] operații .soardoc
-    │   ├── diagrams.ts               [09] operații .soardiag
+    │   ├── documents.ts              [09] operații .ardoc
+    │   ├── diagrams.ts               [09] operații .ardiag
     │   └── naming.ts                 [09] nume unice, sanitizare
     ├── index-service.ts           ✅ [10] index deschis cu workspace-ul, fullSync în fundal, evenimente watcher, index:progress
     ├── database/
@@ -135,7 +135,9 @@ electron/
     │   ├── text-extract.ts        ✅ [10] text simplu din TipTap
     │   ├── migrations/
     │   │   ├── index.ts           ✅ [10] runner după PRAGMA user_version, o tranzacție per migrare
-    │   │   ├── 001_initial.ts     ✅ [10] DB per workspace (files, tags, doc_links, diagram_nodes, search_fts)
+    │   │   ├── 001_initial.ts     ✅ [10] DB per workspace (files, tags, doc_links, diagram_nodes, search_fts); workspaceSchemaSql(kinds)
+    │   │   ├── 002_file_kinds.ts  ✅ schema recreată goală pentru tipurile ardoc / ardiag (indexul se repopulează la fullSync)
+    │   │   ├── workspace.ts       ✅ WORKSPACE_MIGRATIONS
     │   │   └── app/001_projects.ts ✅ [10] DB la nivel de aplicație
     │   └── repositories/
     │       ├── file-rows.ts       ✅ [10] statement-uri comune documente / diagrame
@@ -197,7 +199,7 @@ src/core/
 │   ├── app.constants.ts           ✅ APP_NAME, QUERY_KEYS   [05] DEFAULT_SETTINGS, ACCENT_OPTIONS, UI_ZOOM_STEPS, RECENT_WORKSPACES_LIMIT
 │   ├── layout.constants.ts        ✅ LAYOUT, TITLEBAR_DENSITY, TITLEBAR_INSETS [03]; SIDEBAR_WIDTH, INSPECTOR_WIDTH,
 │   │                                 MAIN_MIN_WITH_*, PANEL_RESIZE_STEP, OVERLAY_EDGE_GAP [04]
-│   ├── file-extensions.ts            [09] .soarws, .soardoc, .soardiag
+│   ├── file-extensions.ts            [09] .arws, .ardoc, .ardiag
 │   └── shortcuts.ts               ✅ [20] registrul: id, combinații, scope, descriere; assertNoConflicts
 └── editor/
     ├── EditorContributionsProvider.tsx  ✅ [04] context + useEditorContribution(kind); kind duplicat → eroare
@@ -270,7 +272,7 @@ src/modules/
 │   └── utils/tree-files.ts                       ✅
 │
 ├── document-editor/                              ✅ [12] TipTap
-│   ├── index.ts                                  ✅ contribuția pentru `soardoc`
+│   ├── index.ts                                  ✅ contribuția pentru `ardoc`
 │   ├── components/
 │   │   ├── DocumentEditor.tsx                    ✅ cale, titlu, corp; coloană min(640px, 100% - 48px)
 │   │   ├── DocumentTitle.tsx                     ✅
@@ -290,7 +292,7 @@ src/modules/
 │   └── styles/prose.css                          ✅
 │
 ├── diagram-editor/                               [13–19] React Flow + Mermaid
-│   ├── index.ts                                  ✅ [13] contribuția pentru `soardiag`
+│   ├── index.ts                                  ✅ [13] contribuția pentru `ardiag`
 │   ├── components/
 │   │   ├── DiagramEditor.tsx                     ✅ [13] store-ul tab-ului + canvas; [18] comutare canvas / Mermaid după engine
 │   │   ├── DiagramCanvas.tsx                     ✅ [13] React Flow controlat, grilă de puncte, fitView la prima deschidere
@@ -388,7 +390,7 @@ src/modules/
 │   │   ├── diagram-sketches.ts                   ✅ [17] primitive rect / circle / ellipse / path
 │   │   └── diagram-starters.ts                   ✅ [17] class / sequence / state / usecase / activity
 │   ├── utils/
-│   │   ├── graph-mapping.ts                      ✅ [13] .soardiag ↔ React Flow
+│   │   ├── graph-mapping.ts                      ✅ [13] .ardiag ↔ React Flow
 │   │   ├── zoom.ts                               ✅ [13] limite și pași de zoom
 │   │   ├── canvas-layout.ts                      ✅ [13] praguri responsive ale canvas-ului
 │   │   ├── node-factory.ts                       ✅ [15] id N<k> / E<k> cel mai mic liber

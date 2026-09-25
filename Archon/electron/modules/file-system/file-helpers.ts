@@ -16,7 +16,7 @@ export async function resolveFolder(root: string, folderRel: string): Promise<st
   throw new AppError('NOT_FOUND', `Folder “${folderRel || '/'}” does not exist`)
 }
 
-/** A path to an app file of the given extension (`.soardoc` / `.soardiag`). */
+/** A path to an app file of the given extension (`.ardoc` / `.ardiag`). */
 export async function resolveAppFile(root: string, relPath: string, ext: string): Promise<string> {
   const normalized = normalizeRelPath(relPath)
   const name = normalized.split('/').pop() ?? ''

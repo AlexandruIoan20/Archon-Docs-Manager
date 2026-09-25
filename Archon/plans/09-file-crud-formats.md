@@ -1,7 +1,7 @@
 # 09 — CRUD fișiere & formate
 
 ## Scop
-Formatele `.soardoc` și `.soardiag` complete (cu câmpurile cerute de design), scheme de validare și operațiile de creare, citire, scriere, redenumire, mutare și ștergere.
+Formatele `.ardoc` și `.ardiag` complete (cu câmpurile cerute de design), scheme de validare și operațiile de creare, citire, scriere, redenumire, mutare și ștergere.
 Operațiile se leagă de butonul „New” și de arbore.
 
 ## Referință design
@@ -23,7 +23,7 @@ Operațiile se leagă de butonul „New” și de arbore.
 
 ## Formate (versiunea 1.0.0)
 
-**`.soardoc`**
+**`.ardoc`**
 ```jsonc
 {
   "version": "1.0.0", "id": "uuid", "title": "Incident Response Policy",
@@ -33,7 +33,7 @@ Operațiile se leagă de butonul „New” și de arbore.
 }
 ```
 
-**`.soardiag`**
+**`.ardiag`**
 ```jsonc
 {
   "version": "1.0.0", "id": "uuid", "title": "Phishing triage",
@@ -65,8 +65,8 @@ Operațiile se leagă de butonul „New” și de arbore.
 - `src/core/schemas/document.schema.ts` și `src/core/schemas/diagram.schema.ts`: `zod`, cu `.default()` pentru câmpurile opționale.
 - `src/core/types/document.types.ts`, `diagram.types.ts`: `z.infer`, plus `DiagramType`, `DiagramNodeType`, `DiagramEngine`.
 - `src/core/types/index.ts` (modificat)
-- `src/core/constants/file-extensions.ts`: `FILE_EXTENSIONS = { workspace: '.soarws', document: '.soardoc', diagram: '.soardiag' } as const`, plus `fileKindFromPath()`.
-- `formats/soardoc.schema.json`, `formats/soardiag.schema.json`
+- `src/core/constants/file-extensions.ts`: `FILE_EXTENSIONS = { workspace: '.arws', document: '.ardoc', diagram: '.ardiag' } as const`, plus `fileKindFromPath()`.
+- `formats/ardoc.schema.json`, `formats/ardiag.schema.json`
 - `electron/modules/file-system/naming.ts`:
   - `slugify(title)`;
   - `nextAvailableName(dir, base, ext)` (`untitled-1`, `untitled-2`…; numerotarea continuă după cel mai mare număr existent);
@@ -117,7 +117,7 @@ Operațiile se leagă de butonul „New” și de arbore.
 - Toast-urile corespund textelor din prototip.
 
 ## Commit
-`feat(file-system): soardoc/soardiag formats and file CRUD`
+`feat(file-system): ardoc/ardiag formats and file CRUD`
 
 ## În afara scopului
 Indexarea (plan 10), editarea conținutului (planurile 12 și 13).

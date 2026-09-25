@@ -14,8 +14,8 @@ import {
 
 describe('normalizeRelPath', () => {
   it('normalizes separators and dots', () => {
-    expect(normalizeRelPath('Playbooks\\Phishing/./triage.soardiag')).toBe(
-      'Playbooks/Phishing/triage.soardiag'
+    expect(normalizeRelPath('Playbooks\\Phishing/./triage.ardiag')).toBe(
+      'Playbooks/Phishing/triage.ardiag'
     )
     expect(normalizeRelPath('')).toBe('')
     expect(normalizeRelPath('a//b/')).toBe('a/b')
@@ -60,8 +60,8 @@ describe('resolveInWorkspace', () => {
 
   it('resolves existing and not-yet-existing paths inside the root', async () => {
     expect(await resolveInWorkspace(root, 'Playbooks')).toBe(join(root, 'Playbooks'))
-    expect(await resolveInWorkspace(root, 'Playbooks/new/file.soardoc')).toBe(
-      join(root, 'Playbooks', 'new', 'file.soardoc')
+    expect(await resolveInWorkspace(root, 'Playbooks/new/file.ardoc')).toBe(
+      join(root, 'Playbooks', 'new', 'file.ardoc')
     )
     expect(await resolveInWorkspace(root, '')).toBe(root)
   })
@@ -77,7 +77,7 @@ describe('resolveInWorkspace', () => {
     await expect(resolveInWorkspace(root, 'escape')).rejects.toMatchObject({
       code: 'PATH_OUTSIDE_WORKSPACE'
     })
-    await expect(resolveInWorkspace(root, 'escape/new.soardoc')).rejects.toMatchObject({
+    await expect(resolveInWorkspace(root, 'escape/new.ardoc')).rejects.toMatchObject({
       code: 'PATH_OUTSIDE_WORKSPACE'
     })
   })
@@ -90,14 +90,14 @@ describe('resolveInWorkspace', () => {
 
 describe('path helpers', () => {
   it('converts absolute paths to relative ones', () => {
-    expect(toRelPath(join('/ws'), join('/ws', 'a', 'b.soardoc'))).toBe('a/b.soardoc')
+    expect(toRelPath(join('/ws'), join('/ws', 'a', 'b.ardoc'))).toBe('a/b.ardoc')
   })
 
   it('knows hidden names, parents and joins', () => {
     expect(isHidden('.git')).toBe(true)
     expect(isHidden('Runbooks')).toBe(false)
-    expect(parentRel('a/b/c.soardoc')).toBe('a/b')
-    expect(parentRel('c.soardoc')).toBe('')
+    expect(parentRel('a/b/c.ardoc')).toBe('a/b')
+    expect(parentRel('c.ardoc')).toBe('')
     expect(joinRel('', 'x')).toBe('x')
     expect(joinRel('a/b', 'x')).toBe('a/b/x')
   })

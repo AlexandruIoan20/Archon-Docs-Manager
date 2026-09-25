@@ -18,23 +18,23 @@ describe('tab shortcuts', () => {
   beforeEach(() => {
     useEditorStore.setState(initial.editor, true)
     const { openFile } = useEditorStore.getState()
-    openFile('a.soardoc', 'soardoc')
-    openFile('b.soardoc', 'soardoc')
-    openFile('c.soardoc', 'soardoc')
+    openFile('a.ardoc', 'ardoc')
+    openFile('b.ardoc', 'ardoc')
+    openFile('c.ardoc', 'ardoc')
   })
 
   it('cycles with Ctrl+Tab and Ctrl+Shift+Tab', () => {
     renderHook(() => useTabShortcuts(), { wrapper: queryWrapper() })
     fireEvent.keyDown(window, { code: 'Tab', ctrlKey: true })
-    expect(active()).toBe('a.soardoc')
+    expect(active()).toBe('a.ardoc')
     fireEvent.keyDown(window, { code: 'Tab', ctrlKey: true, shiftKey: true })
-    expect(active()).toBe('c.soardoc')
+    expect(active()).toBe('c.ardoc')
   })
 
   it('closes the active tab with Ctrl+W', async () => {
     renderHook(() => useTabShortcuts(), { wrapper: queryWrapper() })
     fireEvent.keyDown(window, { code: 'KeyW', ctrlKey: true })
-    await waitFor(() => expect(active()).toBe('b.soardoc'))
+    await waitFor(() => expect(active()).toBe('b.ardoc'))
   })
 })
 
@@ -59,14 +59,14 @@ describe('useQuitGuard', () => {
   })
 
   it('releases the window at once when nothing is unsaved', async () => {
-    useEditorStore.getState().openFile('a.soardoc', 'soardoc')
+    useEditorStore.getState().openFile('a.ardoc', 'ardoc')
     renderHook(() => useQuitGuard())
     mock.emit('app:before-quit', null)
     await waitFor(() => expect(mock.api.app.confirmClose).toHaveBeenCalledOnce())
   })
 
   it('asks about unsaved changes first', async () => {
-    const id = useEditorStore.getState().openFile('a.soardoc', 'soardoc')
+    const id = useEditorStore.getState().openFile('a.ardoc', 'ardoc')
     useEditorStore.getState().setDirty(id, true)
     renderHook(() => useQuitGuard())
     mock.emit('app:before-quit', null)

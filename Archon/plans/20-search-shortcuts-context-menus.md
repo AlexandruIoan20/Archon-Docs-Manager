@@ -73,7 +73,7 @@ Prototipul nu are aceste ecrane. Ele se construiesc exclusiv din primitivele exi
 10. `clipboard.ts` și teste (remapare de id-uri, păstrarea muchiilor interne, eliminarea celor externe).
     `Ctrl+C` / `Ctrl+V` / `Ctrl+D` în scope-ul `diagram`, cu snapshot în istoric.
 11. `CanvasContextMenu` (adăugare la poziția cursorului, convertită cu `screenToFlowPosition`) și `NodeContextMenu`.
-12. **Legătura documente ↔ diagrame** (din plan 12): în `DocumentInspector`, „Link diagram” deschide paleta filtrată pe `.soardiag`, iar alegerea adaugă id-ul în `linkedDiagrams`.
+12. **Legătura documente ↔ diagrame** (din plan 12): în `DocumentInspector`, „Link diagram” deschide paleta filtrată pe `.ardiag`, iar alegerea adaugă id-ul în `linkedDiagrams`.
 13. Teste:
     - paleta afișează grupurile și deschide nodul corect;
     - meniul arborelui apelează rename / delete;

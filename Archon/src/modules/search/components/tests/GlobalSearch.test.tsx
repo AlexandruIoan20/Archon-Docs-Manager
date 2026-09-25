@@ -14,8 +14,8 @@ const initial = { editor: useEditorStore.getState(), ui: useUiStore.getState() }
 const RESULTS: SearchResult[] = [
   {
     fileId: 'diag-1',
-    relPath: 'Playbooks/Phishing/phishing-triage.soardiag',
-    kind: 'soardiag',
+    relPath: 'Playbooks/Phishing/phishing-triage.ardiag',
+    kind: 'ardiag',
     fileTitle: 'Phishing triage',
     nodeId: 'N4',
     nodeLabel: 'Contain Host',
@@ -24,8 +24,8 @@ const RESULTS: SearchResult[] = [
   },
   {
     fileId: 'doc-1',
-    relPath: 'Runbooks/on-call.soardoc',
-    kind: 'soardoc',
+    relPath: 'Runbooks/on-call.ardoc',
+    kind: 'ardoc',
     fileTitle: 'On call',
     nodeId: null,
     nodeLabel: null,
@@ -80,7 +80,7 @@ describe('GlobalSearch', () => {
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     const { tabs, pendingSelection, pendingFocus } = useEditorStore.getState()
-    expect(tabs.map((t) => t.relPath)).toEqual(['Playbooks/Phishing/phishing-triage.soardiag'])
+    expect(tabs.map((t) => t.relPath)).toEqual(['Playbooks/Phishing/phishing-triage.ardiag'])
     const tabId = tabs[0]?.id ?? ''
     expect(pendingSelection[tabId]).toEqual(['N4'])
     expect(pendingFocus[tabId]).toBe('N4')
@@ -94,15 +94,13 @@ describe('GlobalSearch', () => {
     fireEvent.keyDown(input, { key: 'ArrowDown' })
     expect(within(palette()).getAllByRole('option')[1]).toHaveAttribute('aria-selected', 'true')
     fireEvent.keyDown(input, { key: 'Enter' })
-    expect(useEditorStore.getState().tabs.map((t) => t.relPath)).toEqual([
-      'Runbooks/on-call.soardoc'
-    ])
+    expect(useEditorStore.getState().tabs.map((t) => t.relPath)).toEqual(['Runbooks/on-call.ardoc'])
     expect(useEditorStore.getState().pendingFocus).toEqual({})
   })
 
   it('filters by kind and hands the pick over, when asked to', async () => {
     const onPick = vi.fn()
-    act(() => openSearchPalette({ kind: 'soardoc', onPick }))
+    act(() => openSearchPalette({ kind: 'ardoc', onPick }))
     type('isolate')
     await within(palette()).findByRole('group', { name: 'Content' })
     expect(within(palette()).queryByRole('group', { name: 'Nodes' })).not.toBeInTheDocument()

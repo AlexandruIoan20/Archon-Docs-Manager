@@ -76,20 +76,20 @@ describe('tab sessions', () => {
         tabsByWorkspace: {
           a: {
             tabs: [
-              { relPath: 'x.soardoc', kind: 'soardoc', extra: 1 },
-              { relPath: 'x.soardoc', kind: 'soardoc' },
+              { relPath: 'x.ardoc', kind: 'ardoc', extra: 1 },
+              { relPath: 'x.ardoc', kind: 'ardoc' },
               { relPath: 'y.txt', kind: 'text' },
-              { relPath: '', kind: 'soardiag' },
+              { relPath: '', kind: 'ardiag' },
               'nope'
             ],
-            active: 'gone.soardoc'
+            active: 'gone.ardoc'
           },
           b: 'nope'
         }
       }
     }).session
     expect(session.tabsByWorkspace).toEqual({
-      a: { tabs: [{ relPath: 'x.soardoc', kind: 'soardoc' }], active: null },
+      a: { tabs: [{ relPath: 'x.ardoc', kind: 'ardoc' }], active: null },
       b: { tabs: [], active: null }
     })
   })

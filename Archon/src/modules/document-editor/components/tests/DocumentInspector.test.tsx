@@ -5,12 +5,12 @@ import { useSearchPaletteStore, useUiStore } from '@/store'
 import { useDocumentEditorStore } from '../../store/document-editor.store'
 import { DocumentInspector } from '../DocumentInspector'
 
-const TAB = { tabId: 'tab-doc', filePath: 'Runbooks/ir.soardoc', kind: 'soardoc' as const }
+const TAB = { tabId: 'tab-doc', filePath: 'Runbooks/ir.ardoc', kind: 'ardoc' as const }
 
 const diagram = (fileId: string): SearchResult => ({
   fileId,
-  relPath: `Playbooks/${fileId}.soardiag`,
-  kind: 'soardiag',
+  relPath: `Playbooks/${fileId}.ardiag`,
+  kind: 'ardiag',
   fileTitle: fileId,
   nodeId: null,
   nodeLabel: null,
@@ -39,7 +39,7 @@ describe('DocumentInspector', () => {
 
     expect(useUiStore.getState().activeModal).toBe('command-palette')
     const { request } = useSearchPaletteStore.getState()
-    expect(request.kind).toBe('soardiag')
+    expect(request.kind).toBe('ardiag')
     act(() => request.onPick?.(diagram('diag-7')))
     act(() => request.onPick?.(diagram('diag-7')))
 

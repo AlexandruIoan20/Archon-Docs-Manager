@@ -15,10 +15,10 @@ export function DocumentInspector({ tab }: EditorSlotProps): React.JSX.Element |
     session.changed()
   }
 
-  // Pick a diagram in the palette, filtered on `.soardiag`; its id goes in the list.
+  // Pick a diagram in the palette, filtered on `.ardiag`; its id goes in the list.
   const linkDiagram = (): void =>
     openSearchPalette({
-      kind: 'soardiag',
+      kind: 'ardiag',
       placeholder: 'Link a diagram…',
       onPick: (result) => {
         const current = useDocumentEditorStore.getState().sessions[tab.tabId]?.linkedDiagrams ?? []

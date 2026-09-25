@@ -15,7 +15,7 @@ export interface SearchResultRowProps {
 }
 
 const icon = (result: SearchResult, group: ResultGroupId): IconName =>
-  group === 'nodes' ? 'box' : result.kind === 'soardiag' ? 'flow' : 'file'
+  group === 'nodes' ? 'box' : result.kind === 'ardiag' ? 'flow' : 'file'
 
 /** One result: name, where it is (path cut in the middle), the matched text. */
 export function SearchResultRow({

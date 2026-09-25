@@ -64,7 +64,7 @@ export function createSoarApiMock(options: SoarApiMockOptions = {}): SoarApiMock
   const api: SoarApiMock['api'] = {
     app: {
       getInfo: resolved<AppInfo>({
-        name: 'SOAR Docs Studio',
+        name: 'Archon Docs Studio',
         version: '1.0.0',
         platform: 'linux',
         ...info

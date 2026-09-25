@@ -5,7 +5,8 @@ import { join } from 'path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { closeAll, openAppDb, openDatabase, openWorkspaceDb } from './db'
 import { runMigrations, type Migration } from './migrations'
-import { WORKSPACE_MIGRATIONS } from './migrations/001_initial'
+import { migration001Initial } from './migrations/001_initial'
+import { WORKSPACE_MIGRATIONS } from './migrations/workspace'
 
 const version = (db: ReturnType<typeof openDatabase>): number =>
   db.pragma('user_version', { simple: true }) as number
@@ -57,6 +58,23 @@ describe('runMigrations', () => {
       ])
     )
     expect(db.pragma('foreign_keys', { simple: true })).toBe(1)
+  })
+
+  it('rebuilds a version 1 index for the .ardoc / .ardiag kinds', () => {
+    const db = openDatabase(':memory:', [migration001Initial])
+    const insert = (id: string, kind: string): void => {
+      db.prepare(
+        'INSERT INTO files (id, rel_path, kind, title, mtime_ms, size) VALUES (?, ?, ?, ?, 0, 0)'
+      ).run(id, `${id}.${kind}`, kind, id)
+    }
+    insert('old', 'soardoc')
+
+    runMigrations(db, WORKSPACE_MIGRATIONS)
+
+    expect(version(db)).toBe(2)
+    expect(db.prepare('SELECT COUNT(*) AS n FROM files').get()).toEqual({ n: 0 })
+    expect(() => insert('new', 'ardoc')).not.toThrow()
+    expect(() => insert('legacy', 'soardoc')).toThrow()
   })
 })
 

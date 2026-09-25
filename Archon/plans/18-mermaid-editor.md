@@ -22,7 +22,7 @@ Cerința vine din specificație. Prototipul nu are un ecran dedicat, așa că UI
 - npm: `mermaid` (bundled, `-D`), încărcat **lazy** cu `import()`, deoarece e mare și nu trebuie să încetinească pornirea.
 
 ## Decizii
-- **Aceeași contribuție `soardiag`.** `DiagramEditor` alege intern între `DiagramCanvas` și `MermaidEditor`, după `engine`. Nu se adaugă un `FileKind` nou.
+- **Aceeași contribuție `ardiag`.** `DiagramEditor` alege intern între `DiagramCanvas` și `MermaidEditor`, după `engine`. Nu se adaugă un `FileKind` nou.
 - **Inițializare Mermaid:** `mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables })`.
   Culorile se citesc din tokenuri cu `getComputedStyle` la fiecare schimbare de temă.
 - **Randare:** `mermaid.render(id, source)` cu debounce 300ms.

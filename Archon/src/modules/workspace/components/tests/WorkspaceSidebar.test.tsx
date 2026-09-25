@@ -72,8 +72,8 @@ describe('WorkspaceSidebar', () => {
   it('opens a file on click', () => {
     fireEvent.click(row('incident-policy'))
     expect(selectActiveTab(useEditorStore.getState())).toMatchObject({
-      relPath: 'incident-policy.soardoc',
-      kind: 'soardoc'
+      relPath: 'incident-policy.ardoc',
+      kind: 'ardoc'
     })
     expect(row('incident-policy')).toHaveAttribute('aria-selected', 'true')
   })
@@ -120,7 +120,7 @@ describe('WorkspaceSidebar', () => {
     fireEvent.keyDown(row('Playbooks'), { key: 'End' })
     expect(row('incident-policy')).toHaveFocus()
     fireEvent.keyDown(row('incident-policy'), { key: 'Enter' })
-    expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.soardoc')
+    expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.ardoc')
     fireEvent.keyDown(row('incident-policy'), { key: 'Home' })
     expect(row('Architecture')).toHaveFocus()
   })
@@ -141,7 +141,7 @@ describe('WorkspaceSidebar', () => {
     fireEvent.click(screen.getByRole('menuitem', { name: 'New document' }))
 
     await waitFor(() =>
-      expect(selectActivePath(useEditorStore.getState())).toBe('Runbooks/untitled-1.soardoc')
+      expect(selectActivePath(useEditorStore.getState())).toBe('Runbooks/untitled-1.ardoc')
     )
     expect(mock.api.fs.createDocument).toHaveBeenCalledWith('Runbooks', undefined)
     expect(useUiStore.getState().toast?.message).toBe('Document created in Runbooks/')
@@ -238,7 +238,7 @@ describe('WorkspaceSidebar', () => {
 
       fireEvent.click(within(menuFor('incident-policy')).getByRole('menuitem', { name: /Delete/ }))
       expect(useUiStore.getState().activeModal).toBe('confirm-delete')
-      expect(useWorkspaceStore.getState().pendingDelete?.relPath).toBe('incident-policy.soardoc')
+      expect(useWorkspaceStore.getState().pendingDelete?.relPath).toBe('incident-policy.ardoc')
     })
 
     it('copies the relative path and reveals in the file manager', async () => {
@@ -247,7 +247,7 @@ describe('WorkspaceSidebar', () => {
       fireEvent.click(
         within(menuFor('incident-policy')).getByRole('menuitem', { name: /Copy relative path/ })
       )
-      await waitFor(() => expect(writeText).toHaveBeenCalledWith('incident-policy.soardoc'))
+      await waitFor(() => expect(writeText).toHaveBeenCalledWith('incident-policy.ardoc'))
       expect(useUiStore.getState().toast?.message).toBe('Path copied')
 
       fireEvent.click(within(menuFor('Runbooks')).getByRole('menuitem', { name: /Reveal/ }))
@@ -261,7 +261,7 @@ describe('WorkspaceSidebar', () => {
       expect(screen.queryByRole('menu')).not.toBeInTheDocument()
 
       fireEvent.click(within(menuFor('incident-policy')).getByRole('menuitem', { name: 'Open' }))
-      expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.soardoc')
+      expect(selectActivePath(useEditorStore.getState())).toBe('incident-policy.ardoc')
     })
   })
 })

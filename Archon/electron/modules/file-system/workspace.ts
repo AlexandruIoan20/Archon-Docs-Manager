@@ -17,7 +17,7 @@ import { writeJsonAtomic } from './writer'
 export interface OpenWorkspace {
   /** Real (symlink-free) absolute path of the workspace folder. */
   root: string
-  /** Absolute path of the `.soarws` file. */
+  /** Absolute path of the `.arws` file. */
   filePath: string
   file: WorkspaceFile
 }
@@ -75,7 +75,7 @@ async function activate(workspace: OpenWorkspace): Promise<OpenWorkspace> {
   return workspace
 }
 
-/** Accepts a `.soarws` file or the folder that contains `workspace.soarws`. */
+/** Accepts a `.arws` file or the folder that contains `workspace.arws`. */
 export async function openWorkspace(path: string): Promise<OpenWorkspace> {
   const info = await statOrNull(path)
   if (!info) throw new AppError('NOT_FOUND', `${path} does not exist`)

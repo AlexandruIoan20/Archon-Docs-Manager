@@ -97,7 +97,7 @@ describe('NewDiagramDialog', () => {
 
     await waitFor(() => expect(useEditorStore.getState().tabs).toHaveLength(1))
     const tab = useEditorStore.getState().tabs[0]
-    expect(tab?.relPath).toBe('Playbooks/state-1.soardiag')
+    expect(tab?.relPath).toBe('Playbooks/state-1.ardiag')
     expect(useEditorStore.getState().pendingSelection[tab?.id ?? '']).toEqual(['N1'])
     expect(useWorkspaceStore.getState().expanded.Playbooks).toBe(true)
     expect(useUiStore.getState().toast?.message).toBe('State machine diagram created in Playbooks/')
@@ -182,11 +182,11 @@ describe('a new diagram, once open', () => {
       )
     )
     window.soar = mock.api
-    const tabId = useEditorStore.getState().openFile('Playbooks/state-1.soardiag', 'soardiag')
+    const tabId = useEditorStore.getState().openFile('Playbooks/state-1.ardiag', 'ardiag')
     useEditorStore.getState().setPendingSelection(tabId, ['N1'])
 
     render(
-      <DiagramEditor tab={{ tabId, filePath: 'Playbooks/state-1.soardiag', kind: 'soardiag' }} />,
+      <DiagramEditor tab={{ tabId, filePath: 'Playbooks/state-1.ardiag', kind: 'ardiag' }} />,
       { wrapper: queryWrapper() }
     )
     await waitFor(() => expect(getStore(tabId)).toBeDefined())

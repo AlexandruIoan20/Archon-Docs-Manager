@@ -58,7 +58,7 @@ export function registerWorkspaceHandlers(): void {
       title: 'Open workspace',
       buttonLabel: 'Open',
       properties: OPEN_PROPERTIES,
-      filters: [{ name: 'SOAR workspace', extensions: ['soarws'] }]
+      filters: [{ name: 'Archon workspace', extensions: ['arws'] }]
     })
     return path ? opened(await openWorkspace(path)) : null
   })

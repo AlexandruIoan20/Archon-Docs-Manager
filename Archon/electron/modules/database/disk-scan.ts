@@ -77,7 +77,7 @@ export async function listDisk(root: string, scope: string): Promise<DiskFile[]>
 export async function readForIndex(root: string, file: DiskFile): Promise<ReadFile> {
   const path = absolute(root, file.relPath)
   try {
-    return file.kind === 'soardoc'
+    return file.kind === 'ardoc'
       ? { file, doc: await readJson(path, documentFileSchema, file.relPath) }
       : { file, diagram: await readJson(path, diagramFileSchema, file.relPath) }
   } catch (error) {

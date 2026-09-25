@@ -46,8 +46,8 @@ describe('canvas context menus and the node clipboard', () => {
         readText: vi.fn(() => Promise.resolve(clipboardText))
       }
     })
-    const tabId = useEditorStore.getState().openFile('flows/phishing.soardiag', 'soardiag')
-    tab = { tabId, filePath: 'flows/phishing.soardiag', kind: 'soardiag' }
+    const tabId = useEditorStore.getState().openFile('flows/phishing.ardiag', 'ardiag')
+    tab = { tabId, filePath: 'flows/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
   })
 

@@ -154,7 +154,7 @@ describe('App', () => {
     // The document editor fills the title bar, the inspector and the status bar.
     expect(screen.getByRole('toolbar', { name: 'Formatting' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Add tag' })).toBeInTheDocument()
-    expect(screen.getByRole('contentinfo')).toHaveTextContent('incident-policy.soardoc')
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('incident-policy.ardoc')
     expect(screen.getByRole('contentinfo')).toHaveTextContent('0 words')
 
     fireEvent.click(within(tab).getByRole('button', { name: 'Close incident-policy' }))

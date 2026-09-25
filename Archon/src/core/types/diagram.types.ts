@@ -14,7 +14,7 @@ export type DiagramType = z.infer<typeof diagramTypeSchema>
 export type DiagramEngine = z.infer<typeof diagramEngineSchema>
 export type DiagramNodeType = (typeof DIAGRAM_NODE_TYPES)[number]
 
-/** A `.soardiag` file as read from disk (defaults applied). */
+/** A `.ardiag` file as read from disk (defaults applied). */
 export type SoarDiagram = z.infer<typeof diagramFileSchema>
 export type DiagramNode = z.infer<typeof diagramNodeSchema>
 export type DiagramEdge = z.infer<typeof diagramEdgeSchema>

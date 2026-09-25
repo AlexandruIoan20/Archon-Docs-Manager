@@ -54,7 +54,7 @@ function useSetWorkspaceTheme(): (theme: ResolvedTheme) => void {
 /**
  * Owns the theme: applies it to the document, mirrors it into `ui.store` and
  * recolors the native Windows controls. Call it once, in `App.tsx`.
- * A workspace theme (`.soarws` `settings.theme` other than `inherit`) wins over
+ * A workspace theme (`.arws` `settings.theme` other than `inherit`) wins over
  * the app preference, and the toggle then edits the workspace.
  */
 export function useTheme(): ThemeControls {

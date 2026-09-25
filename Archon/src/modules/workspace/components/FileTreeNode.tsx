@@ -88,7 +88,7 @@ export function FileTreeNode({
         <>
           <span aria-hidden className="w-3 shrink-0" />
           <Icon
-            name={row.entry.kind === 'soardiag' ? 'flow' : 'file'}
+            name={row.entry.kind === 'ardiag' ? 'flow' : 'file'}
             size={14}
             className={cn('shrink-0', row.isActive ? 'text-accent' : 'text-fg-muted')}
           />

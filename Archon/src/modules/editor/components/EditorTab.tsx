@@ -62,7 +62,7 @@ export function EditorTab({
       )}
     >
       <Icon
-        name={tab.kind === 'soardiag' ? 'flow' : 'file'}
+        name={tab.kind === 'ardiag' ? 'flow' : 'file'}
         size={13}
         className={cn('shrink-0', active ? 'text-accent' : 'text-fg-muted')}
       />

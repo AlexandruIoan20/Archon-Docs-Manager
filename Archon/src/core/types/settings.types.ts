@@ -1,6 +1,6 @@
 /**
  * App-level preferences, stored by the main process in `userData/settings.json`.
- * They belong to the app, not to a workspace. A workspace (`.soarws`) may later
+ * They belong to the app, not to a workspace. A workspace (`.arws`) may later
  * override the theme; its field defaults to `'inherit'` (plan 07).
  */
 
@@ -44,7 +44,7 @@ export interface WindowSettings {
 
 /** The open tabs of one workspace (plan 11). */
 export interface TabSession {
-  tabs: { relPath: string; kind: 'soardoc' | 'soardiag' }[]
+  tabs: { relPath: string; kind: 'ardoc' | 'ardiag' }[]
   /** Path of the active tab. */
   active: string | null
 }

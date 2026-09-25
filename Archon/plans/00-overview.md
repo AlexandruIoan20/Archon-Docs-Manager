@@ -1,4 +1,4 @@
-# 00 — Overview: de la prototipul Archon la SOAR Docs Studio
+# 00 — Overview: de la prototipul Archon la Archon Docs Studio
 
 Sursa de design: Claude Design → `Archon Prototype.dc.html` (1440×900, temă dark/light).
 Referință suplimentară: `uploads/pasted-…png`, un arbore de foldere cu linii de ghidaj verticale/orizontale.
@@ -79,8 +79,8 @@ Infrastructura de notificări trebuie deci să existe când se scriu operațiile
    Le păstrăm într-un registru tipat, `shared/components/icons/`, pentru fidelitate vizuală și zero dependențe.
 5. **Fonturile se împachetează local** (`@fontsource-variable/inter`, `@fontsource/jetbrains-mono`).
    CSP-ul aplicației (`default-src 'self'`) blochează Google Fonts, iar o aplicație desktop trebuie să meargă offline.
-6. **Formatele de fișier rămân cele din specificație** (`.soarws`, `.soardoc`, `.soardiag`), nu `.md` / `.diagram` din prototip.
-   `.soardiag` se extinde cu câmpurile cerute de design (plan 09).
+6. **Formatele de fișier rămân cele din specificație** (`.arws`, `.ardoc`, `.ardiag`), nu `.md` / `.diagram` din prototip.
+   `.ardiag` se extinde cu câmpurile cerute de design (plan 09).
 7. **Documentele folosesc TipTap**, nu `<textarea>` ca în prototip. Din prototip păstrăm doar aspectul vizual (plan 12).
 8. **Canvas-ul folosește React Flow** (`@xyflow/react`), nu implementarea manuală din prototip.
    Designul nodurilor, muchiilor, minimap-ului și controalelor de zoom se reproduce peste React Flow.
@@ -93,7 +93,7 @@ Infrastructura de notificări trebuie deci să existe când se scriu operațiile
 
 - `src/core/types/editor.types.ts`: contractul `EditorContribution`.
 - `src/core/editor/`: contextul React prin care shell-ul citește contribuțiile înregistrate în `App.tsx`.
-- `src/core/schemas/`: scheme `zod` pentru `.soarws`, `.soardoc`, `.soardiag`. Tipurile TS se derivă din ele, iar main-ul validează la citire.
+- `src/core/schemas/`: scheme `zod` pentru `.arws`, `.ardoc`, `.ardiag`. Tipurile TS se derivă din ele, iar main-ul validează la citire.
 - `src/shared/components/icons/`: registrul de iconițe.
 - `src/modules/*/store/`: store-uri locale de modul.
 - `src/modules/diagram-editor/components/new-diagram/`, `.../edges/`, `.../canvas/`: subcomponente, pentru limita de 200 de linii.
@@ -179,7 +179,7 @@ La toate dimensiunile: niciun element tăiat, niciun scroll orizontal pe fereast
 
 | Întrebare | Default propus | Plan |
 |---|---|---|
-| Brand în TitleBar: „Archon” (design) sau „SOAR Docs Studio” (spec)? | Un singur loc: `APP_NAME` în `app.constants.ts` | 03 |
+| Brand în TitleBar: „Archon” (design) sau „Archon Docs Studio” (spec)? | Un singur loc: `APP_NAME` în `app.constants.ts` | 03 |
 | Avatarul „DR” din TitleBar: aplicația nu are conturi | Nu se implementează. Slotul rămâne liber | 03 |
 | Exportul „UML XMI” | Ultimul pas din plan 19, opțional | 19 |
 | Controlul „FILL” (static în prototip) | Implementat ca selector de fill pentru shape-uri (rect/ellipse) | 15 |

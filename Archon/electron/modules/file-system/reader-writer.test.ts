@@ -33,47 +33,47 @@ describe('file-system reader & writer', () => {
   }
 
   it('lists folders first, then files, alphabetically and case-insensitively', async () => {
-    touch('workspace.soarws')
-    touch('b-doc.soardoc')
-    touch('A-diagram.soardiag')
-    touch('runbooks/x.soardoc')
-    touch('Playbooks/Phishing/triage.soardiag')
-    touch('file10.soardoc')
-    touch('file2.soardoc')
+    touch('workspace.arws')
+    touch('b-doc.ardoc')
+    touch('A-diagram.ardiag')
+    touch('runbooks/x.ardoc')
+    touch('Playbooks/Phishing/triage.ardiag')
+    touch('file10.ardoc')
+    touch('file2.ardoc')
 
     const tree = await readTree(root)
     expect(tree.relPath).toBe('')
     expect(names(tree)).toEqual([
       'Playbooks',
       'runbooks',
-      'A-diagram.soardiag',
-      'b-doc.soardoc',
-      'file2.soardoc',
-      'file10.soardoc'
+      'A-diagram.ardiag',
+      'b-doc.ardoc',
+      'file2.ardoc',
+      'file10.ardoc'
     ])
 
     const playbooks = child(tree, 'Playbooks') as FolderEntry
     const phishing = child(playbooks, 'Phishing') as FolderEntry
     expect(phishing.relPath).toBe('Playbooks/Phishing')
     expect(phishing.children[0]).toEqual({
-      kind: 'soardiag',
-      name: 'triage.soardiag',
+      kind: 'ardiag',
+      name: 'triage.ardiag',
       baseName: 'triage',
-      relPath: 'Playbooks/Phishing/triage.soardiag'
+      relPath: 'Playbooks/Phishing/triage.ardiag'
     })
   })
 
   it('ignores hidden entries and foreign files', async () => {
-    touch('.git/config.soardoc')
-    touch('.draft.soardoc')
+    touch('.git/config.ardoc')
+    touch('.draft.ardoc')
     touch('notes.md', '# hi')
     touch('image.png', '')
     touch('Docs/readme.txt', '')
-    touch('Docs/keep.soardoc')
+    touch('Docs/keep.ardoc')
 
     const tree = await readTree(root)
     expect(names(tree)).toEqual(['Docs'])
-    expect(names(child(tree, 'Docs') as FolderEntry)).toEqual(['keep.soardoc'])
+    expect(names(child(tree, 'Docs') as FolderEntry)).toEqual(['keep.ardoc'])
   })
 
   it('keeps empty folders', async () => {
@@ -88,12 +88,12 @@ describe('file-system reader & writer', () => {
   })
 
   it('writes JSON atomically without leaving temp files', async () => {
-    const target = join(root, 'doc.soardoc')
+    const target = join(root, 'doc.ardoc')
     await writeJsonAtomic(target, { title: 'One' })
     await writeJsonAtomic(target, { title: 'Two' })
 
     expect(JSON.parse(readFileSync(target, 'utf8'))).toEqual({ title: 'Two' })
-    expect(readdirSync(root)).toEqual(['doc.soardoc'])
+    expect(readdirSync(root)).toEqual(['doc.ardoc'])
     expect(isOwnWrite(target)).toBe(true)
   })
 
@@ -106,23 +106,23 @@ describe('file-system reader & writer', () => {
     const schema = z.object({ title: z.string() })
 
     it('returns validated data', async () => {
-      touch('ok.soardoc', '{"title":"Hello"}')
-      expect(await readJson(join(root, 'ok.soardoc'), schema)).toEqual({ title: 'Hello' })
+      touch('ok.ardoc', '{"title":"Hello"}')
+      expect(await readJson(join(root, 'ok.ardoc'), schema)).toEqual({ title: 'Hello' })
     })
 
     it('fails with NOT_FOUND for a missing file', async () => {
-      await expect(readJson(join(root, 'nope.soardoc'), schema)).rejects.toMatchObject({
+      await expect(readJson(join(root, 'nope.ardoc'), schema)).rejects.toMatchObject({
         code: 'NOT_FOUND'
       })
     })
 
     it('fails with INVALID_FILE for broken JSON or a wrong shape', async () => {
-      touch('broken.soardoc', '{ "title": ')
-      touch('wrong.soardoc', '{"title": 3}')
-      await expect(readJson(join(root, 'broken.soardoc'), schema)).rejects.toMatchObject({
+      touch('broken.ardoc', '{ "title": ')
+      touch('wrong.ardoc', '{"title": 3}')
+      await expect(readJson(join(root, 'broken.ardoc'), schema)).rejects.toMatchObject({
         code: 'INVALID_FILE'
       })
-      await expect(readJson(join(root, 'wrong.soardoc'), schema)).rejects.toMatchObject({
+      await expect(readJson(join(root, 'wrong.ardoc'), schema)).rejects.toMatchObject({
         code: 'INVALID_FILE',
         details: [expect.objectContaining({ path: 'title' })]
       })

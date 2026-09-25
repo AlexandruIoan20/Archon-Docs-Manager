@@ -88,7 +88,7 @@ export const diagramDataSchema = z.object({
   viewport: viewportSchema.default({ x: 0, y: 0, zoom: 1 })
 })
 
-/** `.soardiag`: a diagram. */
+/** `.ardiag`: a diagram. */
 export const diagramFileSchema = z.object({
   version: z.string().min(1),
   id: z.string().min(1),

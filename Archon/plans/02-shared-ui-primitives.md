@@ -51,7 +51,7 @@ Planurile următoare **compun** aceste primitive și nu mai scriu stiluri de but
   - întoarce și `maxHeight`, spațiul disponibil pe verticală, ca meniurile lungi să aibă scroll intern.
 - `src/shared/hooks/useFloatingPosition.ts`: aplică funcția de mai sus și o recalculează la resize, la scroll și la schimbarea mărimii elementului.
 - `src/shared/hooks/useElementSize.ts`: `ResizeObserver`, cu actualizări grupate pe `requestAnimationFrame`. Îl folosesc TitleBar-ul, shell-ul și canvas-ul.
-- `src/shared/utils/truncate-middle.ts`: `truncateMiddle(path, maxChars)` păstrează începutul și numele fișierului (`Playbooks/…/triage.soardiag`).
+- `src/shared/utils/truncate-middle.ts`: `truncateMiddle(path, maxChars)` păstrează începutul și numele fișierului (`Playbooks/…/triage.ardiag`).
 - `src/shared/hooks/useClickOutside.ts`: închide meniuri și popover-e.
 - `src/shared/hooks/useEscape.ts`
 - Teste colocate: `*.test.tsx` pentru `Toggle`, `SegmentedControl`, `TagInput`, `Menu`, `Modal`; `*.test.ts` pentru `floating-position` și `truncate-middle`.

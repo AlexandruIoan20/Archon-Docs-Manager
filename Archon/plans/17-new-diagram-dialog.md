@@ -53,7 +53,7 @@ Modalul de creare a diagramelor din prototip: catalogul celor 14 tipuri UML 2.5 
 - Click pe card = selectează tipul. Dublu-click = selectează și creează.
 - Enter = creează. Escape = închide.
 - La creare:
-  - fișier `<type>-N.soardiag` în folderul ales, cu nodurile de pornire (`STARTERS` pentru class / sequence / state / usecase / activity; altfel „<Type> A” / „<Type> B”);
+  - fișier `<type>-N.ardiag` în folderul ales, cu nodurile de pornire (`STARTERS` pentru class / sequence / state / usecase / activity; altfel „<Type> A” / „<Type> B”);
   - poziții `x = 180 + i*300`, `y = 260 + i*70`; muchie N1→N2;
   - folderul se expandează, tab-ul se deschide, N1 e selectat, istoricul e gol;
   - toast „<Type> diagram created in <path>/”.

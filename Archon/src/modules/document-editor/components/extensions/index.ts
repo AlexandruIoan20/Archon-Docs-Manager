@@ -8,7 +8,7 @@ export const DOCUMENT_PLACEHOLDER = 'Start writing…'
 
 /**
  * The document schema, configured once. What these extensions produce is what
- * `.soardoc` stores as TipTap JSON.
+ * `.ardoc` stores as TipTap JSON.
  */
 export const DOCUMENT_EXTENSIONS: Extensions = [
   StarterKit.configure({

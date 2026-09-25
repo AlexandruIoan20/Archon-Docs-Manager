@@ -1,7 +1,7 @@
 # 07 — Workspace în procesul main
 
 ## Scop
-Crearea și deschiderea unui workspace (`.soarws`) și citirea arborelui de fișiere.
+Crearea și deschiderea unui workspace (`.arws`) și citirea arborelui de fișiere.
 Include urmărirea schimbărilor de pe disc și ecranul afișat când nu e deschis niciun workspace.
 Tot accesul la disc stă în main, iar renderer-ul vede doar căi **relative** la workspace.
 
@@ -22,12 +22,12 @@ Tot accesul la disc stă în main, iar renderer-ul vede doar căi **relative** l
 ## Decizii
 - **Layout pe disc:**
   ```
-  <root>/workspace.soarws
-  <root>/**/<nume>.soardoc
-  <root>/**/<nume>.soardiag
+  <root>/workspace.arws
+  <root>/**/<nume>.ardoc
+  <root>/**/<nume>.ardiag
   ```
   Alte fișiere și folderele care încep cu `.` sunt ignorate în tree.
-- **`.soarws` primește câmpul `id` (UUID).** Indexul SQLite (plan 10) se leagă de el, nu de cale, ca să supraviețuiască mutării folderului.
+- **`.arws` primește câmpul `id` (UUID).** Indexul SQLite (plan 10) se leagă de el, nu de cale, ca să supraviețuiască mutării folderului.
 - **Securitatea căilor:** orice cale venită din renderer trece prin `resolveInWorkspace(rel)`.
   Funcția normalizează calea, respinge căile absolute și `..` și verifică `realpath` în interiorul root-ului (protecție la symlink).
   Singurul modul care atinge `fs` direct este `electron/modules/file-system/`.
@@ -35,13 +35,13 @@ Tot accesul la disc stă în main, iar renderer-ul vede doar căi **relative** l
   Se verifică în `out/main/index.js` după build.
 
 ## Fișiere
-- `src/core/schemas/workspace.schema.ts`: `zod` pentru `.soarws`: `version`, `id`, `name`, `created`, `lastModified`, `settings { theme: 'inherit' | 'dark' | 'light', defaultDiagramType }`.
+- `src/core/schemas/workspace.schema.ts`: `zod` pentru `.arws`: `version`, `id`, `name`, `created`, `lastModified`, `settings { theme: 'inherit' | 'dark' | 'light', defaultDiagramType }`.
 - `src/core/types/workspace.types.ts`:
   - `WorkspaceInfo { id, name, rootName }` (fără cale absolută către renderer, cu excepția listei de recente);
   - `TreeEntry = FolderEntry | FileEntry`, cu `relPath`, `name`, `kind`, `children`.
-- `formats/soarws.schema.json`: JSON Schema echivalentă, ca documentație pentru format.
+- `formats/arws.schema.json`: JSON Schema echivalentă, ca documentație pentru format.
 - `electron/modules/file-system/paths.ts`: `resolveInWorkspace`, `toRelPath`, `isHidden`.
-- `electron/modules/file-system/workspace.ts`: `createWorkspace(dir, name)`, `openWorkspace(pathToSoarwsOrDir)`, `getCurrent()`, `closeWorkspace()`.
+- `electron/modules/file-system/workspace.ts`: `createWorkspace(dir, name)`, `openWorkspace(pathToArwsOrDir)`, `getCurrent()`, `closeWorkspace()`.
 - `electron/modules/file-system/reader.ts`: `readTree(root)` (recursiv, sortat: foldere întâi, apoi alfabetic, case-insensitive), `readJson(rel, schema)`.
 - `electron/modules/file-system/writer.ts`: `writeJsonAtomic(rel, data)`, `ensureDir`.
 - `electron/modules/file-system/watcher.ts`:
@@ -61,19 +61,19 @@ Tot accesul la disc stă în main, iar renderer-ul vede doar căi **relative** l
 
 ## Pași
 1. `npm i chokidar zod`. Configurează excluderea chokidar din externalizare și verifică build-ul.
-2. `workspace.schema.ts` și tipurile derivate. `formats/soarws.schema.json`.
+2. `workspace.schema.ts` și tipurile derivate. `formats/arws.schema.json`.
 3. `paths.ts`, cu teste pentru: `..`, absolut, symlink ieșit din root, căi Windows (`\`).
 4. `reader.ts` și `writer.ts`, cu teste pe director temporar: sortare, ignorarea fișierelor ascunse și străine, scriere atomică.
 5. `workspace.ts`:
-   - `create` refuză un folder care conține deja `workspace.soarws`;
+   - `create` refuză un folder care conține deja `workspace.arws`;
    - `open` acceptă fie fișierul, fie folderul;
-   - un `.soarws` invalid produce o eroare tipată `WorkspaceError { code: 'INVALID_FILE' | 'NOT_FOUND' | 'ALREADY_EXISTS' }`, serializată prin IPC.
+   - un `.arws` invalid produce o eroare tipată `WorkspaceError { code: 'INVALID_FILE' | 'NOT_FOUND' | 'ALREADY_EXISTS' }`, serializată prin IPC.
 6. **Convenția de erori IPC:** handler-ele returnează `Result<T> = { ok: true, value } | { ok: false, error: { code, message } }`, în loc să arunce.
    Se definește acum în `ipc.types.ts` și devine standard pentru toate canalele noi.
    `ipc-client.ts` desface rezultatul și aruncă `IpcError` tipat, ca React Query să-l trateze.
 7. `watcher.ts`: pornit la `open`, oprit la `close`/`quit`.
 8. `workspace.handler.ts`, plus evenimentul `workspace:tree-changed` în `IpcEventContract`.
-9. Aplicarea `settings.theme` din `.soarws` peste setarea aplicației, dacă nu e `inherit` (decizie din plan 05).
+9. Aplicarea `settings.theme` din `.arws` peste setarea aplicației, dacă nu e `inherit` (decizie din plan 05).
 10. `workspace.store`, `useWorkspace`, `WorkspaceLanding`.
 11. **Redeschidere automată:** la pornire, se redeschide ultimul workspace dacă mai există.
 12. Teste renderer: `WorkspaceLanding` apelează create/open, iar lista de recente e randată.

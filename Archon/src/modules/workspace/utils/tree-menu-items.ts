@@ -29,7 +29,7 @@ export function treeMenuItems(row: TreeRow, actions: TreeMenuActions): ContextMe
       : [
           {
             label: 'Open',
-            icon: row.entry.kind === 'soardiag' ? 'flow' : 'file',
+            icon: row.entry.kind === 'ardiag' ? 'flow' : 'file',
             onSelect: () => actions.open(row)
           }
         ]

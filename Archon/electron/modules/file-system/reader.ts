@@ -29,7 +29,7 @@ async function readFolder(absolute: string, relPath: string, name: string): Prom
       continue
     }
     const kind = dirent.isFile() ? fileKindFromPath(dirent.name) : null
-    if (!kind) continue // Anything that is not a .soardoc / .soardiag stays out of the tree.
+    if (!kind) continue // Anything that is not a .ardoc / .ardiag stays out of the tree.
     const file: FileEntry = {
       kind,
       name: dirent.name,

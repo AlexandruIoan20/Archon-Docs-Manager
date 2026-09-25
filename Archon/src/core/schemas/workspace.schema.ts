@@ -3,7 +3,7 @@ import { isoDate } from './common.schema'
 import { diagramTypeSchema } from './diagram.schema'
 
 export const WORKSPACE_FORMAT_VERSION = '1.0.0'
-export const WORKSPACE_FILE_NAME = 'workspace.soarws'
+export const WORKSPACE_FILE_NAME = 'workspace.arws'
 
 export const workspaceSettingsSchema = z.object({
   /** `inherit` follows the app preference; otherwise it overrides it for this workspace. */
@@ -11,7 +11,7 @@ export const workspaceSettingsSchema = z.object({
   defaultDiagramType: diagramTypeSchema.default('flowchart')
 })
 
-/** `.soarws`: the file that marks a folder as a workspace. */
+/** `.arws`: the file that marks a folder as a workspace. */
 export const workspaceFileSchema = z.object({
   version: z.string().min(1),
   /** Stable identity: the SQLite index is keyed by it, so moving the folder keeps the index. */

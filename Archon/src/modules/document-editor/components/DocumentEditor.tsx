@@ -54,7 +54,7 @@ function DocumentView({
   )
 }
 
-/** The `.soardoc` editor: path, title and TipTap body in a centred column. */
+/** The `.ardoc` editor: path, title and TipTap body in a centred column. */
 export function DocumentEditor({ tab }: EditorSlotProps): React.JSX.Element {
   const { data, error, isPending } = useDocumentFile(tab.filePath)
   const initial = useInitial(data)

@@ -35,8 +35,8 @@ describe('DiagramEditor', () => {
     mock = createSoarApiMock()
     mock.api.fs.readDiagram.mockResolvedValue(ok(PHISHING))
     window.soar = mock.api
-    const tabId = useEditorStore.getState().openFile('Playbooks/phishing.soardiag', 'soardiag')
-    tab = { tabId, filePath: 'Playbooks/phishing.soardiag', kind: 'soardiag' }
+    const tabId = useEditorStore.getState().openFile('Playbooks/phishing.ardiag', 'ardiag')
+    tab = { tabId, filePath: 'Playbooks/phishing.ardiag', kind: 'ardiag' }
     vi.spyOn(console, 'warn').mockImplementation(() => undefined)
   })
 
@@ -78,7 +78,7 @@ describe('DiagramEditor', () => {
       timeout: AUTOSAVE_DELAY_MS * 3
     })
     const [relPath, saved] = mock.api.fs.writeDiagram.mock.calls[0] ?? []
-    expect(relPath).toBe('Playbooks/phishing.soardiag')
+    expect(relPath).toBe('Playbooks/phishing.ardiag')
     expect(saved?.data.nodes[1]?.position).toEqual({ x: 50, y: 300 })
     expect(saved?.data.nodes[0]).not.toHaveProperty('selected')
     await waitFor(() => expect(isDirty(tab.tabId)).toBe(false))
@@ -109,8 +109,8 @@ describe('DiagramEditor', () => {
     act(() => first.getState().setSelection({ nodes: ['N1'], edges: [] }))
     unmount()
 
-    const otherId = useEditorStore.getState().openFile('other.soardiag', 'soardiag')
-    render(<DiagramEditor tab={{ ...tab, tabId: otherId, filePath: 'other.soardiag' }} />, {
+    const otherId = useEditorStore.getState().openFile('other.ardiag', 'ardiag')
+    render(<DiagramEditor tab={{ ...tab, tabId: otherId, filePath: 'other.ardiag' }} />, {
       wrapper: queryWrapper()
     })
     await waitFor(() => expect(getStore(otherId)).toBeDefined())

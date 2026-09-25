@@ -29,10 +29,10 @@ describe('documents and diagrams', () => {
     const first = await createDocument(root, 'Playbooks', undefined, T0)
     const second = await createDocument(root, 'Playbooks', undefined, T0)
     expect(first).toMatchObject({
-      relPath: 'Playbooks/untitled-1.soardoc',
-      name: 'untitled-1.soardoc'
+      relPath: 'Playbooks/untitled-1.ardoc',
+      name: 'untitled-1.ardoc'
     })
-    expect(second.relPath).toBe('Playbooks/untitled-2.soardoc')
+    expect(second.relPath).toBe('Playbooks/untitled-2.ardoc')
     expect(first.document.id).not.toBe(second.document.id)
 
     const onDisk = documentFileSchema.parse(json(first.relPath))
@@ -46,7 +46,7 @@ describe('documents and diagrams', () => {
 
   it('names a titled document after its title', async () => {
     const created = await createDocument(root, '', 'Incident Response Policy')
-    expect(created.relPath).toBe('incident-response-policy.soardoc')
+    expect(created.relPath).toBe('incident-response-policy.ardoc')
     expect(created.document.title).toBe('Incident Response Policy')
   })
 
@@ -91,18 +91,18 @@ describe('documents and diagrams', () => {
   })
 
   it('reports invalid files with the zod details', async () => {
-    writeFileSync(join(root, 'broken.soardoc'), JSON.stringify({ version: '1.0.0', title: 3 }))
-    await expect(readDocument(root, 'broken.soardoc')).rejects.toMatchObject({
+    writeFileSync(join(root, 'broken.ardoc'), JSON.stringify({ version: '1.0.0', title: 3 }))
+    await expect(readDocument(root, 'broken.ardoc')).rejects.toMatchObject({
       code: 'INVALID_FILE',
       details: expect.arrayContaining([expect.objectContaining({ path: 'title' })])
     })
   })
 
   it('refuses to treat other files as documents or diagrams', async () => {
-    await expect(readDocument(root, 'workspace.soarws')).rejects.toMatchObject({
+    await expect(readDocument(root, 'workspace.arws')).rejects.toMatchObject({
       code: 'INVALID_ARGUMENT'
     })
-    await expect(readDiagram(root, 'Playbooks/x.soardoc')).rejects.toMatchObject({
+    await expect(readDiagram(root, 'Playbooks/x.ardoc')).rejects.toMatchObject({
       code: 'INVALID_ARGUMENT'
     })
   })
@@ -112,15 +112,15 @@ describe('documents and diagrams', () => {
       type: 'flowchart',
       nodes: [{ id: 'N1', type: 'trigger', position: { x: 40, y: 250 }, data: { label: 'Alert' } }]
     })
-    expect(created.relPath).toBe('Playbooks/flowchart-1.soardiag')
+    expect(created.relPath).toBe('Playbooks/flowchart-1.ardiag')
     const onDisk = diagramFileSchema.parse(json(created.relPath))
     expect(onDisk).toMatchObject({ type: 'flowchart', engine: 'react-flow', title: 'flowchart-1' })
     expect(onDisk.data.nodes[0]?.data).toMatchObject({ label: 'Alert', retryOnFail: false })
 
     const next = await createDiagram(root, 'Playbooks', { type: 'flowchart' })
-    expect(next.relPath).toBe('Playbooks/flowchart-2.soardiag')
+    expect(next.relPath).toBe('Playbooks/flowchart-2.ardiag')
     const uml = await createDiagram(root, '', { type: 'sequence', title: 'Login flow' })
-    expect(uml.relPath).toBe('login-flow.soardiag')
+    expect(uml.relPath).toBe('login-flow.ardiag')
   })
 
   it('creates a mermaid diagram with its source and no graph', async () => {

@@ -4,9 +4,9 @@ import { DocumentInspector } from './components/DocumentInspector'
 import { DocumentStatusItems } from './components/DocumentStatusItems'
 import { Toolbar } from './components/Toolbar'
 
-/** The `.soardoc` editor, registered in `App.tsx`. */
+/** The `.ardoc` editor, registered in `App.tsx`. */
 export const documentEditorContribution: EditorContribution = {
-  kind: 'soardoc',
+  kind: 'ardoc',
   Editor: DocumentEditor,
   Toolbar,
   Inspector: DocumentInspector,

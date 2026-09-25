@@ -5,9 +5,9 @@ import { PropertiesPanel } from './components/PropertiesPanel'
 import { DiagramToolbar } from './components/toolbar/DiagramToolbar'
 import { ExportMenu } from './components/toolbar/ExportMenu'
 
-/** The `.soardiag` editor, registered in `App.tsx`. */
+/** The `.ardiag` editor, registered in `App.tsx`. */
 export const diagramEditorContribution: EditorContribution = {
-  kind: 'soardiag',
+  kind: 'ardiag',
   Editor: DiagramEditor,
   Toolbar: DiagramToolbar,
   TitleActions: ExportMenu,

@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 
-export type FileKind = 'soardoc' | 'soardiag'
+export type FileKind = 'ardoc' | 'ardiag'
 
 export interface EditorTabRef {
   tabId: string

@@ -27,7 +27,7 @@ describe('DocumentEditor', () => {
   it('shows path, title, body and word count', async () => {
     renderDocument(tab)
     await documentReady(tab)
-    expect(screen.getByText('Runbooks/ir-policy.soardoc')).toBeInTheDocument()
+    expect(screen.getByText('Runbooks/ir-policy.ardoc')).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Document title' })).toHaveValue('IR policy')
     expect(screen.getByText('3 words')).toBeInTheDocument()
   })
@@ -45,7 +45,7 @@ describe('DocumentEditor', () => {
       timeout: AUTOSAVE_DELAY_MS * 3
     })
     const [relPath, saved] = mock.api.fs.writeDocument.mock.calls[0] ?? []
-    expect(relPath).toBe('Runbooks/ir-policy.soardoc')
+    expect(relPath).toBe('Runbooks/ir-policy.ardoc')
     expect(saved?.content).toEqual({ type: 'doc', content: [paragraph('Now Isolate the host')] })
     await waitFor(() => expect(isDirty(tab.tabId)).toBe(false))
   })
@@ -66,7 +66,7 @@ describe('DocumentEditor', () => {
     })
     fireEvent.keyDown(window, { code: 'KeyS', ctrlKey: true })
     await waitFor(() => expect(mock.api.fs.writeDocument).toHaveBeenCalledOnce())
-    expect(mock.api.fs.writeDocument.mock.calls[0]?.[0]).toBe('Runbooks/ir-policy.soardoc')
+    expect(mock.api.fs.writeDocument.mock.calls[0]?.[0]).toBe('Runbooks/ir-policy.ardoc')
     expect(mock.api.fs.writeDocument.mock.calls[0]?.[1]).toMatchObject({
       title: 'Incident response policy',
       tags: ['ir']

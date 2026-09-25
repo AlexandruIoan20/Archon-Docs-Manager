@@ -28,7 +28,7 @@ export const tiptapDocSchema = z.preprocess(
   })
 )
 
-/** `.soardoc`: a rich-text document. */
+/** `.ardoc`: a rich-text document. */
 export const documentFileSchema = z.object({
   version: z.string().min(1),
   id: z.string().min(1),

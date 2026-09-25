@@ -107,7 +107,7 @@ function normalizeRecent(raw: unknown): string[] {
   return stringList(raw).slice(0, RECENT_WORKSPACES_LIMIT)
 }
 
-const TAB_KINDS = new Set(['soardoc', 'soardiag'])
+const TAB_KINDS = new Set(['ardoc', 'ardiag'])
 
 function normalizeTabSession(raw: unknown): TabSession {
   const src = isObject(raw) ? raw : {}

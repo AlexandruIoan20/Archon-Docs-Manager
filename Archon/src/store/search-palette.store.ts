@@ -3,7 +3,7 @@ import type { FileKind, SearchResult } from '@/core/types'
 import { useUiStore } from './ui.store'
 
 export interface SearchPaletteRequest {
-  /** Only results of this kind (e.g. „Link diagram”: `.soardiag` files). */
+  /** Only results of this kind (e.g. „Link diagram”: `.ardiag` files). */
   kind?: FileKind
   placeholder?: string
   /** Replaces opening the result. */

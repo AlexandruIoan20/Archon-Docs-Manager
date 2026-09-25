@@ -45,7 +45,7 @@ Shell-ul este responsive: panourile se redimensionează, iar când lipsește spa
 ## Fișiere
 - `src/core/types/editor.types.ts`:
   ```ts
-  export type FileKind = 'soardoc' | 'soardiag'
+  export type FileKind = 'ardoc' | 'ardiag'
   export interface EditorTabRef { tabId: string; filePath: string; kind: FileKind }
   export interface EditorSlotProps { tab: EditorTabRef }
   export interface EditorContribution {

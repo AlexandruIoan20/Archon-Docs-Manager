@@ -76,7 +76,7 @@ Tot aici se persistă layout-ul (lățimile și vizibilitatea panourilor, poziț
 10. **Accent:** deocamdată fără UI dedicat.
     Se poate schimba din meniul „⋯” al workspace-ului (plan 08) cu cele 4 swatch-uri din `ACCENT_OPTIONS`.
     În acest plan, testează doar prin `settings:update`.
-11. **Precedența `.soarws` → `settings.theme`:** câmpul din workspace este o suprascriere opțională (`'inherit'` implicit).
+11. **Precedența `.arws` → `settings.theme`:** câmpul din workspace este o suprascriere opțională (`'inherit'` implicit).
     Se documentează aici și se implementează în plan 07.
 12. Teste:
     - `useTheme` setează `data-theme` corect pentru `dark`, `light` și `system`, cu mock pe `nativeTheme`;

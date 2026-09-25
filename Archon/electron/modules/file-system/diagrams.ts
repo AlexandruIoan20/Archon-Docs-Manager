@@ -25,7 +25,7 @@ export interface CreatedDiagram extends EntryRefValue {
   diagram: SoarDiagram
 }
 
-/** `<type>-N.soardiag`, or a file named after `title`, with optional starter content. */
+/** `<type>-N.ardiag`, or a file named after `title`, with optional starter content. */
 export async function createDiagram(
   root: string,
   folderRel: string,

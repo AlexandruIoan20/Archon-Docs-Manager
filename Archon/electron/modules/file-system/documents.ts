@@ -24,7 +24,7 @@ export interface CreatedDocument extends EntryRefValue {
   document: SoarDocument
 }
 
-/** `untitled-N.soardoc`, or a file named after `title`, in an existing folder. */
+/** `untitled-N.ardoc`, or a file named after `title`, in an existing folder. */
 export async function createDocument(
   root: string,
   folderRel: string,

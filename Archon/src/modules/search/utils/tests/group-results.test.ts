@@ -6,8 +6,8 @@ import { snippetParts } from '../snippet-parts'
 
 const result = (over: Partial<SearchResult>): SearchResult => ({
   fileId: 'f1',
-  relPath: 'Playbooks/phishing-triage.soardiag',
-  kind: 'soardiag',
+  relPath: 'Playbooks/phishing-triage.ardiag',
+  kind: 'ardiag',
   fileTitle: 'Phishing triage',
   nodeId: null,
   nodeLabel: null,
@@ -21,8 +21,8 @@ describe('groupResults', () => {
     const groups = groupResults(
       [
         result({ nodeId: 'N2', nodeLabel: 'Contain Host' }),
-        result({ fileId: 'f2', fileTitle: 'Runbook', kind: 'soardoc' }),
-        result({ fileId: 'f3', fileTitle: 'Phishing notes', kind: 'soardoc' })
+        result({ fileId: 'f2', fileTitle: 'Runbook', kind: 'ardoc' }),
+        result({ fileId: 'f3', fileTitle: 'Phishing notes', kind: 'ardoc' })
       ],
       'phish'
     )

@@ -2,7 +2,7 @@ import Database from 'better-sqlite3'
 import { mkdirSync } from 'fs'
 import { dirname, join } from 'path'
 import { APP_MIGRATIONS } from './migrations/app/001_projects'
-import { WORKSPACE_MIGRATIONS } from './migrations/001_initial'
+import { WORKSPACE_MIGRATIONS } from './migrations/workspace'
 import { runMigrations, type Migration } from './migrations'
 
 export type SqliteDatabase = Database.Database

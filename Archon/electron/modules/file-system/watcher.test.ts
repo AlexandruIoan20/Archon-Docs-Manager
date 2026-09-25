@@ -26,17 +26,17 @@ describe('watcher', () => {
   })
 
   it('reports files created and deleted outside the app', async () => {
-    writeFileSync(join(root, 'outside.soardoc'), '{}')
+    writeFileSync(join(root, 'outside.ardoc'), '{}')
     await vi.waitFor(() => expect(onTreeChanged).toHaveBeenCalledOnce(), WAIT)
-    expect(events).toContainEqual({ type: 'add', relPath: 'outside.soardoc', own: false })
+    expect(events).toContainEqual({ type: 'add', relPath: 'outside.ardoc', own: false })
 
-    unlinkSync(join(root, 'outside.soardoc'))
+    unlinkSync(join(root, 'outside.ardoc'))
     await vi.waitFor(() => expect(onTreeChanged).toHaveBeenCalledTimes(2), WAIT)
-    expect(events).toContainEqual({ type: 'unlink', relPath: 'outside.soardoc', own: false })
+    expect(events).toContainEqual({ type: 'unlink', relPath: 'outside.ardoc', own: false })
   })
 
   it('debounces bursts into one notification', async () => {
-    for (let i = 0; i < 5; i++) writeFileSync(join(root, `burst-${i}.soardiag`), '{}')
+    for (let i = 0; i < 5; i++) writeFileSync(join(root, `burst-${i}.ardiag`), '{}')
     await vi.waitFor(() => expect(events.filter((e) => e.type === 'add')).toHaveLength(5), WAIT)
     await vi.waitFor(() => expect(onTreeChanged).toHaveBeenCalled(), WAIT)
     expect(onTreeChanged).toHaveBeenCalledOnce()
@@ -53,17 +53,17 @@ describe('watcher', () => {
   it('ignores hidden and foreign files', async () => {
     writeFileSync(join(root, 'notes.md'), 'x')
     mkdirSync(join(root, '.git'))
-    writeFileSync(join(root, '.git', 'x.soardoc'), '{}')
-    writeFileSync(join(root, 'marker.soardoc'), '{}')
+    writeFileSync(join(root, '.git', 'x.ardoc'), '{}')
+    writeFileSync(join(root, 'marker.ardoc'), '{}')
 
     await vi.waitFor(() => expect(onTreeChanged).toHaveBeenCalled(), WAIT)
-    expect(events.map((event) => event.relPath)).toEqual(['marker.soardoc'])
+    expect(events.map((event) => event.relPath)).toEqual(['marker.ardoc'])
   })
 
   it('flags the app’s own writes and does not refresh the tree for them', async () => {
-    await writeJsonAtomic(join(root, 'own.soardoc'), { title: 'x' })
+    await writeJsonAtomic(join(root, 'own.ardoc'), { title: 'x' })
     await vi.waitFor(
-      () => expect(events).toContainEqual({ type: 'add', relPath: 'own.soardoc', own: true }),
+      () => expect(events).toContainEqual({ type: 'add', relPath: 'own.ardoc', own: true }),
       WAIT
     )
     await new Promise((resolve) => setTimeout(resolve, 300))

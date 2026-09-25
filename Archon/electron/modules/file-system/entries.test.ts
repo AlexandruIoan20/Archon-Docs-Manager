@@ -20,9 +20,9 @@ describe('entries', () => {
     root = realpathSync(mkdtempSync(join(tmpdir(), 'soar-entries-')))
     mkdirSync(join(root, 'Playbooks', 'Phishing'), { recursive: true })
     mkdirSync(join(root, 'Runbooks'))
-    writeFileSync(join(root, 'Playbooks', 'triage.soardiag'), '{}')
-    writeFileSync(join(root, 'policy.soardoc'), '{}')
-    writeFileSync(join(root, 'workspace.soarws'), '{}')
+    writeFileSync(join(root, 'Playbooks', 'triage.ardiag'), '{}')
+    writeFileSync(join(root, 'policy.ardoc'), '{}')
+    writeFileSync(join(root, 'workspace.arws'), '{}')
     writeFileSync(join(root, 'notes.md'), '')
   })
 
@@ -50,12 +50,12 @@ describe('entries', () => {
 
   describe('renameEntry', () => {
     it('keeps the extension of files', async () => {
-      expect(await renameEntry(root, 'policy.soardoc', 'Incident Policy')).toEqual({
-        relPath: 'Incident Policy.soardoc',
-        name: 'Incident Policy.soardoc'
+      expect(await renameEntry(root, 'policy.ardoc', 'Incident Policy')).toEqual({
+        relPath: 'Incident Policy.ardoc',
+        name: 'Incident Policy.ardoc'
       })
-      const typedExt = await renameEntry(root, 'Playbooks/triage.soardiag', 'flow.soardiag')
-      expect(typedExt.relPath).toBe('Playbooks/flow.soardiag')
+      const typedExt = await renameEntry(root, 'Playbooks/triage.ardiag', 'flow.ardiag')
+      expect(typedExt.relPath).toBe('Playbooks/flow.ardiag')
     })
 
     it('renames folders', async () => {
@@ -70,28 +70,28 @@ describe('entries', () => {
     })
 
     it('refuses invalid names without touching the disk', async () => {
-      await expect(renameEntry(root, 'policy.soardoc', 'bad/name')).rejects.toMatchObject({
+      await expect(renameEntry(root, 'policy.ardoc', 'bad/name')).rejects.toMatchObject({
         code: 'INVALID_NAME'
       })
-      await expect(renameEntry(root, 'policy.soardoc', '  ')).rejects.toMatchObject({
+      await expect(renameEntry(root, 'policy.ardoc', '  ')).rejects.toMatchObject({
         code: 'INVALID_NAME'
       })
-      expect(existsSync(join(root, 'policy.soardoc'))).toBe(true)
+      expect(existsSync(join(root, 'policy.ardoc'))).toBe(true)
     })
 
     it('refuses to overwrite and to touch non-workspace entries', async () => {
-      writeFileSync(join(root, 'other.soardoc'), '{}')
-      await expect(renameEntry(root, 'policy.soardoc', 'other')).rejects.toMatchObject({
+      writeFileSync(join(root, 'other.ardoc'), '{}')
+      await expect(renameEntry(root, 'policy.ardoc', 'other')).rejects.toMatchObject({
         code: 'ALREADY_EXISTS'
       })
-      await expect(renameEntry(root, 'workspace.soarws', 'x')).rejects.toMatchObject({
+      await expect(renameEntry(root, 'workspace.arws', 'x')).rejects.toMatchObject({
         code: 'INVALID_ARGUMENT'
       })
       await expect(renameEntry(root, 'notes.md', 'x')).rejects.toMatchObject({
         code: 'INVALID_ARGUMENT'
       })
       await expect(renameEntry(root, '', 'x')).rejects.toMatchObject({ code: 'INVALID_ARGUMENT' })
-      await expect(renameEntry(root, 'missing.soardoc', 'x')).rejects.toMatchObject({
+      await expect(renameEntry(root, 'missing.ardoc', 'x')).rejects.toMatchObject({
         code: 'NOT_FOUND'
       })
     })
@@ -99,8 +99,8 @@ describe('entries', () => {
 
   describe('moveEntry', () => {
     it('moves files and folders', async () => {
-      expect((await moveEntry(root, 'policy.soardoc', 'Runbooks')).relPath).toBe(
-        'Runbooks/policy.soardoc'
+      expect((await moveEntry(root, 'policy.ardoc', 'Runbooks')).relPath).toBe(
+        'Runbooks/policy.ardoc'
       )
       expect((await moveEntry(root, 'Playbooks/Phishing', '')).relPath).toBe('Phishing')
     })
@@ -115,18 +115,18 @@ describe('entries', () => {
     })
 
     it('refuses name clashes and missing targets', async () => {
-      writeFileSync(join(root, 'Runbooks', 'policy.soardoc'), '{}')
-      await expect(moveEntry(root, 'policy.soardoc', 'Runbooks')).rejects.toMatchObject({
+      writeFileSync(join(root, 'Runbooks', 'policy.ardoc'), '{}')
+      await expect(moveEntry(root, 'policy.ardoc', 'Runbooks')).rejects.toMatchObject({
         code: 'ALREADY_EXISTS'
       })
-      await expect(moveEntry(root, 'policy.soardoc', 'Nowhere')).rejects.toMatchObject({
+      await expect(moveEntry(root, 'policy.ardoc', 'Nowhere')).rejects.toMatchObject({
         code: 'NOT_FOUND'
       })
     })
 
     it('does nothing when the entry is already there', async () => {
-      expect((await moveEntry(root, 'Playbooks/triage.soardiag', 'Playbooks')).relPath).toBe(
-        'Playbooks/triage.soardiag'
+      expect((await moveEntry(root, 'Playbooks/triage.ardiag', 'Playbooks')).relPath).toBe(
+        'Playbooks/triage.ardiag'
       )
     })
   })
@@ -141,7 +141,7 @@ describe('entries', () => {
     it('never trashes the root or the workspace file', async () => {
       const trash = vi.fn(async () => undefined)
       await expect(deleteEntry(root, '', trash)).rejects.toMatchObject({ code: 'INVALID_ARGUMENT' })
-      await expect(deleteEntry(root, 'workspace.soarws', trash)).rejects.toMatchObject({
+      await expect(deleteEntry(root, 'workspace.arws', trash)).rejects.toMatchObject({
         code: 'INVALID_ARGUMENT'
       })
       await expect(deleteEntry(root, '../x', trash)).rejects.toMatchObject({

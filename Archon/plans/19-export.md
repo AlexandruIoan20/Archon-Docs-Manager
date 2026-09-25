@@ -32,7 +32,7 @@ Fișierul se salvează prin dialogul nativ al sistemului.
 - **Scriere:** renderer-ul trimite `Uint8Array` sau string prin IPC `export:save`.
   Main-ul afișează `dialog.showSaveDialog`, cu nume implicit `<title>.<ext>` și folderul ultimului export (reținut în setări), apoi scrie fișierul.
   Renderer-ul nu alege niciodată calea direct.
-- **`exportedAt`** din `.soardiag` se actualizează după un export reușit.
+- **`exportedAt`** din `.ardiag` se actualizează după un export reușit.
 
 ## Fișiere
 - `src/core/types/ipc.types.ts` (modificat): `export:save` (`{ defaultName, extension, data }` → `Result<{ path } | { canceled: true }>`) și `export:pdf-from-svg`.

@@ -30,7 +30,7 @@ describe('flattenTree', () => {
       '0:Playbooks',
       '0:Runbooks',
       '0:Empty',
-      '0:incident-policy.soardoc'
+      '0:incident-policy.ardoc'
     ])
   })
 
@@ -40,12 +40,12 @@ describe('flattenTree', () => {
       '0:Architecture',
       '0:Playbooks',
       '1:Phishing',
-      '2:phishing-triage.soardiag',
-      '2:triage-notes.soardoc',
+      '2:phishing-triage.ardiag',
+      '2:triage-notes.ardoc',
       '1:Ransomware',
       '0:Runbooks',
       '0:Empty',
-      '0:incident-policy.soardoc'
+      '0:incident-policy.ardoc'
     ])
   })
 
@@ -81,8 +81,8 @@ describe('flattenTree', () => {
     expect(shape(flat({ query: 'TRIAGE' }))).toEqual([
       '0:Playbooks',
       '1:Phishing',
-      '2:phishing-triage.soardiag',
-      '2:triage-notes.soardoc'
+      '2:phishing-triage.ardiag',
+      '2:triage-notes.ardoc'
     ])
   })
 
@@ -90,7 +90,7 @@ describe('flattenTree', () => {
     expect(shape(flat({ query: 'triage', sideTab: 'diagrams' }))).toEqual([
       '0:Playbooks',
       '1:Phishing',
-      '2:phishing-triage.soardiag'
+      '2:phishing-triage.ardiag'
     ])
   })
 
@@ -105,11 +105,11 @@ describe('flattenTree', () => {
   it('marks the active file and the target folder', () => {
     const rows = flat({
       expanded: { Runbooks: true },
-      activePath: 'Runbooks/on-call.soardoc',
+      activePath: 'Runbooks/on-call.ardoc',
       targetFolder: 'Runbooks'
     })
     const runbooks = rows.find((row) => row.entry.name === 'Runbooks')
-    const onCall = rows.find((row) => row.entry.name === 'on-call.soardoc')
+    const onCall = rows.find((row) => row.entry.name === 'on-call.ardoc')
     expect(runbooks).toMatchObject({ type: 'folder', isTarget: true, expanded: true })
     expect(onCall).toMatchObject({ type: 'file', isActive: true, depth: 1 })
     expect(rows.filter((row) => row.type === 'folder' && row.isTarget)).toHaveLength(1)
@@ -118,7 +118,7 @@ describe('flattenTree', () => {
 
 describe('tree helpers', () => {
   it('matches file names case-insensitively, without the extension', () => {
-    const visible = fileFilter('files', 'SOARDOC')
+    const visible = fileFilter('files', 'ARDOC')
     expect(countFiles(SAMPLE_TREE, visible)).toBe(0)
     expect(countFiles(SAMPLE_TREE, fileFilter('files', ''))).toBe(7)
   })

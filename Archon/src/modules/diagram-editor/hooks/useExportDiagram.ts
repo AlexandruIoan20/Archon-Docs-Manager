@@ -82,7 +82,7 @@ export function useExportDiagram({ tabId, filePath }: EditorTabRef): ExportDiagr
     const state = getStore(tabId)?.getState()
     if (!state || busy) return
     const { notify } = useUiStore.getState()
-    const defaultName = state.meta.title || titleFromPath(filePath, 'soardiag')
+    const defaultName = state.meta.title || titleFromPath(filePath, 'ardiag')
     setBusy(true)
     notify(`Exporting ${defaultName}${format.extension} as ${format.label}`)
     try {
