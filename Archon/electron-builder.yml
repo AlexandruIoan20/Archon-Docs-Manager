@@ -35,6 +35,7 @@ linux:
     - deb
   maintainer: AlexandruIoan20
   category: Development
+  syncDesktopName: true
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false

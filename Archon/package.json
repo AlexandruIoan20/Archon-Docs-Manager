@@ -4,6 +4,8 @@
   "description": "Desktop studio for technical documentation of SOAR platforms",
   "main": "./out/main/index.js",
   "author": "AlexandruIoan20",
+  "homepage": "https://github.com/AlexandruIoan20/Archon-Docs-Manager",
+  "desktopName": "archon-docs-studio.desktop",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
