@@ -1,9 +1,12 @@
 import type { EdgeChange, NodeChange, Viewport, XYPosition } from '@xyflow/react'
 import type { DiagramNodeType, ArchonDiagram } from '@/core/types'
 import type { DiagramTool, PlaceableKind } from '../constants/tools'
+import type { AlignMode, DistributeAxis } from '../utils/align'
+import type { LayoutDirection } from '../utils/auto-layout'
 import type { EdgeHandles } from '../utils/edge-handles'
 import type { DiagramGraph, FlowEdge, FlowNodeData, FlowNode } from '../utils/graph-mapping'
 import type { StyleDefaults } from '../utils/node-factory'
+import type { Guides } from '../utils/smart-guides'
 import type { HistoryState } from './history'
 
 export interface DiagramSelection {
@@ -60,6 +63,21 @@ export interface GraphEdits {
   redo: () => boolean
 }
 
+/** Moving nodes into line: align and distribute the selection, arrange the graph. */
+export interface LayoutEdits {
+  /** Bumped when the canvas should fit the view to the nodes (after arranging). */
+  fitRequest: number
+  /** Lines the selected nodes up; returns how many moved. */
+  alignSelection: (mode: AlignMode) => number
+  /** Spaces three or more selected nodes evenly; returns how many moved. */
+  distributeSelection: (axis: DistributeAxis) => number
+  /**
+   * Lays out the selected nodes (two or more) or the whole diagram in layers,
+   * and turns their edges to follow. `false` when there was nothing to arrange.
+   */
+  arrange: (direction: LayoutDirection) => boolean
+}
+
 /** The text editor of an `engine: 'mermaid'` diagram. */
 export interface MermaidState {
   /** Share of the source pane, in percent (20–80). Kept for the tab's session. */
@@ -72,7 +90,8 @@ export interface MermaidState {
   setPreviewZoom: (zoom: number) => void
 }
 
-export interface DiagramState extends DiagramGraph, ToolState, GraphEdits, MermaidState {
+export interface DiagramState
+  extends DiagramGraph, ToolState, GraphEdits, LayoutEdits, MermaidState {
   selection: DiagramSelection
   /** Bumped by every change that belongs in the file; autosave follows it. */
   revision: number
@@ -80,6 +99,8 @@ export interface DiagramState extends DiagramGraph, ToolState, GraphEdits, Merma
   base: ArchonDiagram | null
   /** A drag or resize is under way: its undo step was already recorded. */
   gestureOpen: boolean
+  /** The smart guides of the drag under way; never saved. */
+  guides: Guides | null
 
   onNodesChange: (changes: NodeChange<FlowNode>[]) => void
   onEdgesChange: (changes: EdgeChange<FlowEdge>[]) => void

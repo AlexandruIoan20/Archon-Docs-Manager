@@ -1,21 +1,46 @@
 import type { DiagramNodeType } from '@/core/types'
 import type { ShortcutId } from '@/core/constants/shortcuts'
 import type { ContextMenuEntry } from '@/shared/components/ui'
+import { ALIGN_COMMANDS, ARRANGE_COMMANDS, type LayoutCommand } from '../constants/layout-commands'
 import { NODE_KINDS } from '../constants/node-kinds'
 import { PLACEABLE_KINDS } from '../constants/tools'
+import type { AlignMode } from './align'
+import type { LayoutDirection } from './auto-layout'
 import type { FlowNode } from './graph-mapping'
 import { isFreeForm } from './node-factory'
+
+/** A submenu running one of `commands`. */
+function commandMenu<T>(
+  label: string,
+  icon: LayoutCommand<T>['icon'],
+  commands: readonly LayoutCommand<T>[],
+  run: (value: T) => void,
+  keys: (id: ShortcutId) => string
+): ContextMenuEntry {
+  return {
+    type: 'submenu',
+    label,
+    icon,
+    items: commands.map((command) => ({
+      label: command.label,
+      icon: command.icon,
+      suffix: command.shortcut ? keys(command.shortcut) : undefined,
+      onSelect: () => run(command.value)
+    }))
+  }
+}
 
 export interface CanvasMenuActions {
   addNode: (type: DiagramNodeType) => void
   paste: () => void
+  arrange: (direction: LayoutDirection) => void
   fitView: () => void
   resetZoom: () => void
   /** A registry shortcut as shown (`⌘V`, `Ctrl+V`). */
   keys: (id: ShortcutId) => string
 }
 
-/** Right click on the empty canvas: add a node there, paste, fit, reset zoom. */
+/** Right click on the empty canvas: add a node there, paste, arrange, fit, reset zoom. */
 export function canvasMenuItems(actions: CanvasMenuActions): ContextMenuEntry[] {
   return [
     ...PLACEABLE_KINDS.map((type): ContextMenuEntry => ({
@@ -26,6 +51,7 @@ export function canvasMenuItems(actions: CanvasMenuActions): ContextMenuEntry[] 
     { type: 'separator' },
     { label: 'Paste', suffix: actions.keys('diagram.paste'), onSelect: actions.paste },
     { type: 'separator' },
+    commandMenu('Arrange', 'hierarchy', ARRANGE_COMMANDS, actions.arrange, actions.keys),
     { label: 'Fit view', onSelect: actions.fitView },
     { label: 'Reset zoom', onSelect: actions.resetZoom }
   ]
@@ -36,6 +62,8 @@ export interface NodeMenuActions {
   copy: () => void
   copyId: (id: string) => void
   changeType: (id: string, type: DiagramNodeType) => void
+  /** Offered when two or more nodes are selected. */
+  align?: (mode: AlignMode) => void
   remove: () => void
   keys: (id: ShortcutId) => string
 }
@@ -43,7 +71,7 @@ export interface NodeMenuActions {
 /** Types a SOAR node can turn into. */
 const NODE_TYPES: readonly DiagramNodeType[] = [...PLACEABLE_KINDS, 'element']
 
-/** Right click on a node: duplicate, copy, copy id, change type ▸, delete. */
+/** Right click on a node: duplicate, copy, copy id, change type ▸, align ▸, delete. */
 export function nodeMenuItems(node: FlowNode, actions: NodeMenuActions): ContextMenuEntry[] {
   const changeType: ContextMenuEntry[] = isFreeForm(node.type)
     ? []
@@ -64,6 +92,9 @@ export function nodeMenuItems(node: FlowNode, actions: NodeMenuActions): Context
     { label: 'Copy', suffix: actions.keys('diagram.copy'), onSelect: actions.copy },
     { label: 'Copy id', suffix: node.id, onSelect: () => actions.copyId(node.id) },
     ...changeType,
+    ...(actions.align
+      ? [commandMenu('Align', 'alignLeft', ALIGN_COMMANDS, actions.align, actions.keys)]
+      : []),
     { type: 'separator' },
     {
       label: 'Delete',

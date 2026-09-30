@@ -65,3 +65,24 @@
   border-radius: 2px;
   background: var(--canvas);
 }
+
+/* Smart guides while dragging: in flow coordinates, a constant 1px on screen. */
+.ar-flow .ar-guides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ar-flow .ar-guides line,
+.ar-flow .ar-guides path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ar-flow .ar-guide {
+  stroke-dasharray: 4 3;
+}

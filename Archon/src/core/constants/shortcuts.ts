@@ -124,6 +124,30 @@ export const SHORTCUTS = [
   { id: 'diagram.paste', keys: ['mod+v'], scope: 'diagram', description: 'Paste nodes' },
   { id: 'diagram.duplicate', keys: ['mod+d'], scope: 'diagram', description: 'Duplicate nodes' },
   { id: 'diagram.cancel', keys: ['escape'], scope: 'diagram', description: 'Cancel a connection' },
+  { id: 'diagram.align.left', keys: ['alt+a'], scope: 'diagram', description: 'Align left' },
+  { id: 'diagram.align.center', keys: ['alt+h'], scope: 'diagram', description: 'Align centres' },
+  { id: 'diagram.align.right', keys: ['alt+d'], scope: 'diagram', description: 'Align right' },
+  { id: 'diagram.align.top', keys: ['alt+w'], scope: 'diagram', description: 'Align top' },
+  { id: 'diagram.align.middle', keys: ['alt+v'], scope: 'diagram', description: 'Align middles' },
+  { id: 'diagram.align.bottom', keys: ['alt+s'], scope: 'diagram', description: 'Align bottom' },
+  {
+    id: 'diagram.distribute.horizontal',
+    keys: ['alt+shift+h'],
+    scope: 'diagram',
+    description: 'Distribute horizontally'
+  },
+  {
+    id: 'diagram.distribute.vertical',
+    keys: ['alt+shift+v'],
+    scope: 'diagram',
+    description: 'Distribute vertically'
+  },
+  {
+    id: 'diagram.arrange',
+    keys: ['alt+shift+a'],
+    scope: 'diagram',
+    description: 'Arrange top to bottom'
+  },
   // Document editor (TipTap handles these)
   {
     id: 'document.bold',

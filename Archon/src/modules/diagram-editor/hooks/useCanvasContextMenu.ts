@@ -9,6 +9,7 @@ import { useDiagramStoreApi } from '../store/DiagramStoreProvider'
 import { canvasMenuItems, nodeMenuItems } from '../utils/canvas-menu-items'
 import type { FlowNode } from '../utils/graph-mapping'
 import { useDeleteSelection } from './useDeleteSelection'
+import { useLayoutCommands } from './useLayoutCommands'
 import { useNodeClipboard } from './useNodeClipboard'
 
 export interface CanvasContextMenu {
@@ -25,6 +26,7 @@ export function useCanvasContextMenu(): CanvasContextMenu {
   const platform = usePlatform()
   const clipboard = useNodeClipboard(store)
   const remove = useDeleteSelection(store)
+  const layout = useLayoutCommands(store)
   const keys = (id: Parameters<typeof shortcutLabel>[1]): string => shortcutLabel(platform, id)
 
   const onPaneContextMenu = (event: ReactMouseEvent | MouseEvent): void => {
@@ -37,6 +39,7 @@ export function useCanvasContextMenu(): CanvasContextMenu {
           useUiStore.getState().notify('Node added')
         },
         paste: () => void clipboard.paste(at),
+        arrange: layout.arrange,
         fitView: () => void fitView({ padding: 0.12, duration: 200 }),
         resetZoom: () => {
           void zoomTo(1).then(() => store.getState().setViewport(getViewport(), true))
@@ -57,6 +60,8 @@ export function useCanvasContextMenu(): CanvasContextMenu {
         copy: () => void clipboard.copy(),
         copyId: (id) => void copyText(id, 'Node id copied'),
         changeType: (id, type) => store.getState().changeNodeType(id, type),
+        align:
+          store.getState().nodes.filter((n) => n.selected).length > 1 ? layout.align : undefined,
         remove,
         keys
       }),

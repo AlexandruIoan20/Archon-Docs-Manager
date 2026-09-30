@@ -25,6 +25,7 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^3.1.1",
     "@electron-toolkit/utils": "^4.0.0",
     "better-sqlite3": "^13.0.3",
     "chokidar": "^5.0.0",

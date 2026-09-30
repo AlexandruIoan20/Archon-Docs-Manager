@@ -5,6 +5,7 @@ import { DiagramStoreProvider } from '../../store/DiagramStoreProvider'
 import { selectIsMermaid } from '../../store/diagram.store'
 import { useDiagramStoreFor, useRegisteredStore } from '../../store/store-registry'
 import { NodePalette } from '../NodePalette'
+import { ArrangeMenu } from './ArrangeMenu'
 import { HistoryButtons } from './HistoryButtons'
 import { StyleControls } from './StyleControls'
 import { StylePopover } from './StylePopover'
@@ -17,13 +18,15 @@ function Tools(): React.JSX.Element {
       <Divider />
       {density === 'full' ? <StyleControls layout="inline" /> : <StylePopover />}
       <Divider />
+      <ArrangeMenu />
+      <Divider />
       <HistoryButtons />
     </div>
   )
 }
 
 /**
- * The diagram's title bar tools: palette │ style │ undo/redo. The title bar is
+ * The diagram's title bar tools: palette │ style │ arrange │ undo/redo. The title bar is
  * another slot of the shell, so the tab's store comes from the registry.
  * A Mermaid diagram has none: its text area keeps its own undo/redo.
  */

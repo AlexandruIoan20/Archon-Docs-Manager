@@ -3,7 +3,9 @@ import { createStore, type StoreApi } from 'zustand/vanilla'
 import type { ArchonDiagram } from '@/core/types'
 import { withSelectedNodes, type DiagramGraph, type FlowNode } from '../utils/graph-mapping'
 import type { DiagramSelection, DiagramState } from './diagram-state'
+import { snapDrag } from './drag-snap'
 import { createGraphEdits, edit } from './graph-edits'
+import { createLayoutEdits } from './layout-edits'
 import { createMermaidSlice } from './mermaid.store'
 import { createToolSlice } from './tool.store'
 
@@ -45,23 +47,28 @@ export function createDiagramStore(
     revision: 0,
     base,
     gestureOpen: false,
+    guides: null,
     ...createToolSlice(set),
     ...createMermaidSlice(set),
     ...createGraphEdits(set, get),
+    ...createLayoutEdits(set, get),
 
     onNodesChange: (changes) =>
       set((state) => {
-        const nodes = applyNodeChanges(changes, state.nodes)
-        if (!changes.some(isNodeEdit)) return { nodes }
+        const snapped = snapDrag(changes, state.nodes, state.viewport.zoom)
+        const nodes = applyNodeChanges(snapped.changes, state.nodes)
+        // Guides follow position changes only; a selection change mid-drag keeps them.
+        const guides = changes.some((c) => c.type === 'position') ? snapped.guides : state.guides
+        if (!changes.some(isNodeEdit)) return { nodes, guides }
         const phase = gesturePhase(changes)
         // A drag or resize is one undo step, recorded before its first change.
         if (phase === 'move' && state.gestureOpen) {
-          return { nodes, revision: state.revision + 1 }
+          return { nodes, guides, revision: state.revision + 1 }
         }
         if (phase === 'end' && state.gestureOpen) {
-          return { nodes, gestureOpen: false, revision: state.revision + 1 }
+          return { nodes, guides, gestureOpen: false, revision: state.revision + 1 }
         }
-        return { ...edit(state, { nodes }), gestureOpen: phase === 'move' }
+        return { ...edit(state, { nodes }), guides, gestureOpen: phase === 'move' }
       }),
 
     onEdgesChange: (changes) =>
@@ -101,7 +108,8 @@ export function createDiagramStore(
         selection: EMPTY_SELECTION,
         connectFrom: null,
         history: { past: [], future: [] },
-        gestureOpen: false
+        gestureOpen: false,
+        guides: null
       }),
 
     setBase: (next) => set({ base: next })

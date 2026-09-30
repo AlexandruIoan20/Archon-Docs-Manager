@@ -1,6 +1,6 @@
 import { Position } from '@xyflow/react'
-import { NODE_KINDS } from '../constants/node-kinds'
 import type { FlowNode } from './graph-mapping'
+import { nodeRect } from './node-rect'
 
 /** Every node has a handle on each side; a handle's id is its side. */
 export const HANDLE_SIDES = [Position.Top, Position.Right, Position.Bottom, Position.Left] as const
@@ -15,10 +15,8 @@ export interface EdgeHandles {
 }
 
 function center(node: FlowNode): { x: number; y: number } {
-  const { size } = NODE_KINDS[node.type ?? 'element']
-  const width = node.measured?.width ?? node.width ?? size.width
-  const height = node.measured?.height ?? node.height ?? size.height
-  return { x: node.position.x + width / 2, y: node.position.y + height / 2 }
+  const { x, y, width, height } = nodeRect(node)
+  return { x: x + width / 2, y: y + height / 2 }
 }
 
 /**

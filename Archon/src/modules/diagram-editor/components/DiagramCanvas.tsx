@@ -17,9 +17,11 @@ import '../styles/tools.css'
 import { MAX_ZOOM, MIN_ZOOM } from '../utils/zoom'
 import { useCanvasInteractions } from '../hooks/useCanvasInteractions'
 import { useCanvasContextMenu } from '../hooks/useCanvasContextMenu'
+import { useFitRequest } from '../hooks/useFitRequest'
 import { useFocusRequest } from '../hooks/useFocusRequest'
 import { useNodeTypes } from '../hooks/useNodeTypes'
 import { DiagramStyleContext, type DiagramStyle } from './diagram-style'
+import { SmartGuides } from './canvas/SmartGuides'
 import { EdgeMarkers } from './edges/EdgeMarkers'
 
 const FIT_VIEW_OPTIONS = { padding: 0.12 }
@@ -45,6 +47,7 @@ export function DiagramCanvas({
   const interactions = useCanvasInteractions()
   const contextMenu = useCanvasContextMenu()
   useFocusRequest(tabId)
+  useFitRequest()
   const style = useMemo<DiagramStyle>(
     () => ({ nodeStyle, edgeStyle, connecting }),
     [nodeStyle, edgeStyle, connecting]
@@ -89,6 +92,7 @@ export function DiagramCanvas({
         {/* Inside the viewport, so an exported image keeps its arrowheads. */}
         <ViewportPortal>
           <EdgeMarkers />
+          <SmartGuides />
         </ViewportPortal>
         <Background variant={BackgroundVariant.Dots} gap={22} size={1.2} />
         {children}

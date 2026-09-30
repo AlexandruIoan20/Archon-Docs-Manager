@@ -2,6 +2,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useDiagramStore } from '../../store/DiagramStoreProvider'
 import { nodeColor } from '../../constants/node-kinds'
 import { isFreeForm } from '../../utils/node-factory'
+import { AlignField } from './AlignField'
 import { ColorField } from './ColorField'
 import { DeleteButton } from './DeleteButton'
 
@@ -12,7 +13,7 @@ export interface MultiSelectionPropertiesProps {
   edgeIds: string[]
 }
 
-/** Several elements: one color for all the nodes, and Delete. */
+/** Several elements: align the nodes, one color for all of them, and Delete. */
 export function MultiSelectionProperties({
   nodeIds,
   edgeIds
@@ -47,6 +48,7 @@ export function MultiSelectionProperties({
   return (
     <div className="flex flex-col gap-3.5">
       <p className="text-[12px] text-fg-muted">{summary}</p>
+      {nodeIds.length > 1 && <AlignField nodeCount={nodeIds.length} />}
       {colorable.length > 0 && (
         <ColorField
           value={sharedColor}

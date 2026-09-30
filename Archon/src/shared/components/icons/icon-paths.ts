@@ -138,6 +138,22 @@ export const ICON_PATHS = {
     { d: 'M4 6h16', strokeWidth: 1 },
     { d: 'M4 12h16', strokeWidth: 2 },
     { d: 'M4 18h16', strokeWidth: 3 }
+  ],
+  // Align and distribute: the line is where the boxes meet.
+  alignLeft: ['M4 2v20', roundedRect(8, 5, 12, 5, 1.5), roundedRect(8, 14, 7, 5, 1.5)],
+  alignCenter: ['M12 2v20', roundedRect(5, 5, 14, 5, 1.5), roundedRect(8, 14, 8, 5, 1.5)],
+  alignRight: ['M20 2v20', roundedRect(4, 5, 12, 5, 1.5), roundedRect(9, 14, 7, 5, 1.5)],
+  alignTop: ['M2 4h20', roundedRect(5, 8, 5, 12, 1.5), roundedRect(14, 8, 5, 7, 1.5)],
+  alignMiddle: ['M2 12h20', roundedRect(5, 5, 5, 14, 1.5), roundedRect(14, 8, 5, 8, 1.5)],
+  alignBottom: ['M2 20h20', roundedRect(5, 4, 5, 12, 1.5), roundedRect(14, 9, 5, 7, 1.5)],
+  distributeH: ['M3 3v18', 'M21 3v18', roundedRect(9, 6, 6, 12, 1.5)],
+  distributeV: ['M3 3h18', 'M3 21h18', roundedRect(6, 9, 12, 6, 1.5)],
+  hierarchy: [
+    roundedRect(9, 2, 6, 5, 1),
+    roundedRect(2, 17, 6, 5, 1),
+    roundedRect(16, 17, 6, 5, 1),
+    'M12 7v5',
+    'M5 17v-3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3'
   ]
 } as const satisfies Record<string, readonly IconPath[]>
 
