@@ -1,4 +1,5 @@
 import type { FlowEdge, FlowNode } from '../utils/graph-mapping'
+import { facingHandles } from '../utils/edge-handles'
 import { createEdge, createNode, isFreeForm } from '../utils/node-factory'
 import type { DiagramState, GetState, GraphEdits, GraphSnapshot, SetState } from './diagram-state'
 import { createHistory } from './history'
@@ -101,9 +102,12 @@ export function createGraphEdits(set: SetState, get: GetState): GraphEdits {
       )
     },
 
-    connect: (source, target) => {
+    connect: (source, target, handles) => {
       const state = get()
-      const edge = createEdge(source, target, state.edges)
+      const from = state.nodes.find((node) => node.id === source)
+      const to = state.nodes.find((node) => node.id === target)
+      const sides = handles ?? (from && to ? facingHandles(from, to) : undefined)
+      const edge = createEdge(source, target, state.edges, sides)
       if (!edge) return null
       set(edit(state, { edges: [...state.edges, edge] }))
       return edge.id

@@ -1,6 +1,7 @@
 import type { EdgeChange, NodeChange, Viewport, XYPosition } from '@xyflow/react'
 import type { DiagramNodeType, ArchonDiagram } from '@/core/types'
 import type { DiagramTool, PlaceableKind } from '../constants/tools'
+import type { EdgeHandles } from '../utils/edge-handles'
 import type { DiagramGraph, FlowEdge, FlowNodeData, FlowNode } from '../utils/graph-mapping'
 import type { StyleDefaults } from '../utils/node-factory'
 import type { HistoryState } from './history'
@@ -42,8 +43,11 @@ export interface GraphEdits {
   /** Deletes the selected nodes (with their edges) and edges. Returns what went. */
   deleteSelection: () => { nodes: number; edges: number }
   removeNodes: (ids: readonly string[]) => void
-  /** Adds a source → target edge; `null` for a loop or a duplicate. */
-  connect: (source: string, target: string) => string | null
+  /**
+   * Adds a source → target edge between `handles`, or the sides the nodes face
+   * each other with; `null` for a loop or a duplicate.
+   */
+  connect: (source: string, target: string, handles?: EdgeHandles) => string | null
   /** `commit: true` records an undo step first (the properties panel commits once per field edit). */
   updateNodeData: (id: string, patch: Partial<FlowNodeData>, options?: { commit?: boolean }) => void
   /** The same patch on several nodes, as one undo step. */

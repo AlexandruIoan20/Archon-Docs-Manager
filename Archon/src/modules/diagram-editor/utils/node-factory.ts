@@ -2,6 +2,7 @@ import type { XYPosition } from '@xyflow/react'
 import type { DiagramNodeType } from '@/core/types'
 import { diagramNodeDataSchema } from '@/core/schemas/diagram.schema'
 import { NODE_KINDS } from '../constants/node-kinds'
+import type { EdgeHandles } from './edge-handles'
 import type { FlowEdge, FlowNode } from './graph-mapping'
 
 export interface StyleDefaults {
@@ -64,7 +65,8 @@ export function createNode(
 export function createEdge(
   source: string,
   target: string,
-  existing: readonly FlowEdge[]
+  existing: readonly FlowEdge[],
+  handles?: EdgeHandles
 ): FlowEdge | null {
   if (source === target) return null
   if (existing.some((edge) => edge.source === source && edge.target === target)) return null
@@ -75,6 +77,7 @@ export function createEdge(
     ),
     source,
     target,
+    ...handles,
     type: 'soar'
   }
 }

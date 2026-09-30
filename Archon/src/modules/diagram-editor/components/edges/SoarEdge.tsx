@@ -18,13 +18,22 @@ function SoarEdgeComponent({
   sourceY,
   targetX,
   targetY,
+  sourcePosition,
+  targetPosition,
   label,
   selected,
   data
 }: EdgeProps): React.JSX.Element {
   const { edgeStyle } = useDiagramStyle()
   const hot = useIsHotEdge(source, target) || Boolean(selected)
-  const { d, labelX, labelY } = getSoarEdgePath(edgeStyle, { sourceX, sourceY, targetX, targetY })
+  const { d, labelX, labelY } = getSoarEdgePath(edgeStyle, {
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition
+  })
 
   return (
     <>

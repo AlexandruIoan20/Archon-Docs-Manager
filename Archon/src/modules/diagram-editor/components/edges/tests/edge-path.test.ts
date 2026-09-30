@@ -1,3 +1,4 @@
+import { Position } from '@xyflow/react'
 import { describe, expect, it } from 'vitest'
 import { curveOffset, getSoarEdgePath } from '../edge-path'
 
@@ -11,6 +12,17 @@ describe('getSoarEdgePath', () => {
       labelY: 100
     })
     expect(curveOffset(10)).toBe(40)
+  })
+
+  it('curves out of and into the sides it is given', () => {
+    const down = { sourceX: 100, sourceY: 50, targetX: 100, targetY: 250 }
+    expect(
+      getSoarEdgePath('curved', {
+        ...down,
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top
+      })
+    ).toEqual({ d: 'M100,50 C100,170 100,130 100,250', labelX: 100, labelY: 150 })
   })
 
   it('draws orthogonal steps with rounded corners', () => {

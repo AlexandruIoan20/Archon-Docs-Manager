@@ -57,8 +57,9 @@ export function useCanvasInteractions(): CanvasProps {
   }
 
   // Dragging from a handle, in the Select tool.
-  const onConnect = ({ source, target }: Connection): void => {
-    if (store.getState().connect(source, target)) notify('Edge created')
+  const onConnect = ({ source, target, sourceHandle, targetHandle }: Connection): void => {
+    const handles = sourceHandle && targetHandle ? { sourceHandle, targetHandle } : undefined
+    if (store.getState().connect(source, target, handles)) notify('Edge created')
   }
 
   return {

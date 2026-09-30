@@ -1,5 +1,6 @@
 import type { Edge, Node, Viewport } from '@xyflow/react'
 import type { DiagramEdge, DiagramNode, DiagramNodeType, ArchonDiagram } from '@/core/types'
+import { DEFAULT_SOURCE_HANDLE, DEFAULT_TARGET_HANDLE } from './edge-handles'
 
 export type FlowNodeData = DiagramNode['data']
 export type FlowNode = Node<FlowNodeData, DiagramNodeType>
@@ -43,6 +44,10 @@ export function fileToGraph(diagram: ArchonDiagram): DiagramGraph {
     edges: data.edges.map(({ label, ...edge }) => ({
       ...edge,
       type: typeof edge.type === 'string' ? edge.type : SOAR_EDGE_TYPE,
+      sourceHandle:
+        typeof edge.sourceHandle === 'string' ? edge.sourceHandle : DEFAULT_SOURCE_HANDLE,
+      targetHandle:
+        typeof edge.targetHandle === 'string' ? edge.targetHandle : DEFAULT_TARGET_HANDLE,
       ...(label === null ? {} : { label })
     })),
     viewport: { ...data.viewport }
@@ -58,6 +63,11 @@ export function graphToFile({ meta, nodes, edges, viewport }: DiagramGraph): Arc
       edges: edges.map((edge) => {
         const { label, ...rest } = without(edge, EDGE_RUNTIME_KEYS)
         if (rest.type === SOAR_EDGE_TYPE) delete rest.type
+        // Right → left is implied, so older files stay as they were.
+        if (rest.sourceHandle == null || rest.sourceHandle === DEFAULT_SOURCE_HANDLE)
+          delete rest.sourceHandle
+        if (rest.targetHandle == null || rest.targetHandle === DEFAULT_TARGET_HANDLE)
+          delete rest.targetHandle
         return { ...rest, label: typeof label === 'string' ? label : null } as DiagramEdge
       }),
       viewport: { x: viewport.x, y: viewport.y, zoom: viewport.zoom }

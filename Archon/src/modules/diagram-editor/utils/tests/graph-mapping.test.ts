@@ -15,6 +15,16 @@ describe('graph mapping', () => {
     expect(edges[1]).not.toHaveProperty('label')
   })
 
+  it('defaults edges to right → left and keeps other sides in the file', () => {
+    const graph = fileToGraph(PHISHING)
+    expect(graph.edges[0]).toMatchObject({ sourceHandle: 'right', targetHandle: 'left' })
+    graph.edges[0] = { ...graph.edges[0]!, sourceHandle: 'bottom', targetHandle: 'top' }
+    const file = graphToFile(graph)
+    expect(file.data.edges[0]).toMatchObject({ sourceHandle: 'bottom', targetHandle: 'top' })
+    expect(file.data.edges[1]).not.toHaveProperty('sourceHandle')
+    expect(file.data.edges[1]).not.toHaveProperty('targetHandle')
+  })
+
   it('leaves React Flow runtime state out of the file', () => {
     const graph = fileToGraph(PHISHING)
     const [first, ...rest] = graph.nodes

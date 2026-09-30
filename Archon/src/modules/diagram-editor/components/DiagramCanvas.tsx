@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import {
   Background,
   BackgroundVariant,
+  ConnectionMode,
   ReactFlow,
   ViewportPortal,
   type OnMove,
@@ -78,6 +79,8 @@ export function DiagramCanvas({
         maxZoom={MAX_ZOOM}
         // Deleting is ours (undo + toast), see `useDiagramShortcuts`.
         deleteKeyCode={null}
+        // Every handle is a source (`NodeHandles`), so edges may join any two sides.
+        connectionMode={ConnectionMode.Loose}
         {...interactions}
         onPaneContextMenu={contextMenu.onPaneContextMenu}
         onNodeContextMenu={contextMenu.onNodeContextMenu}

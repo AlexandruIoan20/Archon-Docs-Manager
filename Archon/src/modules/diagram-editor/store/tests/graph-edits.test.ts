@@ -53,6 +53,22 @@ describe('graph edits', () => {
     expect(ids(store.getState().edges)).toEqual(['E1', 'E2'])
   })
 
+  it('connects on the sides the nodes face, or on the handles given', () => {
+    const store = make()
+    const { position } = store.getState().nodes.find((n) => n.id === 'N2')!
+    store.getState().addNode('action', { x: position.x, y: position.y + 400 })
+    store.getState().connect('N2', 'N3')
+    expect(store.getState().edges.at(-1)).toMatchObject({
+      sourceHandle: 'bottom',
+      targetHandle: 'top'
+    })
+    store.getState().connect('N3', 'N1', { sourceHandle: 'left', targetHandle: 'bottom' })
+    expect(store.getState().edges.at(-1)).toMatchObject({
+      sourceHandle: 'left',
+      targetHandle: 'bottom'
+    })
+  })
+
   it('records a drag as one undo step', () => {
     const store = make()
     const move = (x: number, dragging: boolean): void =>
