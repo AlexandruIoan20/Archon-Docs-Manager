@@ -21,7 +21,20 @@ export const UML_DIAGRAM_TYPES = [
   'interaction'
 ] as const
 
-export const DIAGRAM_TYPES = ['flowchart', ...UML_DIAGRAM_TYPES] as const
+/** The C4 model's diagrams (c4model.com); its code level is a UML class diagram. */
+export const C4_DIAGRAM_TYPES = [
+  'c4-context',
+  'c4-container',
+  'c4-component',
+  'c4-landscape',
+  'c4-dynamic',
+  'c4-deployment'
+] as const
+
+/** The types the „New diagram” dialog offers. */
+export const CATALOG_DIAGRAM_TYPES = [...UML_DIAGRAM_TYPES, ...C4_DIAGRAM_TYPES] as const
+
+export const DIAGRAM_TYPES = ['flowchart', ...CATALOG_DIAGRAM_TYPES] as const
 
 export const DIAGRAM_NODE_TYPES = [
   'trigger',
@@ -31,7 +44,13 @@ export const DIAGRAM_NODE_TYPES = [
   'element',
   'shape-rect',
   'shape-ellipse',
-  'text'
+  'text',
+  'c4-person',
+  'c4-system',
+  'c4-container',
+  'c4-database',
+  'c4-component',
+  'c4-boundary'
 ] as const
 
 const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Expected a #RRGGBB color')
@@ -54,7 +73,9 @@ export const diagramNodeDataSchema = z.looseObject({
   stroke: hexColor.nullable().default(null),
   fill: hexColor.nullable().default(null),
   strokeWidth: z.number().positive().nullable().default(null),
-  fontSize: z.number().positive().nullable().default(null)
+  fontSize: z.number().positive().nullable().default(null),
+  /** C4: a person or system outside the one being described (drawn grey). */
+  external: z.boolean().default(false)
 })
 
 /** Same shape as a React Flow node (`id` / `type` / `position` / `data`). */

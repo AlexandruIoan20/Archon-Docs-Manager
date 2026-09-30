@@ -1,11 +1,12 @@
-import type { DiagramEdgeInput, DiagramNodeInput, UmlDiagramType } from '@/core/types'
+import type { DiagramEdgeInput, DiagramNodeInput, CatalogDiagramType } from '@/core/types'
 import { catalogEntry } from '../constants/diagram-catalog'
 import { STARTERS, type StarterNode } from '../constants/diagram-starters'
+import { isC4Diagram } from '../constants/tools'
 
 export const STARTER_ORIGIN = { x: 180, y: 260 } as const
 export const STARTER_STEP = { x: 300, y: 70 } as const
 
-function fallback(type: UmlDiagramType): readonly [StarterNode, StarterNode] {
+function fallback(type: CatalogDiagramType): readonly [StarterNode, StarterNode] {
   const { name, icon } = catalogEntry(type)
   return [
     { type: 'element', data: { label: `${name} A`, icon } },
@@ -13,8 +14,11 @@ function fallback(type: UmlDiagramType): readonly [StarterNode, StarterNode] {
   ]
 }
 
-/** The nodes N1, N2 of a new diagram, placed on a diagonal, with the edge N1 → N2. */
-export function buildStarterGraph(type: UmlDiagramType): {
+/**
+ * The nodes N1, N2 of a new diagram, placed on a diagonal, with the edge
+ * N1 → N2 (labelled „Uses” in C4, where every relationship is described).
+ */
+export function buildStarterGraph(type: CatalogDiagramType): {
   nodes: DiagramNodeInput[]
   edges: DiagramEdgeInput[]
 } {
@@ -28,5 +32,6 @@ export function buildStarterGraph(type: UmlDiagramType): {
     },
     data: { ...starter.data }
   }))
-  return { nodes, edges: [{ id: 'E1', source: 'N1', target: 'N2' }] }
+  const label = isC4Diagram(type) ? { label: 'Uses' } : {}
+  return { nodes, edges: [{ id: 'E1', source: 'N1', target: 'N2', ...label }] }
 }

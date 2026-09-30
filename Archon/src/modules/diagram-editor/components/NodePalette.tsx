@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { IconButton, Menu, MenuItem } from '@/shared/components/ui'
 import { Icon } from '@/shared/components/icons'
 import { NODE_KINDS } from '../constants/node-kinds'
-import { PLACEABLE_KINDS, TOOLS, type ToolDef } from '../constants/tools'
+import { placeableKinds, TOOLS, type ToolDef } from '../constants/tools'
 import { useDiagramStore } from '../store/DiagramStoreProvider'
 
 const tip = (tool: ToolDef): string => `${tool.label} (${tool.shortcut})`
@@ -13,6 +13,7 @@ function AddNodeButton({ tool }: { tool: ToolDef }): React.JSX.Element {
   const anchorRef = useRef<HTMLButtonElement>(null)
   const active = useDiagramStore((s) => s.tool === 'node')
   const nodeKind = useDiagramStore((s) => s.nodeKind)
+  const kinds = useDiagramStore((s) => placeableKinds(s.meta.type))
   const setTool = useDiagramStore((s) => s.setTool)
   const setNodeKind = useDiagramStore((s) => s.setNodeKind)
 
@@ -36,7 +37,7 @@ function AddNodeButton({ tool }: { tool: ToolDef }): React.JSX.Element {
         <Icon name="chevD" size={10} />
       </button>
       <Menu open={open} onClose={() => setOpen(false)} anchor={anchorRef} aria-label="Node type">
-        {PLACEABLE_KINDS.map((kind) => (
+        {kinds.map((kind) => (
           <MenuItem
             key={kind}
             icon={NODE_KINDS[kind].defaultIcon}

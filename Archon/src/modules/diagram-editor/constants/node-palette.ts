@@ -21,3 +21,13 @@ export const NODE_COLORS = {
   red: '#DC2626',
   neutral: '#8892A4'
 } as const satisfies Record<string, NodeColor>
+
+/** The C4 model's customary colors: the defaults of C4 nodes (data, like the palette). */
+export const C4_COLORS = {
+  person: '#08427B',
+  system: '#1168BD',
+  container: '#438DD5',
+  component: '#85BBF0',
+  external: '#8C8496',
+  boundary: '#8892A4'
+} as const

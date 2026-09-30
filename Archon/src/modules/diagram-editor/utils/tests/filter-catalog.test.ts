@@ -5,10 +5,21 @@ const ids = (groups: ReturnType<typeof filterCatalog>): string[] =>
   groups.flatMap((group) => group.entries.map((entry) => entry.id))
 
 describe('filterCatalog', () => {
-  it('groups everything, structural first', () => {
+  it('groups everything, structural first, C4 last', () => {
     const groups = filterCatalog('all', '')
-    expect(groups.map((g) => g.category.id)).toEqual(['structural', 'behavioral'])
-    expect(ids(groups)).toHaveLength(14)
+    expect(groups.map((g) => g.category.id)).toEqual(['structural', 'behavioral', 'c4'])
+    expect(ids(groups)).toHaveLength(20)
+  })
+
+  it('keeps the C4 types in their own category', () => {
+    expect(ids(filterCatalog('c4', ''))).toEqual([
+      'c4-context',
+      'c4-container',
+      'c4-component',
+      'c4-landscape',
+      'c4-dynamic',
+      'c4-deployment'
+    ])
   })
 
   it('matches the name, in any case', () => {

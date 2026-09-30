@@ -60,6 +60,8 @@ export type {
   DiagramNodeType,
   DiagramType,
   ArchonDiagram,
+  C4DiagramType,
+  CatalogDiagramType,
   UmlDiagramType
 } from './diagram.types'
 export type { IndexProgress, IndexStatus, SearchResult, TagCount } from './search.types'

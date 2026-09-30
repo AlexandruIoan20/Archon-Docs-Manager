@@ -39,5 +39,10 @@ export function categoryCounts(
   catalog: readonly DiagramCatalogEntry[] = DIAGRAM_CATALOG
 ): Record<CategoryFilter, number> {
   const count = (id: DiagramCategory): number => catalog.filter((e) => e.category === id).length
-  return { all: catalog.length, structural: count('structural'), behavioral: count('behavioral') }
+  return {
+    all: catalog.length,
+    structural: count('structural'),
+    behavioral: count('behavioral'),
+    c4: count('c4')
+  }
 }

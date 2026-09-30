@@ -15,7 +15,7 @@ export interface CategoryListProps {
 const COUNTS = categoryCounts()
 
 const OPTIONS = [
-  { value: 'all', label: 'All UML types', short: 'All', icon: 'grid4' },
+  { value: 'all', label: 'All types', short: 'All', icon: 'grid4' },
   ...DIAGRAM_CATEGORIES.map((c) => ({ value: c.id, label: c.label, short: c.label, icon: c.icon }))
 ] as const satisfies readonly {
   value: CategoryFilter
@@ -88,7 +88,7 @@ export function CategoryList({
         )
       })}
       <p className="mt-auto border-t border-border px-2 pt-2.5 text-[11px] leading-[1.5] text-fg-muted">
-        Every type starts with its UML 2.5 notation and two linked starter nodes.
+        Every type starts with its notation (UML 2.5 or C4) and two linked starter nodes.
       </p>
     </nav>
   )

@@ -1,4 +1,4 @@
-import type { UmlDiagramType } from '@/core/types'
+import type { CatalogDiagramType } from '@/core/types'
 
 /** A primitive of a catalog sketch, in a 160×54 box. */
 export type SketchShape =
@@ -21,7 +21,7 @@ const path = (d: string, dashed?: boolean): SketchShape => ({ kind: 'path', d, d
 const circle = (cx: number, cy: number, r: number): SketchShape => ({ kind: 'circle', cx, cy, r })
 
 /** The notation of each type, drawn small: what the card shows. */
-export const SKETCHES: Record<UmlDiagramType, readonly SketchShape[]> = {
+export const SKETCHES: Record<CatalogDiagramType, readonly SketchShape[]> = {
   class: [
     rect(14, 6, 48, 42, 2),
     path('M14 18h48M14 32h48'),
@@ -115,5 +115,56 @@ export const SKETCHES: Record<UmlDiagramType, readonly SketchShape[]> = {
     path('M88 27h20'),
     rect(108, 10, 44, 34, 2),
     path('M108 18h16l4-4v-4')
+  ],
+  // C4: people are a head over a rounded body, boundaries are dashed.
+  'c4-context': [
+    circle(18, 13, 6),
+    rect(8, 21, 20, 18, 7),
+    path('M30 29h24M48 25l6 4-6 4'),
+    rect(56, 13, 46, 30, 3),
+    path('M102 29h18M114 25l6 4-6 4'),
+    path('M122 13h30v30h-30z', true)
+  ],
+  'c4-container': [
+    circle(16, 15, 5),
+    rect(8, 22, 16, 15, 6),
+    path('M26 29h18'),
+    path('M42 4h112v46H42z', true),
+    rect(52, 16, 40, 24, 3),
+    path('M92 28h14'),
+    path('M108 18a16 4 0 0 1 32 0v18a16 4 0 0 1-32 0zM108 18a16 4 0 0 0 32 0')
+  ],
+  'c4-component': [
+    path('M6 4h148v46H6z', true),
+    rect(16, 16, 34, 22, 2),
+    path('M50 27h13'),
+    rect(63, 16, 34, 22, 2),
+    path('M97 27h13'),
+    rect(110, 16, 34, 22, 2)
+  ],
+  'c4-landscape': [
+    circle(18, 15, 5),
+    rect(10, 22, 16, 15, 6),
+    path('M28 29h24'),
+    path('M44 4h110v46H44z', true),
+    rect(54, 10, 38, 16, 3),
+    rect(104, 10, 40, 16, 3),
+    rect(76, 31, 42, 14, 3)
+  ],
+  'c4-dynamic': [
+    rect(8, 16, 36, 22, 3),
+    path('M44 27h18'),
+    circle(53, 19, 4),
+    rect(62, 16, 36, 22, 3),
+    path('M98 27h18'),
+    circle(107, 19, 4),
+    rect(116, 16, 36, 22, 3)
+  ],
+  'c4-deployment': [
+    rect(8, 4, 144, 46, 3),
+    rect(18, 13, 58, 30, 3),
+    rect(26, 21, 42, 16, 2),
+    rect(86, 13, 56, 30, 3),
+    path('M98 21a16 3 0 0 1 32 0v12a16 3 0 0 1-32 0zM98 21a16 3 0 0 0 32 0')
   ]
 }

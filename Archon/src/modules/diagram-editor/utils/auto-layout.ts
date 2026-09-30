@@ -19,12 +19,15 @@ export interface Arrangement {
 }
 
 /**
- * The nodes an arrangement moves: SOAR nodes, and shapes or text with edges.
- * Loose shapes and notes are annotations and stay where they are.
+ * The nodes an arrangement moves: SOAR and C4 nodes, and shapes or text with
+ * edges. Loose shapes, notes and C4 boundaries stay where they are.
  */
 export function arrangeable(nodes: readonly FlowNode[], edges: readonly FlowEdge[]): FlowNode[] {
   const linked = new Set(edges.flatMap((edge) => [edge.source, edge.target]))
-  return nodes.filter((node) => !isFreeForm(node.type) || linked.has(node.id))
+  // C4 boundaries frame the others; the user places them.
+  return nodes.filter(
+    (node) => node.type !== 'c4-boundary' && (!isFreeForm(node.type) || linked.has(node.id))
+  )
 }
 
 /** The sides an edge takes in a layered layout: forward along the flow, back against it. */

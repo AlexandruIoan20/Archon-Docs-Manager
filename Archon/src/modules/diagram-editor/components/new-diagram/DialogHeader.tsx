@@ -25,7 +25,7 @@ export function DialogHeader({
           New diagram
         </h2>
         <p className="min-w-0 truncate text-[12px] text-fg-muted">
-          Choose a UML type — {APP_NAME} scaffolds the notation and shapes for you.
+          Choose a UML or C4 type — {APP_NAME} scaffolds the notation and shapes for you.
         </p>
       </div>
       <SearchInput

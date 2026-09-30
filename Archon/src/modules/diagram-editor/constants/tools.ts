@@ -1,11 +1,21 @@
-import type { DiagramNodeType } from '@/core/types'
+import type { DiagramNodeType, DiagramType } from '@/core/types'
 import { getShortcut, type ShortcutId } from '@/core/constants/shortcuts'
 import type { IconName } from '@/shared/components/icons'
 
 export type DiagramTool = 'select' | 'pan' | 'node' | 'connect' | 'text' | 'rect' | 'ellipse'
 
 /** Node types the Add node tool can place (its chevron menu). */
-export type PlaceableKind = 'trigger' | 'action' | 'decision' | 'integration'
+export type PlaceableKind =
+  | 'trigger'
+  | 'action'
+  | 'decision'
+  | 'integration'
+  | 'c4-person'
+  | 'c4-system'
+  | 'c4-container'
+  | 'c4-database'
+  | 'c4-component'
+  | 'c4-boundary'
 
 export interface ToolDef {
   id: DiagramTool
@@ -46,6 +56,28 @@ export const PLACEABLE_KINDS: readonly PlaceableKind[] = [
   'decision',
   'integration'
 ]
+
+/** The C4 model's elements, placed in C4 diagrams instead of the SOAR nodes. */
+export const C4_KINDS: readonly PlaceableKind[] = [
+  'c4-person',
+  'c4-system',
+  'c4-container',
+  'c4-database',
+  'c4-component',
+  'c4-boundary'
+]
+
+/** `undefined` for a graph without metadata (a diagram being loaded). */
+export const isC4Diagram = (type: DiagramType | undefined): boolean =>
+  type?.startsWith('c4-') ?? false
+
+/** What Add node offers in a diagram of this type. */
+export const placeableKinds = (type: DiagramType | undefined): readonly PlaceableKind[] =>
+  isC4Diagram(type) ? C4_KINDS : PLACEABLE_KINDS
+
+/** What Add node places before another kind is picked. */
+export const defaultNodeKind = (type: DiagramType | undefined): PlaceableKind =>
+  isC4Diagram(type) ? 'c4-container' : 'action'
 
 /** The node type a click places with this tool, or `null` if the tool does not place. */
 export function placedNodeType(tool: DiagramTool, kind: PlaceableKind): DiagramNodeType | null {

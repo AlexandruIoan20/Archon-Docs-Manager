@@ -6,6 +6,7 @@ import { usePlatform } from '@/shared/hooks/usePlatform'
 import { copyText } from '@/shared/utils/copy-text'
 import { shortcutLabel } from '@/shared/utils/platform'
 import { useDiagramStoreApi } from '../store/DiagramStoreProvider'
+import { placeableKinds } from '../constants/tools'
 import { canvasMenuItems, nodeMenuItems } from '../utils/canvas-menu-items'
 import type { FlowNode } from '../utils/graph-mapping'
 import { useDeleteSelection } from './useDeleteSelection'
@@ -34,6 +35,7 @@ export function useCanvasContextMenu(): CanvasContextMenu {
     menu.open(
       event,
       canvasMenuItems({
+        kinds: placeableKinds(store.getState().meta.type),
         addNode: (type) => {
           store.getState().addNode(type, at)
           useUiStore.getState().notify('Node added')

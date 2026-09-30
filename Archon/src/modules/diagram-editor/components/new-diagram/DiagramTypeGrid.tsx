@@ -1,13 +1,13 @@
 import { useRef, type KeyboardEvent } from 'react'
-import type { UmlDiagramType } from '@/core/types'
+import type { CatalogDiagramType } from '@/core/types'
 import type { CatalogGroup } from '../../utils/filter-catalog'
 import { DiagramTypeCard } from './DiagramTypeCard'
 
 export interface DiagramTypeGridProps {
   groups: CatalogGroup[]
-  selected: UmlDiagramType | null
-  onSelect: (type: UmlDiagramType) => void
-  onCreate: (type: UmlDiagramType) => void
+  selected: CatalogDiagramType | null
+  onSelect: (type: CatalogDiagramType) => void
+  onCreate: (type: CatalogDiagramType) => void
   query: string
 }
 
@@ -69,7 +69,7 @@ export function DiagramTypeGrid({
     else return
     event.preventDefault()
     if (!next?.dataset.type) return
-    onSelect(next.dataset.type as UmlDiagramType)
+    onSelect(next.dataset.type as CatalogDiagramType)
     next.focus()
   }
 

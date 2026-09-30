@@ -1,4 +1,5 @@
 import { NODE_COLORS } from '../constants/node-palette'
+import type { PlaceableKind } from '../constants/tools'
 import type { StyleDefaults } from '../utils/node-factory'
 import type { SetState, ToolState } from './diagram-state'
 
@@ -10,10 +11,10 @@ export const DEFAULT_STYLE: StyleDefaults = {
 }
 
 /** The tab's active tool, kept in the diagram store (one per tab, same registry). */
-export function createToolSlice(set: SetState): ToolState {
+export function createToolSlice(set: SetState, nodeKind: PlaceableKind): ToolState {
   return {
     tool: 'select',
-    nodeKind: 'action',
+    nodeKind,
     connectFrom: null,
     styleDefaults: DEFAULT_STYLE,
     // Another tool always drops a half-made connection.

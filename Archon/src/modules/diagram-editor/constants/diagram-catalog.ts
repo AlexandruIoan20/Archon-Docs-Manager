@@ -1,7 +1,7 @@
-import type { UmlDiagramType } from '@/core/types'
+import type { CatalogDiagramType } from '@/core/types'
 import type { IconName } from '@/shared/components/icons'
 
-export type DiagramCategory = 'structural' | 'behavioral'
+export type DiagramCategory = 'structural' | 'behavioral' | 'c4'
 
 export interface DiagramCategoryInfo {
   id: DiagramCategory
@@ -12,7 +12,7 @@ export interface DiagramCategoryInfo {
 }
 
 export interface DiagramCatalogEntry {
-  id: UmlDiagramType
+  id: CatalogDiagramType
   category: DiagramCategory
   /** „State machine”; the dialog adds „diagram”. */
   name: string
@@ -32,10 +32,16 @@ export const DIAGRAM_CATEGORIES: readonly DiagramCategoryInfo[] = [
     label: 'Behavioral',
     note: 'what the system does over time',
     icon: 'play'
+  },
+  {
+    id: 'c4',
+    label: 'C4 model',
+    note: 'software architecture, zoomed in level by level',
+    icon: 'zoomLevels'
   }
 ]
 
-/** The 14 UML 2.5 diagram types offered by the „New diagram” dialog. */
+/** The 14 UML 2.5 diagram types and the 6 C4 ones offered by the „New diagram” dialog. */
 export const DIAGRAM_CATALOG: readonly DiagramCatalogEntry[] = [
   {
     id: 'class',
@@ -134,10 +140,53 @@ export const DIAGRAM_CATALOG: readonly DiagramCatalogEntry[] = [
     name: 'Interaction overview',
     description: 'Interactions composed as a flow',
     icon: 'play'
+  },
+  {
+    id: 'c4-context',
+    category: 'c4',
+    name: 'System context',
+    description: 'The system, its users and the systems around it',
+    icon: 'user'
+  },
+  {
+    id: 'c4-container',
+    category: 'c4',
+    name: 'Container',
+    description: 'Apps and data stores inside one system',
+    icon: 'box'
+  },
+  {
+    id: 'c4-component',
+    category: 'c4',
+    // „C4”: UML has a component diagram too.
+    name: 'C4 component',
+    description: 'The components inside one container',
+    icon: 'component'
+  },
+  {
+    id: 'c4-landscape',
+    category: 'c4',
+    name: 'System landscape',
+    description: 'All the systems and people of an organisation',
+    icon: 'server'
+  },
+  {
+    id: 'c4-dynamic',
+    category: 'c4',
+    name: 'C4 dynamic',
+    description: 'Numbered interactions for one use case',
+    icon: 'list'
+  },
+  {
+    id: 'c4-deployment',
+    category: 'c4',
+    name: 'C4 deployment',
+    description: 'Containers mapped onto infrastructure',
+    icon: 'database'
   }
 ]
 
-export function catalogEntry(id: UmlDiagramType): DiagramCatalogEntry {
+export function catalogEntry(id: CatalogDiagramType): DiagramCatalogEntry {
   const entry = DIAGRAM_CATALOG.find((e) => e.id === id)
   if (!entry) throw new Error(`Unknown diagram type: ${id}`)
   return entry

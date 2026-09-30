@@ -1,4 +1,4 @@
-import type { UmlDiagramType } from '@/core/types'
+import type { CatalogDiagramType } from '@/core/types'
 import { cn } from '@/shared/utils/cn'
 import { SKETCHES, SKETCH_SIZE, type SketchShape } from '../../constants/diagram-sketches'
 import '../../styles/new-diagram.css'
@@ -21,7 +21,7 @@ export function DiagramSketch({
   type,
   selected
 }: {
-  type: UmlDiagramType
+  type: CatalogDiagramType
   selected: boolean
 }): React.JSX.Element {
   const { width, height } = SKETCH_SIZE

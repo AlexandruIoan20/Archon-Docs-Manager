@@ -148,6 +148,34 @@ export const ICON_PATHS = {
   alignBottom: ['M2 20h20', roundedRect(5, 4, 5, 12, 1.5), roundedRect(14, 9, 5, 7, 1.5)],
   distributeH: ['M3 3v18', 'M21 3v18', roundedRect(9, 6, 6, 12, 1.5)],
   distributeV: ['M3 3h18', 'M3 21h18', roundedRect(6, 9, 12, 6, 1.5)],
+  // C4 model.
+  user: [circle(12, 7, 4), 'M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1'],
+  server: [roundedRect(3, 3, 18, 8, 2), roundedRect(3, 13, 18, 8, 2), 'M7 7h.01', 'M7 17h.01'],
+  database: [
+    'M3 5a9 3 0 0 0 18 0a9 3 0 0 0 -18 0',
+    'M3 5v14a9 3 0 0 0 18 0V5',
+    'M3 12a9 3 0 0 0 18 0'
+  ],
+  component: [
+    roundedRect(7, 3, 14, 18, 2),
+    roundedRect(3, 7, 7, 3, 1),
+    roundedRect(3, 14, 7, 3, 1)
+  ],
+  boundary: [
+    'M4 8V6a2 2 0 0 1 2-2h2',
+    'M16 4h2a2 2 0 0 1 2 2v2',
+    'M20 16v2a2 2 0 0 1-2 2h-2',
+    'M8 20H6a2 2 0 0 1-2-2v-2',
+    'M11 4h2',
+    'M11 20h2',
+    'M4 11v2',
+    'M20 11v2'
+  ],
+  zoomLevels: [
+    roundedRect(2, 2, 20, 20, 2.5),
+    roundedRect(6, 6, 12, 12, 2),
+    roundedRect(10, 10, 4, 4, 1)
+  ],
   hierarchy: [
     roundedRect(9, 2, 6, 5, 1),
     roundedRect(2, 17, 6, 5, 1),

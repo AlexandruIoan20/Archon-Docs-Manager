@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import { Input, Textarea, TagInput, Toggle } from '@/shared/components/ui'
-import { NODE_KINDS, nodeColor, nodeIcon } from '../../constants/node-kinds'
+import { canBeExternal, isC4, NODE_KINDS, nodeColor, nodeIcon } from '../../constants/node-kinds'
 import { useCommitOnFocus } from '../../hooks/useCommitOnFocus'
 import { useTagSuggestions } from '../../hooks/useTagSuggestions'
 import { useDiagramStore } from '../../store/DiagramStoreProvider'
@@ -13,6 +13,23 @@ import { NodeIdentity } from './NodeIdentity'
 
 type TextKey = 'label' | 'subtitle' | 'description'
 
+/** What the subtitle means: C4 elements keep their technology there, a boundary its kind. */
+function subtitleLabel(type: FlowNode['type']): string | null {
+  switch (type) {
+    case 'c4-person':
+    case 'c4-system':
+      return null
+    case 'c4-container':
+    case 'c4-database':
+    case 'c4-component':
+      return 'Technology'
+    case 'c4-boundary':
+      return 'Bounds'
+    default:
+      return 'Subtitle'
+  }
+}
+
 interface TextFieldProps {
   value: string
   onFocus: () => void
@@ -20,21 +37,24 @@ interface TextFieldProps {
   onChange: (event: { target: { value: string } }) => void
 }
 
-/** One node: identity, name, subtitle, color, description, tags, retry, delete. */
+/** One node: identity, name, subtitle, color, description, tags, retry or external, delete. */
 export function NodeProperties({ node }: { node: FlowNode }): React.JSX.Element {
   const ids = {
     name: useId(),
     subtitle: useId(),
     description: useId(),
     tags: useId(),
-    retry: useId()
+    retry: useId(),
+    external: useId()
   }
   const updateNodeData = useDiagramStore((s) => s.updateNodeData)
   const session = useCommitOnFocus(node.id)
   const suggestions = useTagSuggestions()
   const kind = NODE_KINDS[node.type ?? 'element'] ?? NODE_KINDS.element
   const freeForm = isFreeForm(node.type)
+  const subtitle = freeForm ? null : subtitleLabel(node.type)
   const { data } = node
+  const color = nodeColor(node.type, data.color, data.external)
 
   // Typing: one undo step for the whole edit of a field (see `useCommitOnFocus`).
   const text = (key: TextKey): TextFieldProps => ({
@@ -52,8 +72,8 @@ export function NodeProperties({ node }: { node: FlowNode }): React.JSX.Element 
     <div className="flex flex-col gap-3.5">
       <NodeIdentity
         icon={nodeIcon(node.type, data.icon)}
-        color={nodeColor(node.type, data.color)}
-        title={freeForm ? kind.label : `${kind.label} node`}
+        color={color}
+        title={freeForm || isC4(node.type) ? kind.label : `${kind.label} node`}
         id={node.id}
       />
 
@@ -61,8 +81,8 @@ export function NodeProperties({ node }: { node: FlowNode }): React.JSX.Element 
         <Field label={node.type === 'text' ? 'Text' : 'Name'} htmlFor={ids.name}>
           <Input id={ids.name} {...text('label')} />
         </Field>
-        {!freeForm && (
-          <Field label="Subtitle" htmlFor={ids.subtitle}>
+        {subtitle && (
+          <Field label={subtitle} htmlFor={ids.subtitle}>
             <Input id={ids.subtitle} tone="muted" {...text('subtitle')} />
           </Field>
         )}
@@ -74,10 +94,7 @@ export function NodeProperties({ node }: { node: FlowNode }): React.JSX.Element 
         </p>
       ) : (
         <>
-          <ColorField
-            value={nodeColor(node.type, data.color)}
-            onChange={(color) => set({ color })}
-          />
+          <ColorField value={color} onChange={(next) => set({ color: next })} />
           <Field label="Description" htmlFor={ids.description}>
             <Textarea id={ids.description} className="h-[74px]" {...text('description')} />
           </Field>
@@ -103,6 +120,18 @@ export function NodeProperties({ node }: { node: FlowNode }): React.JSX.Element 
               checked={data.retryOnFail}
               onChange={(retryOnFail) => set({ retryOnFail })}
               aria-labelledby={ids.retry}
+            />
+          </div>
+        )}
+        {canBeExternal(node.type) && (
+          <div className="flex items-center justify-between gap-2">
+            <span id={ids.external} className="text-[12px] text-fg-muted">
+              External (outside the system in scope)
+            </span>
+            <Toggle
+              checked={data.external}
+              onChange={(external) => set({ external })}
+              aria-labelledby={ids.external}
             />
           </div>
         )}

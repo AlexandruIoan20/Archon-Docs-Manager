@@ -1,0 +1,206 @@
+/* C4 model nodes. They reuse the skins of `nodes.css` (card, outline, solid)
+   through the same `--node-*` variables, with C4's centred text. */
+
+.ar-node.ar-c4 {
+  width: 220px;
+  height: 128px;
+}
+
+.ar-node.ar-c4--person {
+  width: 200px;
+  height: 156px;
+}
+
+.ar-c4 .ar-c4-body {
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+/* No rail: C4 boxes are outlined all around in their color. */
+.ar-node--card.ar-c4 .ar-node-body::before {
+  display: none;
+}
+
+.ar-node--card.ar-c4 .ar-node-body,
+.ar-node--card.ar-c4 .ar-c4-head {
+  border: 1.5px solid var(--node-color);
+  background: var(--surface);
+}
+
+.ar-c4-name {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-c4-type {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text2);
+  font-size: 10.5px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ar-c4-description {
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--text2);
+  font-size: 11px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow-wrap: anywhere;
+}
+
+.ar-node--solid.ar-c4 .ar-c4-name,
+.ar-node--solid.ar-c4 .ar-c4-type,
+.ar-node--solid.ar-c4 .ar-c4-description {
+  color: #fff;
+}
+
+.ar-node--solid.ar-c4 .ar-c4-type,
+.ar-node--solid.ar-c4 .ar-c4-description {
+  opacity: 0.85;
+}
+
+/* Person: a head over a rounded body. */
+.ar-c4--person .ar-c4-body {
+  position: absolute;
+  inset: 44px 0 0;
+  width: auto;
+  height: auto;
+  padding-top: 16px;
+  border-radius: 28px;
+}
+
+.ar-c4-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  box-sizing: border-box;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--node-border);
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.ar-node--card .ar-c4-head {
+  box-shadow: var(--shadow-node);
+}
+
+.ar-node--outline .ar-c4-head {
+  border: 1.5px solid var(--node-border);
+  background: var(--canvas);
+}
+
+.ar-node--solid .ar-c4-head {
+  background: var(--node-color);
+  box-shadow: var(--shadow-node);
+}
+
+/* Database: a cylinder behind a transparent body. */
+.ar-c4-cylinder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ar-c4-cylinder path {
+  stroke: var(--node-color);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.ar-c4-cylinder-body {
+  fill: var(--surface);
+}
+
+.ar-node--card .ar-c4-cylinder {
+  filter: drop-shadow(var(--shadow-node));
+}
+
+.ar-node--outline .ar-c4-cylinder-body {
+  fill: var(--canvas);
+}
+
+.ar-node--solid .ar-c4-cylinder-body {
+  fill: var(--node-color);
+}
+
+.ar-c4-cylinder-rim {
+  fill: none;
+}
+
+.ar-node--solid .ar-c4-cylinder-rim {
+  stroke: rgba(255, 255, 255, 0.6);
+}
+
+.ar-c4--cylinder .ar-c4-body,
+.ar-node--card.ar-c4--cylinder .ar-c4-body,
+.ar-node--outline.ar-c4--cylinder .ar-c4-body,
+.ar-node--solid.ar-c4--cylinder .ar-c4-body {
+  position: relative;
+  padding-top: 22px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* The connect tool's source. */
+.ar-node--pending.ar-c4 .ar-node-body,
+.ar-node--pending.ar-c4 .ar-c4-head {
+  border-color: var(--accent);
+}
+
+.ar-node--pending .ar-c4-cylinder path {
+  stroke: var(--accent);
+}
+
+/* Boundary: a dashed frame under the other nodes. Only its label and resize
+   handles take the pointer, so the elements inside stay clickable. */
+.ar-flow .react-flow__node-c4-boundary {
+  pointer-events: none !important;
+}
+
+.ar-flow .react-flow__node-c4-boundary .react-flow__resize-control {
+  pointer-events: all;
+}
+
+.ar-c4-boundary {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 1.5px dashed var(--node-color);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+}
+
+.ar-c4-boundary-label {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  display: flex;
+  max-width: calc(100% - 24px);
+  flex-direction: column;
+  cursor: move;
+  pointer-events: all;
+}
+
+.ar-flow .react-flow__node-c4-boundary.selected .ar-c4-boundary {
+  border-color: var(--accent);
+}

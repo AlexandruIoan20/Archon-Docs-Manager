@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type { DiagramEngine, EntryRef, UmlDiagramType } from '@/core/types'
+import type { DiagramEngine, EntryRef, CatalogDiagramType } from '@/core/types'
 import { QUERY_KEYS } from '@/core/constants/app.constants'
 import { ipcClient } from '@/core/ipc/ipc-client'
 import { useEditorStore, useUiStore, useWorkspaceStore } from '@/store'
@@ -8,7 +8,7 @@ import { mermaidTemplate } from '../mermaid/templates'
 import { buildStarterGraph } from '../utils/build-starter-graph'
 
 export interface CreateDiagramRequest {
-  type: UmlDiagramType
+  type: CatalogDiagramType
   /** Relative folder; `''` is the root. */
   folder: string
   /** `mermaid`: a text diagram from the type's template (see `supportsMermaid`). */

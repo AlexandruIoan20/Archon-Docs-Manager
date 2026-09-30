@@ -1,6 +1,7 @@
 import { applyEdgeChanges, applyNodeChanges, type EdgeChange, type NodeChange } from '@xyflow/react'
 import { createStore, type StoreApi } from 'zustand/vanilla'
 import type { ArchonDiagram } from '@/core/types'
+import { defaultNodeKind } from '../constants/tools'
 import { withSelectedNodes, type DiagramGraph, type FlowNode } from '../utils/graph-mapping'
 import type { DiagramSelection, DiagramState } from './diagram-state'
 import { snapDrag } from './drag-snap'
@@ -48,7 +49,7 @@ export function createDiagramStore(
     base,
     gestureOpen: false,
     guides: null,
-    ...createToolSlice(set),
+    ...createToolSlice(set, defaultNodeKind(graph.meta.type)),
     ...createMermaidSlice(set),
     ...createGraphEdits(set, get),
     ...createLayoutEdits(set, get),

@@ -26,6 +26,10 @@ const FREE_FORM: ReadonlySet<DiagramNodeType> = new Set(['shape-rect', 'shape-el
 export const isFreeForm = (type: DiagramNodeType | undefined): boolean =>
   type !== undefined && FREE_FORM.has(type)
 
+/** Nodes that keep their own size in the file: shapes, text and C4 boundaries. */
+export const isResizable = (type: DiagramNodeType | undefined): boolean =>
+  isFreeForm(type) || type === 'c4-boundary'
+
 /** A new node centred on `center`, selected, with defaults for its type. */
 export function createNode(
   type: DiagramNodeType,
@@ -36,8 +40,10 @@ export function createNode(
   const kind = NODE_KINDS[type]
   const { width, height } = kind.size
   const freeForm = isFreeForm(type)
+  const boundary = type === 'c4-boundary'
   const data = diagramNodeDataSchema.parse({
     label: type === 'text' ? 'Text' : freeForm ? '' : kind.label,
+    ...(boundary ? { subtitle: 'Software System' } : {}),
     ...(freeForm
       ? {
           stroke: style.stroke,
@@ -57,7 +63,9 @@ export function createNode(
     data,
     selected: true,
     // Resizable nodes keep their size in the file; SOAR nodes have a fixed one.
-    ...(freeForm ? { width, height } : {})
+    ...(isResizable(type) ? { width, height } : {}),
+    // A boundary lies under what it frames, and under the edges.
+    ...(boundary ? { zIndex: -1 } : {})
   }
 }
 

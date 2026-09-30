@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type KeyboardEvent } from 'react'
-import type { DiagramEngine, UmlDiagramType } from '@/core/types'
+import type { DiagramEngine, CatalogDiagramType } from '@/core/types'
 import { useUiStore, useWorkspaceStore } from '@/store'
 import { Modal, ModalBody } from '@/shared/components/ui'
 import { useCreateDiagram } from '../../hooks/useCreateDiagram'
@@ -21,7 +21,7 @@ export function NewDiagramDialog(): React.JSX.Element {
   const { create, pending } = useCreateDiagram()
   const [category, setCategory] = useState<CategoryFilter>('all')
   const [query, setQuery] = useState('')
-  const [chosen, setChosen] = useState<UmlDiagramType>('class')
+  const [chosen, setChosen] = useState<CatalogDiagramType>('class')
   const [chosenEngine, setEngine] = useState<DiagramEngine>('react-flow')
 
   const groups = filterCatalog(category, query)
@@ -32,7 +32,7 @@ export function NewDiagramDialog(): React.JSX.Element {
   // „Text” stays chosen across types, but only applies where Mermaid can draw.
   const engine: DiagramEngine = textSupported ? chosenEngine : 'react-flow'
 
-  const submit = (type: UmlDiagramType | undefined = selected?.id): void => {
+  const submit = (type: CatalogDiagramType | undefined = selected?.id): void => {
     if (!type || pending) return
     closeModal()
     void create({

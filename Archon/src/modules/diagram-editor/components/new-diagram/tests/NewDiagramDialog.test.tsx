@@ -51,9 +51,9 @@ describe('NewDiagramDialog', () => {
     delete window.archon
   })
 
-  it('opens with the focus in the search, all 14 types and Class selected', () => {
+  it('opens with the focus in the search, all 20 types and Class selected', () => {
     expect(within(dialog()).getByRole('searchbox')).toHaveFocus()
-    expect(shownTypes()).toHaveLength(14)
+    expect(shownTypes()).toHaveLength(20)
     expect(card('Class')).toHaveAttribute('aria-selected', 'true')
     expect(within(dialog()).getByText('Class diagram')).toBeInTheDocument()
   })
@@ -83,7 +83,7 @@ describe('NewDiagramDialog', () => {
     expect(card('Object')).toHaveAttribute('aria-selected', 'true')
     expect(card('Object')).toHaveFocus()
     fireEvent.keyDown(card('Object'), { key: 'End' })
-    expect(card('Interaction overview')).toHaveAttribute('aria-selected', 'true')
+    expect(card('C4 deployment')).toHaveAttribute('aria-selected', 'true')
   })
 
   it('creates on double-click, with the type, its starters and the target folder', async () => {

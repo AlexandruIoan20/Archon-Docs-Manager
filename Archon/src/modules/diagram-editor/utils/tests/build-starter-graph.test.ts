@@ -22,6 +22,13 @@ describe('buildStarterGraph', () => {
     expect(nodes.map((n) => n.data?.label)).toEqual(['Deployment A', 'Deployment B'])
   })
 
+  it('starts a C4 diagram with C4 elements and a described relationship', () => {
+    const { nodes, edges } = buildStarterGraph('c4-context')
+    expect(nodes.map((n) => n.type)).toEqual(['c4-person', 'c4-system'])
+    expect(edges[0]).toMatchObject({ label: 'Uses' })
+    expect(() => diagramDataSchema.parse(buildStarterGraph('c4-container'))).not.toThrow()
+  })
+
   it('is valid diagram data', () => {
     expect(() => diagramDataSchema.parse(buildStarterGraph('class'))).not.toThrow()
   })

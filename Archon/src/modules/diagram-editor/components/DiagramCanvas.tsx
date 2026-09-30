@@ -12,6 +12,7 @@ import { useDiagramStore, useDiagramStoreApi } from '../store/DiagramStoreProvid
 import { isDefaultViewport, type FlowEdge, type FlowNode } from '../utils/graph-mapping'
 import '../styles/nodes.css'
 import '../styles/node-chrome.css'
+import '../styles/c4.css'
 import '../styles/edges.css'
 import '../styles/tools.css'
 import { MAX_ZOOM, MIN_ZOOM } from '../utils/zoom'
